@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang=”ru”>
+<head>
+	<title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div>
+        <a href="/main/">Главная</a>
+        <a href="/doc/income/">Оприходование</a>
+        <a href="/doc/move/">Перемещение</a>
+        <a href="/doc/writeoff/">Списание</a>
+    </div>
+    <hr>
+	{% block content %}{% endblock %}
+	{% block footer %}
+	<p></p>
+	{% endblock %}
+</body>
+</html>
