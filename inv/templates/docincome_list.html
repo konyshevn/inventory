@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Оприходования{% endblock %}
+{% block content %}
+	<h1>Оприходования</h1>
+
+	{% for doc in doc_list %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Дата</th>
+					<th>Номер</th>
+					<th>Проведен</th>
+					<th>Подразделение</th>
+					<th>Склад</th>
+				</tr>	
+		{% endif %}
+		
+		<tr>
+			<td>{{ doc.doc_date }}</td>
+			<td><a href="/doc/income/{{ doc.id }}"> {{ doc.doc_num }} </a></td>
+			<td>{% if doc.doc_active %}
+					Да
+				{% else %}
+					Нет
+				{% endif %}
+			</td>
+			<td>{{ doc.department }}</td>
+			<td>{% if doc.stock %}
+					{{ doc.stock }}
+				{% endif %}
+			</td>
+		</tr>
+		
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}
