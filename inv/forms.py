@@ -6,10 +6,23 @@ from inv.models import *
 class DocIncomeForm(ModelForm):
     class Meta:
         model = DocIncome
-        fields = ['doc_date', 'doc_num', 'department', 'stock']
+        fields = ['doc_num', 'doc_date', 'department', 'stock']
+        labels = {
+            'doc_date': 'Дата',
+            'doc_num': 'Номер',
+            'department': 'Подразделение',
+            'stock': 'Склад'}
 
 
-DocIncomeTableUnitFormSetBase = modelformset_factory(DocIncomeTableUnit, form=DocIncomeForm, fields=['device', 'person', 'comment'], can_delete=True)
+DocIncomeTableUnitFormSet = modelformset_factory(
+    DocIncomeTableUnit,
+    form=DocIncomeForm,
+    labels={
+        'device': 'Устройство',
+        'person': 'Сотрудник',
+        'qty': 'Количество',
+        'comment': 'Комментарий'},
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True)
 
 
 

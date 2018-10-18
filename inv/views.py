@@ -22,5 +22,5 @@ def doc_form(request, doc_id, model):
     doc = model.objects.get(id=doc_id)
     template_name = '%s_form.html' % model.__name__.lower()
     form = DocIncomeForm(instance=doc)
-    formset = DocIncomeTableUnitFormSetBase(queryset=DocIncomeTableUnit.objects.filter(doc=doc))
+    formset = DocIncomeTableUnitFormSet(queryset=DocIncomeTableUnit.objects.filter(doc=doc))
     return render(request, template_name, {'form': form, 'formset': formset})

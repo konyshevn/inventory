@@ -7,13 +7,23 @@
 		{{ form.as_table }}
 		<br>
 		{{ formset.managment_form }}
-		{% for form_rec in formset %} 
-			{% for field in form_rec.visible_fields %}
-				{{ field.label }}
-			{% endfor %}
-		<!--	<div class="form">{{ form_rec.as_p}}</div> -->
+		<table border="1">
+			{% for form_rec in formset %}
+				{% if forloop.first %}
+					<th>{{ form_rec.device.label }}</th>
+					<th>{{ form_rec.person.label }}</th>
+					<th>{{ form_rec.qty.label }}</th>
+					<th>{{ form_rec.comment.label }}</th>
+				{% endif %}
+				<tr>
+					<td>{{ form_rec.device }}</td>
+					<td>{{ form_rec.person }}</td>
+					<td>{{ form_rec.qty }}</td>
+					<td>{{ form_rec.comment }}</td>
+				</tr>
+			 
 		{% endfor %}
-		
+		</table>
 	</form>	
 
 {% endblock %}
