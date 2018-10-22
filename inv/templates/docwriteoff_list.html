@@ -18,7 +18,7 @@
 		<tr>
 			<td>{{ doc.doc_date }}</td>
 			<td><a href="/doc/writeoff/{{ doc.id }}"> {{ doc.doc_num }} </a></td>
-			<td>{% if doc.doc_active %}
+			<td>{% if doc.active %}
 					Да
 				{% else %}
 					Нет

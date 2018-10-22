@@ -3,12 +3,34 @@
 {% block content %}
 	<h1>Оприходование</h1>
 	<form action="" method="post">
-		{% csrf_token %}	
-		{{ form.as_table }}
+		{% csrf_token %}
+		
+		
+		<div class="field">
+			{{ form.doc_num.errors }}
+			{{ form.doc_num.label}}
+			{{ form.doc_num}}
+			{{ form.doc_date.errors }}
+			{{ form.doc_date.label}}
+			{{ form.doc_date}}
+		</div>
 		<br>
-		{{ formset.managment_form }}
+		<div class="field">
+			{{ form.department.errors }}
+			{{ form.department.label}}
+			{{ form.department}}
+			{{ form.stock.errors }}
+			{{ form.stock.label}}
+			{{ form.stock}}
+		</div>
+		<br>
+		
+		{{ formset.management_form }}
 		<table border="1">
 			{% for form_rec in formset %}
+				{% for field in form_rec.hidden_fields %}
+				{{ field }}
+				{% endfor %}
 				{% if forloop.first %}
 					<th>{{ form_rec.device.label }}</th>
 					<th>{{ form_rec.person.label }}</th>
@@ -16,14 +38,28 @@
 					<th>{{ form_rec.comment.label }}</th>
 				{% endif %}
 				<tr>
-					<td>{{ form_rec.device }}</td>
-					<td>{{ form_rec.person }}</td>
-					<td>{{ form_rec.qty }}</td>
-					<td>{{ form_rec.comment }}</td>
+					<td>
+						{{ form_rec.device.errors }}
+						{{ form_rec.device }}
+					</td>
+					<td>
+						{{ form_rec.person.errors }}
+						{{ form_rec.person }}
+					</td>
+					<td>
+						{{ form_rec.qty.errors }}
+						{{ form_rec.qty }}
+					</td>
+					<td>
+						{{ form_rec.comment.errors }}
+						{{ form_rec.comment }}
+					</td>
 				</tr>
-			 
-		{% endfor %}
+			{% endfor %}
 		</table>
+	<br>	
+	<input type="submit" name="reg_write" value="Провести">
+	<input type="button" name="reg_del" value="Отмена проведения">
+	<input type="button" name="doc_write" value="Записать">
 	</form>	
-
 {% endblock %}

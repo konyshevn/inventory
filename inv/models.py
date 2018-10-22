@@ -73,8 +73,8 @@ class Document(models.Model):
         if status_sum:
             for reg in status:
                 getattr(sys.modules[__name__], reg).objects.bulk_create(status[reg]['recs'])
-                self.active = True
-                self.save()
+            self.active = True
+            self.save()
         else:
             for reg in status:
                 if not status[reg]['success']:
