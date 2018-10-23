@@ -76,6 +76,7 @@ class Document(models.Model):
             self.active = True
             self.save()
         else:
+            return status
             for reg in status:
                 if not status[reg]['success']:
                     print('Ошибка проведения регистра ' + reg + ': ' + status[reg]['errors'])
@@ -217,6 +218,24 @@ class DocIncome(Document):
         status['RegDeviceStock']['success'] = True
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
+
+    def doc_write(self, doc_date, doc_num, department, stock, table_unit):
+        self.doc_date = doc_date
+        self.doc_num = doc_num
+        self.department = department
+        self.stock = stock
+        tableunit_recs = []
+        for rec in table_unit:
+            if rec:
+                tableunit_recs.append(DocIncomeTableUnit(
+                    doc=self,
+                    device=rec['device'],
+                    person=rec['person'],
+                    qty=rec['qty'],
+                    comment=rec['comment']))
+        self.save()
+        DocIncomeTableUnit.objects.filter(doc=self).delete()
+        DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
         return 'Оприходование ' + self.doc_num + ' ' + str(self.doc_date)

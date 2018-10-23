@@ -25,10 +25,11 @@ def doc_form(request, doc_id, model):
     if request.method == 'POST':
         print('-' * 50)
         form = DocIncomeForm(request.POST, instance=doc)
-        formset = DocIncomeTableUnitFormSet(request.POST, queryset=DocIncomeTableUnit.objects.filter(doc=doc))
+        formset = DocIncomeTableUnitFormSet(request.POST, queryset=doc.get_table_unit())
         print('form: ' + str(form.is_valid()))
         print('formset: ' + str(formset.is_valid()))
-        print(formset.errors)
+        print('formset errors: %s' % formset.errors)
+        print('request.POST: %s' % request.POST)
 
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
@@ -37,20 +38,15 @@ def doc_form(request, doc_id, model):
             doc_date = form_cd['doc_date']
             department = form_cd['department']
             stock = form_cd['stock']
-
-            tableunit_recs = []
-            for rec in formset_cd:
-                tableunit_recs.append(DocIncomeTableUnit(
-                    doc=doc,
-                    device=rec['device'],
-                    person=rec['person'],
-                    qty=rec['qty'],
-                    comment=rec['comment']))
-                
-            DocIncomeTableUnit.objects.filter(doc=doc).delete()
-            DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
+            dw = doc.doc_write(doc_num=doc_num, doc_date=doc_date, department=department, stock=stock, table_unit=formset_cd)
+            rd = doc.reg_delete()
+            rw = doc.reg_write()
+            if (not dw) & (not rd) & (not rw):
+                return HttpResponseRedirect('success')
+            else:
+                return HttpResponseRedirect('fail')
     else:
         form = DocIncomeForm(instance=doc)
-        formset = DocIncomeTableUnitFormSet(queryset=DocIncomeTableUnit.objects.filter(doc=doc))
+        formset = DocIncomeTableUnitFormSet(queryset=doc.get_table_unit())
 
     return render(request, template_name, {'form': form, 'formset': formset})
