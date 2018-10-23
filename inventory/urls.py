@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 import inv.views
 import inv.models
+import inv.forms
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +25,7 @@ urlpatterns = [
     re_path('doc/income/$', inv.views.doc_list, {'model': inv.models.DocIncome}),
     re_path('doc/move/$', inv.views.doc_list, {'model': inv.models.DocMove}),
     re_path('doc/writeoff/$', inv.views.doc_list, {'model': inv.models.DocWriteoff}),
-    re_path('doc/income/(?P<doc_id>\d+)/$', inv.views.doc_form, {'model': inv.models.DocIncome}),
+    re_path('doc/income/(?P<doc_id>\d+)/$', inv.views.doc_form, {'model': inv.models.DocIncome, 'form_class': inv.forms.DocIncomeForm, 'formset_class': inv.forms.DocIncomeTableUnitFormSet}),
+    re_path('doc/writeoff/(?P<doc_id>\d+)/$', inv.views.doc_form, {'model': inv.models.DocWriteoff, 'form_class': inv.forms.DocWriteoffForm, 'formset_class': inv.forms.DocWriteoffTableUnitFormSet}),
+
 ]

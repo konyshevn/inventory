@@ -18,14 +18,14 @@ def doc_list(request, model):
     return render(request, template_name, {'doc_list': doc_list})
 
 
-def doc_form(request, doc_id, model):
+def doc_form(request, doc_id, model, form_class, formset_class):
     doc = model.objects.get(id=doc_id)
     template_name = '%s_form.html' % model.__name__.lower()
 
     if request.method == 'POST':
+        form = form_class(request.POST, instance=doc)
+        formset = formset_class(request.POST, queryset=doc.get_table_unit())
         print('-' * 50)
-        form = DocIncomeForm(request.POST, instance=doc)
-        formset = DocIncomeTableUnitFormSet(request.POST, queryset=doc.get_table_unit())
         print('form: ' + str(form.is_valid()))
         print('formset: ' + str(formset.is_valid()))
         print('formset errors: %s' % formset.errors)
@@ -34,19 +34,15 @@ def doc_form(request, doc_id, model):
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
-            doc_num = form_cd['doc_num']
-            doc_date = form_cd['doc_date']
-            department = form_cd['department']
-            stock = form_cd['stock']
-            dw = doc.doc_write(doc_num=doc_num, doc_date=doc_date, department=department, stock=stock, table_unit=formset_cd)
+            dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
             rd = doc.reg_delete()
             rw = doc.reg_write()
             if (not dw) & (not rd) & (not rw):
-                return HttpResponseRedirect('success')
+                return HttpResponseRedirect('reg_write_success')
             else:
-                return HttpResponseRedirect('fail')
+                return HttpResponseRedirect('reg_write_fail')
     else:
-        form = DocIncomeForm(instance=doc)
-        formset = DocIncomeTableUnitFormSet(queryset=doc.get_table_unit())
+        form = form_class(instance=doc)
+        formset = formset_class(queryset=doc.get_table_unit())
 
     return render(request, template_name, {'form': form, 'formset': formset})

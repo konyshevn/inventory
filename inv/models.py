@@ -133,6 +133,24 @@ class DocWriteoff(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
+    def doc_write(self, doc_attr, table_unit):
+        self.doc_date = doc_attr['doc_date']
+        self.doc_num = doc_attr['doc_num']
+        self.department = doc_attr['department']
+        self.stock = doc_attr['stock']
+        tableunit_recs = []
+        for rec in table_unit:
+            if rec:
+                tableunit_recs.append(DocWriteoffTableUnit(
+                    doc=self,
+                    device=rec['device'],
+                    person=rec['person'],
+                    qty=rec['qty'],
+                    comment=rec['comment']))
+        self.save()
+        DocWriteoffTableUnit.objects.filter(doc=self).delete()
+        DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
+
     def __str__(self):
         return 'Списание ' + self.doc_num + ' ' + str(self.doc_date)
 
@@ -219,11 +237,11 @@ class DocIncome(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
-    def doc_write(self, doc_date, doc_num, department, stock, table_unit):
-        self.doc_date = doc_date
-        self.doc_num = doc_num
-        self.department = department
-        self.stock = stock
+    def doc_write(self, doc_attr, table_unit):
+        self.doc_date = doc_attr['doc_date']
+        self.doc_num = doc_attr['doc_num']
+        self.department = doc_attr['department']
+        self.stock = doc_attr['stock']
         tableunit_recs = []
         for rec in table_unit:
             if rec:

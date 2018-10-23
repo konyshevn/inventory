@@ -25,6 +25,26 @@ DocIncomeTableUnitFormSet = modelformset_factory(
     fields=['device', 'person', 'qty', 'comment'], can_delete=True)
 
 
+class DocWriteoffForm(ModelForm):
+    class Meta:
+        model = DocWriteoff
+        fields = ['doc_num', 'doc_date', 'department', 'stock']
+        labels = {
+            'doc_date': 'Дата',
+            'doc_num': 'Номер',
+            'department': 'Подразделение',
+            'stock': 'Склад'}
+
+
+DocWriteoffTableUnitFormSet = modelformset_factory(
+    DocWriteoffTableUnit,
+    form=DocWriteoffForm,
+    labels={
+        'device': 'Устройство',
+        'person': 'Сотрудник',
+        'qty': 'Количество',
+        'comment': 'Комментарий'},
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True)
 
 
 #class DocIncomeTableUnitFormSet(DocIncomeTableUnitFormSetBase):
