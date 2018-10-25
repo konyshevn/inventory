@@ -37,12 +37,24 @@ def doc_form(request, doc_id, model, form_class, formset_class):
             dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
             rd = doc.reg_delete()
             rw = doc.reg_write()
-            if (not dw) & (not rd) & (not rw):
-                return HttpResponseRedirect('reg_write_success')
+            print(rw)
+            if (not dw) & (not rd) & (rw[0]):
+                return HttpResponseRedirect('reg_write/1')
             else:
-                return HttpResponseRedirect('reg_write_fail')
+                request.session['reg_write_errors'] = (dw, rd, rw[1])
+                return HttpResponseRedirect('reg_write/0')
     else:
         form = form_class(instance=doc)
         formset = formset_class(queryset=doc.get_table_unit())
 
     return render(request, template_name, {'form': form, 'formset': formset})
+
+
+def reg_write_status(request, doc_id, model, status):
+    doc = model.objects.get(id=doc_id)
+    if int(status):
+        template_name = '%s_reg_write_success.html' % model.__name__.lower()
+        return render(request, template_name, {'doc': doc})
+    else:
+        template_name = '%s_reg_write_fail.html' % model.__name__.lower()
+        return render(request, template_name, {'doc': doc, 'reg_write_errors': request.session['reg_write_errors']})

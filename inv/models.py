@@ -70,16 +70,18 @@ class Document(models.Model):
         print(status)
         status_list = list(status.values())
         status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
+        status_errors = { k: v['errors'] for k, v in status.items() if not v['success'] }
         if status_sum:
             for reg in status:
                 getattr(sys.modules[__name__], reg).objects.bulk_create(status[reg]['recs'])
             self.active = True
             self.save()
+            return (True, status_errors)
         else:
-            return status
             for reg in status:
                 if not status[reg]['success']:
                     print('Ошибка проведения регистра ' + reg + ': ' + status[reg]['errors'])
+            return (False, status_errors)
 
     class Meta:
         abstract = True
@@ -114,6 +116,7 @@ class DocWriteoff(Document):
     devices = models.ManyToManyField(Device, through='DocWriteoffTableUnit')
     REG_LIST = ['RegDeviceStock']
     table_unit = True
+#    tu = getattr(sys.modules[__name__], 'DocWriteoffTableUnit')
 
     def get_data(self):
         status = {}
@@ -151,9 +154,6 @@ class DocWriteoff(Document):
         DocWriteoffTableUnit.objects.filter(doc=self).delete()
         DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
 
-    def __str__(self):
-        return 'Списание ' + self.doc_num + ' ' + str(self.doc_date)
-
 
 class DocWriteoffTableUnit(models.Model):
     doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE)
@@ -161,6 +161,9 @@ class DocWriteoffTableUnit(models.Model):
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
+
+    def __str__(self):
+        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date)
 
 
 class DocMove(Document):
@@ -200,7 +203,7 @@ class DocMove(Document):
         return status
 
     def __str__(self):
-        return 'Перемещение ' + self.doc_num + ' ' + str(self.doc_date)
+        return 'Перемещение №' + self.doc_num + ' от ' + str(self.doc_date)
 
 
 class DocMoveTableUnit(models.Model):
@@ -256,7 +259,7 @@ class DocIncome(Document):
         DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
-        return 'Оприходование ' + self.doc_num + ' ' + str(self.doc_date)
+        return 'Оприходование №' + self.doc_num + ' от ' + str(self.doc_date)
 
 
 class DocIncomeTableUnit(models.Model):
