@@ -6,19 +6,46 @@ from django.db.models import Sum, F
 from inv.models import *
 from inv.forms import *
 # Create your views here.
+DOCUMENT = {
+    'income': {'model': DocIncome, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
+    'writeoff': {'model': DocWriteoff, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
+    'move': {'model': DocMove, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
+}
+
+
+def get_doc_type(doc_name):
+    if doc_name in DOCUMENT:
+        return DOCUMENT[doc_name]
+    else:
+        return False
 
 
 def main(request):
     return render_to_response('base.html',)
 
 
-def doc_list(request, model):
+def doc_type_error(request):
+    return render_to_response('doc_type_error.html',)
+
+
+def doc_list(request, doc_name):
+    doc_type = get_doc_type(doc_name)
+    if not doc_type:
+        return HttpResponseRedirect('/doc_type_error/')
+    model = doc_type['model']
     doc_list = model.objects.all()
     template_name = '%s_list.html' % model.__name__.lower()
     return render(request, template_name, {'doc_list': doc_list})
 
 
-def doc_form(request, doc_id, model, form_class, formset_class):
+def doc_form(request, doc_id, doc_name):
+    doc_type = get_doc_type(doc_name)
+    if not doc_type:
+        return HttpResponseRedirect('/doc_type_error/')
+    model = doc_type['model']
+    form_class = doc_type['form']
+    formset_class = doc_type['formset']
+
     doc = model.objects.get(id=doc_id)
     template_name = '%s_form.html' % model.__name__.lower()
 
@@ -37,7 +64,6 @@ def doc_form(request, doc_id, model, form_class, formset_class):
             dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
             rd = doc.reg_delete()
             rw = doc.reg_write()
-            print(rw)
             if (not dw) & (not rd) & (rw[0]):
                 return HttpResponseRedirect('reg_write/1')
             else:
@@ -50,11 +76,15 @@ def doc_form(request, doc_id, model, form_class, formset_class):
     return render(request, template_name, {'form': form, 'formset': formset})
 
 
-def reg_write_status(request, doc_id, model, status):
+def reg_write_status(request, doc_id, doc_name, status):
+    doc_type = get_doc_type(doc_name)
+    if not doc_type:
+        return HttpResponseRedirect('/doc_type_error/')
+    model = doc_type['model']
     doc = model.objects.get(id=doc_id)
     if int(status):
-        template_name = '%s_reg_write_success.html' % model.__name__.lower()
+        template_name = 'reg_write_success.html'
         return render(request, template_name, {'doc': doc})
     else:
-        template_name = '%s_reg_write_fail.html' % model.__name__.lower()
+        template_name = 'reg_write_fail.html'
         return render(request, template_name, {'doc': doc, 'reg_write_errors': request.session['reg_write_errors']})

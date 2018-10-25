@@ -22,11 +22,9 @@ import inv.forms
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', inv.views.main),
-    re_path('doc/income/$', inv.views.doc_list, {'model': inv.models.DocIncome}),
-    re_path('doc/move/$', inv.views.doc_list, {'model': inv.models.DocMove}),
-    re_path('doc/writeoff/$', inv.views.doc_list, {'model': inv.models.DocWriteoff}),
-    re_path('doc/income/(?P<doc_id>\d+)/$', inv.views.doc_form, {'model': inv.models.DocIncome, 'form_class': inv.forms.DocIncomeForm, 'formset_class': inv.forms.DocIncomeTableUnitFormSet}),
-    re_path('doc/income/(?P<doc_id>\d+)/reg_write/(?P<status>\d)/$', inv.views.reg_write_status, {'model': inv.models.DocIncome}),
-    re_path('doc/writeoff/(?P<doc_id>\d+)/$', inv.views.doc_form, {'model': inv.models.DocWriteoff, 'form_class': inv.forms.DocWriteoffForm, 'formset_class': inv.forms.DocWriteoffTableUnitFormSet}),
+    path('doc_type_error/', inv.views.doc_type_error),
+    re_path('doc/(?P<doc_name>\w+)/$', inv.views.doc_list),
+    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\d+)/$', inv.views.doc_form),
+    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\d+)/reg_write/(?P<status>\d)/$', inv.views.reg_write_status),
 
 ]

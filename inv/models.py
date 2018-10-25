@@ -116,7 +116,6 @@ class DocWriteoff(Document):
     devices = models.ManyToManyField(Device, through='DocWriteoffTableUnit')
     REG_LIST = ['RegDeviceStock']
     table_unit = True
-#    tu = getattr(sys.modules[__name__], 'DocWriteoffTableUnit')
 
     def get_data(self):
         status = {}
@@ -154,6 +153,9 @@ class DocWriteoff(Document):
         DocWriteoffTableUnit.objects.filter(doc=self).delete()
         DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
 
+    def __str__(self):
+        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date)
+
 
 class DocWriteoffTableUnit(models.Model):
     doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE)
@@ -161,9 +163,6 @@ class DocWriteoffTableUnit(models.Model):
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
-
-    def __str__(self):
-        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date)
 
 
 class DocMove(Document):
