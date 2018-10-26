@@ -153,7 +153,7 @@ class DocWriteoff(Document):
         DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
-        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date)
+        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
 
 
 class DocWriteoffTableUnit(models.Model):
@@ -200,8 +200,29 @@ class DocMove(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
+    def doc_write(self, doc_attr, table_unit):
+        self.doc_date = doc_attr['doc_date']
+        self.doc_num = doc_attr['doc_num']
+        self.department_from = doc_attr['department_from']
+        self.department_to = doc_attr['department_to']
+        self.stock_from = doc_attr['stock_from']
+        self.stock_to = doc_attr['stock_to']
+        tableunit_recs = []
+        for rec in table_unit:
+            if rec:
+                tableunit_recs.append(DocMoveTableUnit(
+                    doc=self,
+                    device=rec['device'],
+                    person_from=rec['person_from'],
+                    person_to=rec['person_to'],
+                    qty=rec['qty'],
+                    comment=rec['comment']))
+        self.save()
+        DocMoveTableUnit.objects.filter(doc=self).delete()
+        DocMoveTableUnit.objects.bulk_create(tableunit_recs)
+
     def __str__(self):
-        return 'Перемещение №' + self.doc_num + ' от ' + str(self.doc_date)
+        return 'Перемещение №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
 
 
 class DocMoveTableUnit(models.Model):
@@ -257,7 +278,7 @@ class DocIncome(Document):
         DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
-        return 'Оприходование №' + self.doc_num + ' от ' + str(self.doc_date)
+        return 'Оприходование №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
 
 
 class DocIncomeTableUnit(models.Model):

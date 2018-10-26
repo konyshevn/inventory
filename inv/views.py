@@ -102,7 +102,7 @@ def reg_write_status(request, doc_id, doc_name, status):
     doc = model.objects.get(id=doc_id)
     if int(status):
         template_name = 'reg_write_success.html'
-        return render(request, template_name, {'doc': doc})
+        return render(request, template_name, {'doc': doc, 'doc_name': doc_name})
     else:
         template_name = 'reg_write_fail.html'
-        return render(request, template_name, {'doc': doc, 'reg_write_errors': request.session['reg_write_errors']})
+        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'reg_write_errors': request.session['reg_write_errors']})

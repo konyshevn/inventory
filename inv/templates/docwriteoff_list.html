@@ -16,7 +16,7 @@
 		{% endif %}
 		
 		<tr>
-			<td>{{ doc.doc_date }}</td>
+			<td>{{ doc.doc_date|date:"d.m.Y H:i:s" }}</td>
 			<td><a href="/doc/writeoff/{{ doc.id }}"> {{ doc.doc_num }} </a></td>
 			<td>{% if doc.active %}
 					Да
