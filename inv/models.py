@@ -67,7 +67,6 @@ class Document(models.Model):
 
     def reg_write(self):
         status = self.get_data()
-        print(status)
         status_list = list(status.values())
         status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
         status_errors = { k: v['errors'] for k, v in status.items() if not v['success'] }
