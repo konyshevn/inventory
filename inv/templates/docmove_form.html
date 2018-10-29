@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Перемещение{% endblock %}
+{% block content %}
+	<h1>Перемещение</h1>
+	<form action="" method="post">
+		{% csrf_token %}
+			
+		<div class="field">
+			{{ form.doc_num.errors }}
+			{{ form.doc_num.label}}
+			{{ form.doc_num}}
+			{{ form.doc_date.errors }}
+			{{ form.doc_date.label}}
+			{{ form.doc_date}}
+			{% if active %}
+				Проведен
+			{% else %}
+				Не проведен
+			{% endif %}
+		</div>
+		<br>
+		<div class="field">
+			{{ form.department_from.errors }}
+			{{ form.department_from.label}}
+			{{ form.department_from}}
+			{{ form.department_to.errors }}
+			{{ form.department_to.label}}
+			{{ form.department_to}}
+		</div>
+		<br>
+		<div>
+			{{ form.stock_from.errors }}
+			{{ form.stock_from.label}}
+			{{ form.stock_from}}
+			{{ form.stock_to.errors }}
+			{{ form.stock_to.label}}
+			{{ form.stock_to}}
+		</div>
+		<br>
+		
+		{{ formset.management_form }}
+		<table border="1">
+			{% for form_rec in formset %}
+				{% for field in form_rec.hidden_fields %}
+				{{ field }}
+				{% endfor %}
+				{% if forloop.first %}
+					<th>{{ form_rec.device.label }}</th>
+					<th>{{ form_rec.person_from.label }}</th>
+					<th>{{ form_rec.person_to.label }}</th>
+					<th>{{ form_rec.qty.label }}</th>
+					<th>{{ form_rec.comment.label }}</th>
+				{% endif %}
+				<tr>
+					<td>
+						{{ form_rec.device.errors }}
+						{{ form_rec.device }}
+					</td>
+					<td>
+						{{ form_rec.person_from.errors }}
+						{{ form_rec.person_from }}
+					</td>
+					<td>
+						{{ form_rec.person_to.errors }}
+						{{ form_rec.person_to }}
+					</td>
+					<td>
+						{{ form_rec.qty.errors }}
+						{{ form_rec.qty }}
+					</td>
+					<td>
+						{{ form_rec.comment.errors }}
+						{{ form_rec.comment }}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	<br>	
+	<input type="submit" name="reg_write" value="Провести">
+	<input type="submit" name="reg_delete" value="Отмена проведения">
+	<input type="submit" name="doc_write" value="Записать">
+	</form>	
+{% endblock %}
