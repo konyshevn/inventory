@@ -5,7 +5,6 @@
 	<form action="" method="post">
 		{% csrf_token %}
 		
-		
 		<div class="field">
 			{{ form.doc_num.errors }}
 			{{ form.doc_num.label}}
@@ -13,6 +12,11 @@
 			{{ form.doc_date.errors }}
 			{{ form.doc_date.label}}
 			{{ form.doc_date}}
+			{% if active %}
+				Проведен
+			{% else %}
+				Не проведен
+			{% endif %}	
 		</div>
 		<br>
 		<div class="field">

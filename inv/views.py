@@ -14,6 +14,11 @@ DOCUMENT = {
     'writeoff': {'model': DocWriteoff, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'move': {'model': DocMove, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
 }
+OPERATION_DESCR = {
+    'reg_write': 'проведение',
+    'reg_delete': 'отмена проведения',
+    'doc_write': 'запись'
+}
 
 
 def get_doc_type(doc_name):
@@ -56,11 +61,6 @@ def doc_form(request, doc_id, doc_name):
         start = time.time()
         form = form_class(request.POST, instance=doc)
         formset = formset_class(request.POST, queryset=doc.get_table_unit())
-#        print('-' * 50)
-#        print('form: ' + str(form.is_valid()))
-#        print('formset: ' + str(formset.is_valid()))
-#        print('formset errors: %s' % formset.errors)
-#        print('request.POST: %s' % request.POST)
 
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
@@ -84,48 +84,54 @@ def doc_form(request, doc_id, doc_name):
                 if (not dw) & (not rd) & (rw[0]):
                     print('-' * 50)
                     print('PERIOD total: ' + str(time.time() - start))
-                    return HttpResponseRedirect('reg_write/1')
+                    return HttpResponseRedirect('status/reg_write/1')
                 else:
-                    request.session['reg_write_errors'] = (dw, rd, rw[1])
-                    return HttpResponseRedirect('reg_write/0')
+                    request.session['status_errors'] = (dw, rd, rw[1])
+                    return HttpResponseRedirect('status/reg_write/0')
+
             elif 'reg_delete' in request.POST:
                 rd = doc.reg_delete()
                 if not rd:
-                    return HttpResponseRedirect('reg_delete/1')
+                    return HttpResponseRedirect('status/reg_delete/1')
                 else:
-                    request.session['reg_delete_errors'] = (rd,)
-                    return HttpResponseRedirect('reg_delete/0')
+                    request.session['status_errors'] = (rd,)
+                    return HttpResponseRedirect('status/reg_delete/0')
+
+            elif 'doc_write' in request.POST:
+                if doc.active:
+                    dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
+                    rd = doc.reg_delete()
+                    rw = doc.reg_write()
+
+                    if (not dw) & (not rd) & (rw[0]):
+                        return HttpResponseRedirect('status/doc_write/1')
+                    else:
+                        request.session['status_errors'] = (dw, rd, rw[1])
+                        return HttpResponseRedirect('status/doc_write/0')
+                else:
+                    dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
+                    if not dw:
+                        return HttpResponseRedirect('status/doc_write/1')
+                    else:
+                        request.session['status_errors'] = (dw,)
+                        return HttpResponseRedirect('status/doc_write/0')
 
     else:
         form = form_class(instance=doc)
         formset = formset_class(queryset=doc.get_table_unit())
 
-    return render(request, template_name, {'form': form, 'formset': formset})
+    return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
 
 
-def reg_write_status(request, doc_id, doc_name, status):
+def operation_status(request, doc_id, doc_name, status, operation):
     doc_type = get_doc_type(doc_name)
     if not doc_type:
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
     doc = model.objects.get(id=doc_id)
     if int(status):
-        template_name = 'reg_write_success.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name})
+        template_name = 'operation_success.html'
+        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'operation': OPERATION_DESCR[operation]})
     else:
-        template_name = 'reg_write_fail.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'reg_write_errors': request.session['reg_write_errors']})
-
-
-def reg_delete_status(request, doc_id, doc_name, status):
-    doc_type = get_doc_type(doc_name)
-    if not doc_type:
-        return HttpResponseRedirect('/doc_type_error/')
-    model = doc_type['model']
-    doc = model.objects.get(id=doc_id)
-    if int(status):
-        template_name = 'reg_delete_success.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name})
-    else:
-        template_name = 'reg_delete_fail.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'reg_delete_errors': request.session['reg_delete_errors']})
+        template_name = 'operation_fail.html'
+        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
