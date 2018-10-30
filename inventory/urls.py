@@ -24,6 +24,6 @@ urlpatterns = [
     path('main/', inv.views.main),
     path('doc_type_error/', inv.views.doc_type_error),
     re_path('doc/(?P<doc_name>\w+)/$', inv.views.doc_list),
-    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\d+)/$', inv.views.doc_form),
-    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\d+)/status/(?P<operation>\w+)/(?P<status>\d)/$', inv.views.operation_status),
+    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/$', inv.views.doc_form),
+    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/status/(?P<operation>\w+)/(?P<status>\d)/$', inv.views.operation_status),
 ]

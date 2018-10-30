@@ -139,6 +139,7 @@ class DocWriteoff(Document):
         self.doc_num = doc_attr['doc_num']
         self.department = doc_attr['department']
         self.stock = doc_attr['stock']
+        self.save()
         tableunit_recs = []
         for rec in table_unit:
             if rec:
@@ -148,7 +149,6 @@ class DocWriteoff(Document):
                     person=rec['person'],
                     qty=rec['qty'],
                     comment=rec['comment']))
-        self.save()
         DocWriteoffTableUnit.objects.filter(doc=self).delete()
         DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
 
@@ -207,6 +207,7 @@ class DocMove(Document):
         self.department_to = doc_attr['department_to']
         self.stock_from = doc_attr['stock_from']
         self.stock_to = doc_attr['stock_to']
+        self.save()
         tableunit_recs = []
         for rec in table_unit:
             if rec:
@@ -217,7 +218,6 @@ class DocMove(Document):
                     person_to=rec['person_to'],
                     qty=rec['qty'],
                     comment=rec['comment']))
-        self.save()
         DocMoveTableUnit.objects.filter(doc=self).delete()
         DocMoveTableUnit.objects.bulk_create(tableunit_recs)
 
@@ -264,6 +264,7 @@ class DocIncome(Document):
         self.doc_num = doc_attr['doc_num']
         self.department = doc_attr['department']
         self.stock = doc_attr['stock']
+        self.save()
         tableunit_recs = []
         for rec in table_unit:
             if rec:
@@ -273,7 +274,6 @@ class DocIncome(Document):
                     person=rec['person'],
                     qty=rec['qty'],
                     comment=rec['comment']))
-        self.save()
         DocIncomeTableUnit.objects.filter(doc=self).delete()
         DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render, render_to_response
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.db.models import Sum, F
+from django.db import models
 
 import time
 
@@ -51,11 +52,14 @@ def doc_form(request, doc_id, doc_name):
     if not doc_type:
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
+    template_name = '%s_form.html' % model.__name__.lower()
     form_class = doc_type['form']
     formset_class = doc_type['formset']
 
-    doc = model.objects.get(id=doc_id)
-    template_name = '%s_form.html' % model.__name__.lower()
+    if doc_id == 'new':
+        doc = model(active=False)
+    else:
+        doc = model.objects.get(id=doc_id)
 
     if request.method == 'POST':
         start = time.time()
@@ -66,36 +70,24 @@ def doc_form(request, doc_id, doc_name):
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
             if 'reg_write' in request.POST:
-                start_dw = time.time()
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
-                print('-' * 50)
-                print('PERIOD doc_write: ' + str(time.time() - start_dw))
-
-                start_rd = time.time()
                 rd = doc.reg_delete()
-                print('-' * 50)
-                print('PERIOD reg_delete: ' + str(time.time() - start_rd))
-
-                start_rw = time.time()
                 rw = doc.reg_write()
-                print('-' * 50)
-                print('PERIOD reg_write: ' + str(time.time() - start_rw))
-
                 if (not dw) & (not rd) & (rw[0]):
                     print('-' * 50)
                     print('PERIOD total: ' + str(time.time() - start))
-                    return HttpResponseRedirect('status/reg_write/1')
+                    status_url = '/doc/%s/%s/status/reg_write/1' % (doc_name, doc.id)
                 else:
                     request.session['status_errors'] = (dw, rd, rw[1])
-                    return HttpResponseRedirect('status/reg_write/0')
+                    status_url = '/doc/%s/%s/status/reg_write/0' % (doc_name, doc.id)
 
             elif 'reg_delete' in request.POST:
                 rd = doc.reg_delete()
                 if not rd:
-                    return HttpResponseRedirect('status/reg_delete/1')
+                    status_url = '/doc/%s/%s/status/reg_delete/1' % (doc_name, doc.id)
                 else:
                     request.session['status_errors'] = (rd,)
-                    return HttpResponseRedirect('status/reg_delete/0')
+                    status_url = '/doc/%s/%s/status/reg_delete/0' % (doc_name, doc.id)
 
             elif 'doc_write' in request.POST:
                 if doc.active:
@@ -104,21 +96,25 @@ def doc_form(request, doc_id, doc_name):
                     rw = doc.reg_write()
 
                     if (not dw) & (not rd) & (rw[0]):
-                        return HttpResponseRedirect('status/doc_write/1')
+                        status_url = '/doc/%s/%s/status/doc_write/1' % (doc_name, doc.id)
                     else:
                         request.session['status_errors'] = (dw, rd, rw[1])
-                        return HttpResponseRedirect('status/doc_write/0')
+                        status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
                 else:
                     dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                     if not dw:
-                        return HttpResponseRedirect('status/doc_write/1')
+                        status_url = '/doc/%s/%s/status/doc_write/1' % (doc_name, doc.id)
                     else:
                         request.session['status_errors'] = (dw,)
-                        return HttpResponseRedirect('status/doc_write/0')
-
+                        status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
+            return HttpResponseRedirect(status_url)
     else:
-        form = form_class(instance=doc)
-        formset = formset_class(queryset=doc.get_table_unit())
+        if doc_id == 'new':
+            form = form_class()
+            formset = formset_class(queryset=model.objects.none())
+        else:
+            form = form_class(instance=doc)
+            formset = formset_class(queryset=doc.get_table_unit())
 
     return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
 

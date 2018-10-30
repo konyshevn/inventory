@@ -2,6 +2,11 @@
 {% block title %}Перемещения{% endblock %}
 {% block content %}
 	<h1>Перемещения</h1>
+	<br>
+
+	<form action="{{ request.path }}new">
+    	<button type="submit">Новый</button>
+	</form>
 
 	{% for doc in doc_list %}
 		{% if forloop.first %}
