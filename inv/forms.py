@@ -22,7 +22,7 @@ DocIncomeTableUnitFormSet = modelformset_factory(
         'person': 'Сотрудник',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person', 'qty', 'comment'], can_delete=True)
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=1)
 
 
 class DocWriteoffForm(ModelForm):
