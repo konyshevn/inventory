@@ -22,7 +22,7 @@ DocIncomeTableUnitFormSet = modelformset_factory(
         'person': 'Сотрудник',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=1)
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5)
 
 
 class DocWriteoffForm(ModelForm):
@@ -44,7 +44,7 @@ DocWriteoffTableUnitFormSet = modelformset_factory(
         'person': 'Сотрудник',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person', 'qty', 'comment'], can_delete=True)
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5)
 
 
 class DocMoveForm(ModelForm):
@@ -69,5 +69,5 @@ DocMoveTableUnitFormSet = modelformset_factory(
         'person_to': 'Сотрудник получатель',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person_from', 'person_to', 'qty', 'comment'], can_delete=True)
+    fields=['device', 'person_from', 'person_to', 'qty', 'comment'], can_delete=True, extra=5)
 #class DocIncomeTableUnitFormSet(DocIncomeTableUnitFormSetBase):
