@@ -15,6 +15,16 @@ DOCUMENT = {
     'writeoff': {'model': DocWriteoff, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'move': {'model': DocMove, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
 }
+
+CATALOG = {
+    'device': {'model': Device, 'form': DeviceForm, 'order_by': 'name'},
+    'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'name'},
+    'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'name'},
+    'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
+    'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'name'},
+    'stock': {'model': Stock, 'form': StockForm, 'order_by': 'name'},
+}
+
 OPERATION_DESCR = {
     'reg_write': 'проведение',
     'reg_delete': 'отмена проведения',
@@ -29,12 +39,23 @@ def get_doc_type(doc_name):
         return False
 
 
+def get_catlg_type(catlg_name):
+    if catlg_name in CATALOG:
+        return CATALOG[catlg_name]
+    else:
+        return False
+
+
 def main(request):
     return render_to_response('base.html',)
 
 
 def doc_type_error(request):
-    return render_to_response('doc_type_error.html',)
+    return render_to_response('doc/doc_type_error.html',)
+
+
+def catlg_type_error(request):
+    return render_to_response('catlg/catlg_type_error.html',)
 
 
 def doc_list(request, doc_name):
@@ -43,7 +64,7 @@ def doc_list(request, doc_name):
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
     doc_list = model.objects.all().order_by('doc_date')
-    template_name = '%s_list.html' % model.__name__.lower()
+    template_name = 'doc/%s/%s_list.html' % (doc_name, model.__name__.lower())
     return render(request, template_name, {'doc_list': doc_list})
 
 
@@ -52,7 +73,7 @@ def doc_form(request, doc_id, doc_name):
     if not doc_type:
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
-    template_name = '%s_form.html' % model.__name__.lower()
+    template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
     form_class = doc_type['form']
     formset_class = doc_type['formset']
 
@@ -126,8 +147,18 @@ def operation_status(request, doc_id, doc_name, status, operation):
     model = doc_type['model']
     doc = model.objects.get(id=doc_id)
     if int(status):
-        template_name = 'operation_success.html'
+        template_name = 'doc/operation_success.html'
         return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'operation': OPERATION_DESCR[operation]})
     else:
-        template_name = 'operation_fail.html'
+        template_name = 'doc/operation_fail.html'
         return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
+
+
+def catlg_list(request, catlg_name):
+    catlg_type = get_catlg_type(catlg_name)
+    if not catlg_type:
+        return HttpResponseRedirect('/catlg_type_error/')
+    model = catlg_type['model']
+    catlg_list = model.objects.all().order_by(catlg_type['order_by'])
+    template_name = 'catlg/%s/%s_list.html' % (catlg_name, model.__name__.lower())
+    return render(request, template_name, {'catlg_list': catlg_list})

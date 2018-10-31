@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Перемещение{% endblock %}
+{% block title %}Оприходование{% endblock %}
 {% block content %}
-	<h1>Перемещение</h1>
+	<h1>Оприходование</h1>
 	<form action="" method="post">
 		{% csrf_token %}
-			
+		
 		<div class="field">
 			{{ form.doc_num.errors }}
 			{{ form.doc_num.label}}
@@ -16,39 +16,29 @@
 				Проведен
 			{% else %}
 				Не проведен
-			{% endif %}
+			{% endif %}	
 		</div>
 		<br>
 		<div class="field">
-			{{ form.department_from.errors }}
-			{{ form.department_from.label}}
-			{{ form.department_from}}
-			{{ form.department_to.errors }}
-			{{ form.department_to.label}}
-			{{ form.department_to}}
-		</div>
-		<br>
-		<div>
-			{{ form.stock_from.errors }}
-			{{ form.stock_from.label}}
-			{{ form.stock_from}}
-			{{ form.stock_to.errors }}
-			{{ form.stock_to.label}}
-			{{ form.stock_to}}
+			{{ form.department.errors }}
+			{{ form.department.label}}
+			{{ form.department}}
+			{{ form.stock.errors }}
+			{{ form.stock.label}}
+			{{ form.stock}}
 		</div>
 		<br>
 		
 		<input type="button" value="Добавить" onClick="add_row();" />
 		{{ formset.management_form }}
-		<table border="1" id="table_unit">
+		<table border="1" id="table_unit" class="table_unit">
 			{% for form_rec in formset %}
 				{% for field in form_rec.hidden_fields %}
 				{{ field }}
 				{% endfor %}
 				{% if forloop.first %}
 					<th>{{ form_rec.device.label }}</th>
-					<th>{{ form_rec.person_from.label }}</th>
-					<th>{{ form_rec.person_to.label }}</th>
+					<th>{{ form_rec.person.label }}</th>
 					<th>{{ form_rec.qty.label }}</th>
 					<th>{{ form_rec.comment.label }}</th>
 				{% endif %}
@@ -58,12 +48,8 @@
 						{{ form_rec.device }}
 					</td>
 					<td>
-						{{ form_rec.person_from.errors }}
-						{{ form_rec.person_from }}
-					</td>
-					<td>
-						{{ form_rec.person_to.errors }}
-						{{ form_rec.person_to }}
+						{{ form_rec.person.errors }}
+						{{ form_rec.person }}
 					</td>
 					<td>
 						{{ form_rec.qty.errors }}
@@ -80,5 +66,5 @@
 	<input type="submit" name="reg_write" value="Провести">
 	<input type="submit" name="reg_delete" value="Отмена проведения">
 	<input type="submit" name="doc_write" value="Записать">
-	</form>	
+	</form>
 {% endblock %}

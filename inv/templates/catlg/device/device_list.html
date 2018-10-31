@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Устройства{% endblock %}
+{% block content %}
+	<h1>Устройства</h1>
+	<br>
+
+	<form action="{{ request.path }}new">
+    	<button type="submit">Новый</button>
+	</form>
+	
+	{% for catlg in catlg_list %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Тип</th>
+					<th>Наименование</th>
+					<th>Серийный номер</th>
+					<th>Инвентарный номер</th>
+					<th>Комментарий</th>
+				</tr>	
+		{% endif %}
+		
+		<tr>
+			<td>{{ catlg.device_type }}</td>
+			<td><a href="/catlg/device/{{ catlg.id }}"> {{ catlg.name }} </a></td>
+			<td>{{ catlg.serial_num }}</td>
+			<td>{{ catlg.inv_num }}</td>
+			<td>{{ catlg.comment }}</td>
+		</tr>
+		
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}

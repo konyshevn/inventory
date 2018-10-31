@@ -10,12 +10,23 @@
 	<title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+    <div><a href="/main/">Главная</a></div>
     <div>
-        <a href="/main/">Главная</a>
+        <b>Документы:</b> 
         <a href="/doc/income/">Оприходование</a>
         <a href="/doc/move/">Перемещение</a>
         <a href="/doc/writeoff/">Списание</a>
     </div>
+    <div>
+        <b>Справочники:</b>
+        <a href="/catlg/device/">Устройства</a>
+        <a href="/catlg/devicetype/">Типы устройств</a>
+        <a href="/catlg/nomenclature/">Номенклатура</a>
+        <a href="/catlg/department/">Подразделения</a>
+        <a href="/catlg/stock/">Склады</a>
+        <a href="/catlg/person/">Сотрудники</a>
+    </div>
+    
     <hr>
 	{% block content %}{% endblock %}
 	{% block footer %}

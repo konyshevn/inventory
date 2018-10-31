@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Склады{% endblock %}
+{% block content %}
+	<h1>Склады</h1>
+	<br>
+
+	<form action="{{ request.path }}new">
+    	<button type="submit">Новый</button>
+	</form>
+	
+	{% for catlg in catlg_list %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Наименование</th>
+				</tr>	
+		{% endif %}
+		
+		<tr>
+			<td><a href="/catlg/stock/{{ catlg.id }}"> {{ catlg.name }} </a></td>
+		</tr>
+		
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}

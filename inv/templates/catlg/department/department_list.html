@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Подразделения{% endblock %}
+{% block content %}
+	<h1>Подразделения</h1>
+	<br>
+
+	<form action="{{ request.path }}new">
+    	<button type="submit">Новый</button>
+	</form>
+	
+	{% for catlg in catlg_list %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Наименование</th>
+				</tr>	
+		{% endif %}
+		
+		<tr>
+			<td><a href="/catlg/department/{{ catlg.id }}"> {{ catlg.name }} </a></td>
+		</tr>
+		
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}

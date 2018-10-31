@@ -70,4 +70,57 @@ DocMoveTableUnitFormSet = modelformset_factory(
         'qty': 'Количество',
         'comment': 'Комментарий'},
     fields=['device', 'person_from', 'person_to', 'qty', 'comment'], can_delete=True, extra=5)
-#class DocIncomeTableUnitFormSet(DocIncomeTableUnitFormSetBase):
+
+
+class DeviceForm(ModelForm):
+    class Meta:
+        model = Device
+        fields = ['device_type', 'name', 'serial_num', 'inv_num', 'comment']
+        labels = {
+            'device_type': 'Тип',
+            'name': 'Наименование',
+            'serial_num': 'Серийный номер',
+            'inv_num': 'Инвентарный номер',
+            'comment': 'Комментарий'}
+
+
+class DeviceTypeForm(ModelForm):
+    class Meta:
+        model = DeviceType
+        fields = ['name']
+        labels = {
+            'name': 'Наименование'}
+
+
+class NomenclatureForm(ModelForm):
+    class Meta:
+        model = Nomenclature
+        fields = ['name']
+        labels = {
+            'name': 'Наименование'}
+
+
+class DepartmentForm(ModelForm):
+    class Meta:
+        model = Department
+        fields = ['name']
+        labels = {
+            'name': 'Наименование'}
+
+
+class StockForm(ModelForm):
+    class Meta:
+        model = Stock
+        fields = ['name']
+        labels = {
+            'name': 'Наименование'}
+
+
+class PersonForm(ModelForm):
+    class Meta:
+        model = Person
+        fields = ['surname', 'name', 'department']
+        labels = {
+            'surname': 'Фамилия',
+            'name': 'Имя',
+            'department': 'Подразделение'}
