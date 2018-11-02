@@ -37,11 +37,17 @@
 				{{ field }}
 				{% endfor %}
 				{% if forloop.first %}
-					<th>{{ form_rec.device.label }}</th>
-					<th>{{ form_rec.person.label }}</th>
-					<th>{{ form_rec.qty.label }}</th>
-					<th>{{ form_rec.comment.label }}</th>
+					<thead>
+						<tr>
+							<th>{{ form_rec.device.label }}</th>
+							<th>{{ form_rec.person.label }}</th>
+							<th>{{ form_rec.qty.label }}</th>
+							<th>{{ form_rec.comment.label }}</th>
+						</tr>
+					</thead>
+					<tbody>
 				{% endif %}
+
 				<tr>
 					<td>
 						{{ form_rec.device.errors }}
@@ -61,10 +67,14 @@
 					</td>
 				</tr>
 			{% endfor %}
+			</tbody>
 		</table>
 	<br>	
 	<input type="submit" name="reg_write" value="Провести">
 	<input type="submit" name="reg_delete" value="Отмена проведения">
 	<input type="submit" name="doc_write" value="Записать">
 	</form>
+	<script type="text/javascript">
+
+	</script>
 {% endblock %}
