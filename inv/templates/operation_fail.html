@@ -2,7 +2,7 @@
 {% block title %}Операция не выполнена{% endblock %}
 {% block content %}
 	<h1></h1>
-    <p>{{ operation.title }} документа <a href="/doc/{{ doc_name }}/{{ doc.id }}">{{ doc }}</a> не выполнено.</p>
+    <p>{{ operation.title }} <a href="/{{ obj_type_name }}/{{ obj_name }}/{{ obj.id }}">{{ obj }}</a> не выполнено.</p>
 
 	<p>Ошибки:</p>     
     {% for err in status_errors %}

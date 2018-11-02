@@ -9,29 +9,87 @@ from functools import reduce
 
 
 #---------------Device---------------
-class Nomenclature(models.Model):
-    name = models.CharField(max_length=30)
+class Catalog(models.Model):
+    def catlg_write(self, catlg_attr):
+        for attr in self.__dict__.keys():
+            if attr in catlg_attr:
+                setattr(self, attr, catlg_attr[attr])
+        self.save()
+
+    class Meta:
+        abstract = True
+
+
+class Nomenclature(Catalog):
+    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+
+    class Meta:
+        verbose_name_plural = 'Номенклатура'
+        verbose_name = 'Номенклатура'
 
     def __str__(self):
         return self.name
 
 
-class DeviceType(models.Model):
-    name = models.CharField(max_length=30)
+class DeviceType(Catalog):
+    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+
+    class Meta:
+        verbose_name_plural = 'Типы устройств'
+        verbose_name = 'Тип устройства'
 
     def __str__(self):
         return self.name
 
 
-class Device(models.Model):
-    inv_num = models.CharField(max_length=30, blank=True)
+class Device(Catalog):
+    inv_num = models.CharField(max_length=30, blank=True, verbose_name='Инвентарный номер')
     serial_num = models.CharField(max_length=30, blank=True)
     name = models.ForeignKey(Nomenclature, on_delete=models.PROTECT, null=True)
     device_type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, null=True)
     comment = models.CharField(max_length=30, blank=True)
 
+    class Meta:
+        verbose_name_plural = 'Устройства'
+        verbose_name = 'Устройство'
+
     def __str__(self):
         return str(self.name) + ' (sn: ' + str(self.serial_num) + ')'
+
+
+class Department(Catalog):
+    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+
+    class Meta:
+        verbose_name_plural = 'Подразделения'
+        verbose_name = 'Подразделение'
+
+    def __str__(self):
+        return self.name
+
+
+class Person(Catalog):
+    surname = models.CharField(max_length=30)
+    name = models.CharField(max_length=30)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name_plural = 'Сотрудники'
+        verbose_name = 'Сотрудник'
+
+    def __str__(self):
+        return self.surname + ' ' + self.name
+
+
+class Stock(Catalog):
+    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+
+    class Meta:
+        verbose_name_plural = 'Склады'
+        verbose_name = 'Склад'
+
+    def __str__(self):
+        return self.name
 
 
 #---------------Document---------------
@@ -69,7 +127,7 @@ class Document(models.Model):
         status = self.get_data()
         status_list = list(status.values())
         status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
-        status_errors = { k: v['errors'] for k, v in status.items() if not v['success'] }
+        status_errors = {k: v['errors'] for k, v in status.items() if not v['success']}
         if status_sum:
             for reg in status:
                 getattr(sys.modules[__name__], reg).objects.bulk_create(status[reg]['recs'])
@@ -84,29 +142,6 @@ class Document(models.Model):
 
     class Meta:
         abstract = True
-
-
-class Department(models.Model):
-    name = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.name
-
-
-class Person(models.Model):
-    surname = models.CharField(max_length=30)
-    name = models.CharField(max_length=30)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT)
-
-    def __str__(self):
-        return self.surname + ' ' + self.name
-
-
-class Stock(models.Model):
-    name = models.CharField(max_length=30)
-
-    def __str__(self):
-        return self.name
 
 
 class DocWriteoff(Document):

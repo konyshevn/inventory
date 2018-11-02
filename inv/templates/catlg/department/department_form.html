@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Подразделение{% endblock %}
+{% block content %}
+	<h1>Подразделение</h1>
+	<form action="" method="post">
+		{% csrf_token %}
+		
+		<table>
+			<tr>
+			{{ form.name.errors }}
+				<td>{{ form.name.label}}</td>
+				<td>{{ form.name}}</td>
+			</tr>
+		</table>
+		<br>	
+		<input type="submit" name="catlg_write" value="Записать">
+	</form>
+{% endblock %}

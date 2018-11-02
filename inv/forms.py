@@ -12,6 +12,7 @@ class DocIncomeForm(ModelForm):
             'doc_num': 'Номер',
             'department': 'Подразделение',
             'stock': 'Склад'}
+        widgets = {'doc_date': forms.DateTimeInput}
 
 
 DocIncomeTableUnitFormSet = modelformset_factory(
@@ -22,7 +23,9 @@ DocIncomeTableUnitFormSet = modelformset_factory(
         'person': 'Сотрудник',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5)
+    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5,
+    widgets={'device': forms.Select, }
+    )
 
 
 class DocWriteoffForm(ModelForm):

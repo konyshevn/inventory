@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Операция выполнена{% endblock %}
+{% block content %}
+    {% load my_tags %}
+	<h1></h1>
+    {% if obj_type_name == 'doc' %}
+	   <p>{{ operation }} <a href="/{{ obj_type_name }}/{{ obj_name }}/{{ obj.id }}">{{ obj }}</a> выполнено успешно.</p>
+    {% elif obj_type_name == 'catlg' %}
+        <p>{{ operation }} <a href="/{{ obj_type_name }}/{{ obj_name }}/{{ obj.id }}">{{ obj }}</a> в справочник {{ obj|verbose_name_plural }} выполнено успешно.</p>
+    {% endif %}
+{% endblock %}

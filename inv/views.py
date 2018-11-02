@@ -3,7 +3,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.db.models import Sum, F
 from django.db import models
 
-import time
+import time, datetime
 
 
 #from inv.forms import *
@@ -26,9 +26,10 @@ CATALOG = {
 }
 
 OPERATION_DESCR = {
-    'reg_write': 'проведение',
-    'reg_delete': 'отмена проведения',
-    'doc_write': 'запись'
+    'reg_write': 'Проведение документа',
+    'reg_delete': 'Отмена проведения документа',
+    'doc_write': 'Запись документа',
+    'catlg_write': 'Запись',
 }
 
 
@@ -76,9 +77,9 @@ def doc_form(request, doc_id, doc_name):
     template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
     form_class = doc_type['form']
     formset_class = doc_type['formset']
-
+    print(datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
     if doc_id == 'new':
-        doc = model(active=False)
+        doc = model(doc_date=datetime.datetime.now(), active=False)
     else:
         doc = model.objects.get(id=doc_id)
 
@@ -140,18 +141,23 @@ def doc_form(request, doc_id, doc_name):
     return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
 
 
-def operation_status(request, doc_id, doc_name, status, operation):
-    doc_type = get_doc_type(doc_name)
-    if not doc_type:
-        return HttpResponseRedirect('/doc_type_error/')
-    model = doc_type['model']
-    doc = model.objects.get(id=doc_id)
+def operation_status(request, obj_type_name, obj_id, obj_name, status, operation):
+    if obj_type_name == 'doc':
+        obj_type = get_doc_type(obj_name)
+        if not obj_type:
+            return HttpResponseRedirect('/doc_type_error/')
+    elif obj_type_name == 'catlg':
+        obj_type = get_catlg_type(obj_name)
+        if not obj_type:
+            return HttpResponseRedirect('/catlg_type_error/')
+    model = obj_type['model']
+    obj = model.objects.get(id=obj_id)
     if int(status):
-        template_name = 'doc/operation_success.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'operation': OPERATION_DESCR[operation]})
+        template_name = 'operation_success.html'
+        return render(request, template_name, {'obj': obj, 'obj_name': obj_name, 'obj_type_name': obj_type_name, 'operation': OPERATION_DESCR[operation]})
     else:
-        template_name = 'doc/operation_fail.html'
-        return render(request, template_name, {'doc': doc, 'doc_name': doc_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
+        template_name = 'operation_fail.html'
+        return render(request, template_name, {'obj': obj, 'obj_name': obj_name, 'obj_type_name': obj_type_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
 
 
 def catlg_list(request, catlg_name):
@@ -162,3 +168,38 @@ def catlg_list(request, catlg_name):
     catlg_list = model.objects.all().order_by(catlg_type['order_by'])
     template_name = 'catlg/%s/%s_list.html' % (catlg_name, model.__name__.lower())
     return render(request, template_name, {'catlg_list': catlg_list})
+
+
+def catlg_form(request, catlg_id, catlg_name):
+    catlg_type = get_catlg_type(catlg_name)
+    if not catlg_type:
+        return HttpResponseRedirect('/catlg_type_error/')
+    model = catlg_type['model']
+    template_name = 'catlg/%s/%s_form.html' % (catlg_name, model.__name__.lower())
+    form_class = catlg_type['form']
+
+    if catlg_id == 'new':
+        catlg = model()
+    else:
+        catlg = model.objects.get(id=catlg_id)
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=catlg)
+
+        if form.is_valid():
+            form_cd = form.cleaned_data
+            if 'catlg_write' in request.POST:
+                cw = catlg.catlg_write(catlg_attr=form_cd)
+                if (not cw):
+                    status_url = '/catlg/%s/%s/status/catlg_write/1' % (catlg_name, catlg.id)
+                else:
+                    request.session['status_errors'] = (cw, )
+                    status_url = '/catlg/%s/%s/status/catlg_write/0' % (catlg_name, catlg.id)
+            return HttpResponseRedirect(status_url)
+    else:
+        if catlg_id == 'new':
+            form = form_class()
+        else:
+            form = form_class(instance=catlg)
+
+    return render(request, template_name, {'form': form, })
