@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Регистры{% endblock %}
+{% block content %}
+	<h1>Регистры</h1>
+	<br>
+	{% for rec in reg_recs %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Операция</th>
+					<th>Документ-основание</th>
+					<th>Дата</th>
+					<th>Подразделение</th>
+					<th>Склад</th>
+					<th>Сотрудник</th>
+					<th>Количество</th>
+				</tr>	
+		{% endif %}
+		
+		<tr>
+			<td>{{ rec.operation_type }}</td>
+			<td>{{ rec.base_doc }}</td>
+			<td>{{ rec.reg_date|date:"d.m.Y H:i:s" }}</td>
+			<td>{{ rec.department }}</td>
+			<td>{{ rec.stock }}</td>
+			<td>{{ rec.person }}</td>
+			<td>{{ rec.qty }}</td>
+		</tr>
+		
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Движение документа {{ doc }} по регистрам{% endblock %}
+{% block content %}
+	<p>Движение документа <a href="{{ request.META.HTTP_REFERER }}">{{ doc }}</a> по регистрам:</p>
+	<br>
+	{% for reg, recs in reg_recs.items %}
+	       	<p>Регистр {{ reg }}</p>
+			<table border="1">	
+				<tr>
+					<th>Операция</th>
+					<th>Документ-основание</th>
+					<th>Дата</th>
+					<th>Подразделение</th>
+					<th>Склад</th>
+					<th>Сотрудник</th>
+					<th>Количество</th>
+				</tr>	
+			{% for rec in recs %}
+				<tr>
+					<td>{{ rec.operation_type }}</td>
+					<td>{{ rec.base_doc }}</td>
+					<td>{{ rec.reg_date|date:"d.m.Y H:i:s" }}</td>
+					<td>{{ rec.department }}</td>
+					<td>{% if not rec.stock %}
+						{% else %}
+							{{ rec.stock }}
+						{% endif %}
+					</td>
+					<td>{% if not rec.person %}
+						{% else %}
+							{{ rec.person }}
+						{% endif %}	
+					</td>
+					<td>{{ rec.qty }}</td>
+				</tr>
+			{% endfor %}
+		{% if forloop.last %}
+			</table>			
+		{% endif %}
+
+	{% endfor %}
+{% endblock %}
