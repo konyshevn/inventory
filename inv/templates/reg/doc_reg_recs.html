@@ -10,6 +10,7 @@
 					<th>Операция</th>
 					<th>Документ-основание</th>
 					<th>Дата</th>
+					<th>Устройство</th>
 					<th>Подразделение</th>
 					<th>Склад</th>
 					<th>Сотрудник</th>
@@ -20,6 +21,7 @@
 					<td>{{ rec.operation_type }}</td>
 					<td>{{ rec.base_doc }}</td>
 					<td>{{ rec.reg_date|date:"d.m.Y H:i:s" }}</td>
+					<td>{{ rec.device }}</td>
 					<td>{{ rec.department }}</td>
 					<td>{% if not rec.stock %}
 						{% else %}
