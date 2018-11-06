@@ -8,6 +8,12 @@ https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 """
 
 import os
+import sys
+
+
+#path = '/home/nikita/projects/inventory'
+sys.path.append('/home/nikita/projects/inventory')
+sys.path.append('/home/nikita/projects/inventory/inv')
 
 from django.core.wsgi import get_wsgi_application
 
