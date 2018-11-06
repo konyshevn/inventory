@@ -127,3 +127,17 @@ class PersonForm(ModelForm):
             'surname': 'Фамилия',
             'name': 'Имя',
             'department': 'Подразделение'}
+
+
+class RegDeviceStockForm(ModelForm):
+    class Meta:
+        model = RegDeviceStock
+        fields = ['operation_type', 'reg_date', 'department', 'stock', 'person', 'qty']
+        labels = {
+            'operation_type': 'Операция',
+#            'base_doc': 'Документ-основание',
+            'reg_date': 'Дата',
+            'department': 'Подразделение',
+            'stock': 'Склад',
+            'person': 'Сотрудник',
+            'qty': 'Количество'}

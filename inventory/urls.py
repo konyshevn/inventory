@@ -23,9 +23,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', inv.views.main),
     path('doc_type_error/', inv.views.doc_type_error),
+    path('catlg_type_error/', inv.views.catlg_type_error),
+    path('reg_type_error/', inv.views.reg_type_error),
     re_path('doc/(?P<doc_name>\w+)/$', inv.views.doc_list),
     re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/$', inv.views.doc_form),
     re_path('(?P<obj_type_name>\w+)/(?P<obj_name>\w+)/(?P<obj_id>\w+)/status/(?P<operation>\w+)/(?P<status>\d)/$', inv.views.operation_status),
     re_path('catlg/(?P<catlg_name>\w+)/$', inv.views.catlg_list),
     re_path('catlg/(?P<catlg_name>\w+)/(?P<catlg_id>\w+)/$', inv.views.catlg_form),
-]
+    re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/reg/$', inv.views.doc_reg_recs),
+ ]

@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.db.models import Sum, F
 from django.db import models
-
+from django.contrib.contenttypes.models import ContentType
 import time, datetime
 
 
@@ -23,6 +23,10 @@ CATALOG = {
     'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
     'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'name'},
     'stock': {'model': Stock, 'form': StockForm, 'order_by': 'name'},
+}
+
+REGISTRY = {
+    'devicestock': {'model': RegDeviceStock, 'form': RegDeviceStockForm},
 }
 
 OPERATION_DESCR = {
@@ -47,6 +51,13 @@ def get_catlg_type(catlg_name):
         return False
 
 
+def get_reg_type(reg_name):
+    if reg_name in REGISTRY:
+        return REGISTRY[reg_name]
+    else:
+        return False
+
+
 def main(request):
     return render_to_response('base.html',)
 
@@ -57,6 +68,10 @@ def doc_type_error(request):
 
 def catlg_type_error(request):
     return render_to_response('catlg/catlg_type_error.html',)
+
+
+def reg_type_error(request):
+    return render_to_response('reg/reg_type_error.html',)
 
 
 def doc_list(request, doc_name):
@@ -203,3 +218,64 @@ def catlg_form(request, catlg_id, catlg_name):
             form = form_class(instance=catlg)
 
     return render(request, template_name, {'form': form, })
+
+
+def doc_reg_recs(request, doc_name, doc_id):
+    doc_type = get_doc_type(doc_name)
+    if not doc_type:
+        return HttpResponseRedirect('/doc_type_error/')
+    doc_model = doc_type['model']
+    base_doc_type = ContentType.objects.get_for_model(doc_model)
+    reg_recs = {}
+    doc = doc_model.objects.get(id=doc_id)
+
+    for reg in doc.REG_LIST:
+        reg_model = getattr(sys.modules[__name__], reg)
+        reg_recs.update([(reg, reg_model.objects.filter(base_doc_type=base_doc_type, base_doc_id=doc_id))])
+    
+    template_name = 'reg/doc_reg_recs.html'
+    print(reg_recs)
+    return render(request, template_name, {'reg_recs': reg_recs, 'doc': doc})
+
+
+#--------------------------DONT USE NOW--------------------------------
+def reg_search(request, reg_name, base_doc_id=None, doc_name=None):
+    reg_type = get_reg_type(reg_name)
+    if not reg_type:
+        return HttpResponseRedirect('/reg_type_error/')
+    reg_model = reg_type['model']
+    template_name = 'reg/reg_search.html'
+    form_class = reg_type['form']
+
+    if doc_name:
+        doc_type = get_doc_type(doc_name)
+        if not doc_type:
+            return HttpResponseRedirect('/doc_type_error/')
+        base_doc_type = ContentType.objects.get_for_model(doc_type['model'])
+        if base_doc_id:
+            reg_recs = reg_model.objects.filter(base_doc_type=base_doc_type, base_doc_id=base_doc_id)
+        else:
+            reg_recs = reg_model.objects.filter(base_doc_type=base_doc_type)
+    else:
+        reg_recs = reg_model.objects.all()
+
+    if request.method == 'POST':
+        form = form_class(request.POST)
+
+        if form.is_valid():
+            form_cd = form.cleaned_data
+            if 'reg_search' in request.POST:
+
+                cw = catlg.catlg_write(catlg_attr=form_cd)
+                if (not cw):
+                    status_url = '/catlg/%s/%s/status/catlg_write/1' % (catlg_name, catlg.id)
+                else:
+                    request.session['status_errors'] = (cw, )
+                    status_url = '/catlg/%s/%s/status/catlg_write/0' % (catlg_name, catlg.id)
+            return HttpResponseRedirect(status_url)
+    else:
+        form = form_class()
+    print(reg_recs)
+
+    return render(request, template_name, {'form': form, 'reg_recs': reg_recs})
+#----------------------------------------------------------------------
