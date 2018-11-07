@@ -89,9 +89,9 @@ def doc_form(request, doc_id, doc_name):
     if not doc_type:
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
-    template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
     form_class = doc_type['form']
     formset_class = doc_type['formset']
+    template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
     print(datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
     if doc_id == 'new':
         doc = model(doc_date=datetime.datetime.now(), active=False)
@@ -232,7 +232,7 @@ def doc_reg_recs(request, doc_name, doc_id):
     for reg in doc.REG_LIST:
         reg_model = getattr(sys.modules[__name__], reg)
         reg_recs.update([(reg, reg_model.objects.filter(base_doc_type=base_doc_type, base_doc_id=doc_id))])
-    
+
     template_name = 'reg/doc_reg_recs.html'
     print(reg_recs)
     return render(request, template_name, {'reg_recs': reg_recs, 'doc': doc})
