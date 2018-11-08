@@ -6,14 +6,13 @@ from django.contrib.contenttypes.models import ContentType
 import time, datetime
 
 
-#from inv.forms import *
 from inv.models import *
 from inv.forms import *
-# Create your views here.
+
 DOCUMENT = {
-    'income': {'model': DocIncome, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
-    'writeoff': {'model': DocWriteoff, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
-    'move': {'model': DocMove, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
+    'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
+    'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
+    'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
 }
 
 CATALOG = {
@@ -106,6 +105,8 @@ def doc_form(request, doc_id, doc_name):
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
+            print(form_cd)
+            print(formset_cd)
             if 'reg_write' in request.POST:
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()

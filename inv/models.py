@@ -10,8 +10,16 @@ from functools import reduce
 
 #---------------Device---------------
 class Catalog(models.Model):
+    # Метод "Запись данных в справочник".
+    # Записывает переданные ему данные из формы в элемент справочника.
+    # Все проверки перед записью в элемент справочника должны быть сделаны заранее,
+    # метод принимает только "чистые/проверенные" данные для записи.
+    # catlg_attr - словарь: ключ - наименование атрибута справочника
     def catlg_write(self, catlg_attr):
+        # проход по всем пользовательским атрибутам справочника
         for attr in self.__dict__.keys():
+            # если атрибут присутствует среди значений переданных из формы,
+            # то присвоить соотвествующему атрибуту справочника переданное значение из формы.
             if attr in catlg_attr:
                 setattr(self, attr, catlg_attr[attr])
         self.save()
@@ -105,8 +113,50 @@ class Document(models.Model):
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
 
-    def doc_write(self):
+    # Метод "Запись данных в документ".
+    # Записывает переданные ему данные из формы в документ.
+    # Все проверки перед записью документа должны быть сделаны заранее,
+    # метод принимает только "чистые/проверенные" данные для записи.
+    # doc_attr - словарь: ключ - наименование атрибута документа
+    # table_unit - список. Элемент списка - словарь: ключ - наименование атрибута TableUnit.
+    # Ключ "id" - существующий объект TableUnit.
+    def doc_write(self, doc_attr, table_unit):
+        # проход по всем пользовательским атрибутам документа
+        for attr in self.__dict__.keys():
+            # если атрибут присутствует среди значений переданных из формы,
+            # то присвоить соотвествующему атрибуту документа переданное значение из формы.
+            if attr in doc_attr:
+                setattr(self, attr, doc_attr[attr])
         self.save()
+
+        if self.table_unit:
+            table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
+            # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
+            # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
+            for rec in table_unit:
+                # создать новую запись для TableUnit, потребуется далее в случае если это новая строка, а не модификация старой
+                print('-' * 50)
+                print(rec)
+                new_rec_flag = False
+                new_rec = table_unit_model(doc=self)
+                if rec:
+                    # проход по всем пользовательским атрибутам TableUnit, attr - наименование атрибута.
+                    for attr in table_unit_model.__dict__.keys():
+                        # если атрибут присутствует среди значений переданных из формы,
+                        # то присвоить соотвествующему атрибуту записи/строке TableUnit переданное значение из формы.
+                        if attr in rec:
+                            # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
+                            # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
+                            if rec['id'] is not None:
+                                setattr(rec['id'], attr, rec[attr])
+                            else:
+                                new_rec_flag = True
+                                setattr(new_rec, attr, rec[attr])
+                    # после прохода по всем атрибутам сохранить новую запись
+                    if new_rec_flag:
+                        new_rec.save()
+        self.save()
+
 
     def get_table_unit(self):
         doc_type = self.__class__.__name__
@@ -169,7 +219,7 @@ class DocWriteoff(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
-    def doc_write(self, doc_attr, table_unit):
+    def doc_write2(self, doc_attr, table_unit):
         self.doc_date = doc_attr['doc_date']
         self.doc_num = doc_attr['doc_num']
         self.department = doc_attr['department']
@@ -235,7 +285,7 @@ class DocMove(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
-    def doc_write(self, doc_attr, table_unit):
+    def doc_write2(self, doc_attr, table_unit):
         self.doc_date = doc_attr['doc_date']
         self.doc_num = doc_attr['doc_num']
         self.department_from = doc_attr['department_from']
@@ -294,7 +344,7 @@ class DocIncome(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
-    def doc_write(self, doc_attr, table_unit):
+    def doc_write2(self, doc_attr, table_unit):
         self.doc_date = doc_attr['doc_date']
         self.doc_num = doc_attr['doc_num']
         self.department = doc_attr['department']
