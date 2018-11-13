@@ -73,6 +73,7 @@ def reg_type_error(request):
     return render_to_response('reg/reg_type_error.html',)
 
 
+# Форма списка документов
 def doc_list(request, doc_name):
     doc_type = get_doc_type(doc_name)
     if not doc_type:
@@ -83,6 +84,7 @@ def doc_list(request, doc_name):
     return render(request, template_name, {'doc_list': doc_list})
 
 
+# Форма документа
 def doc_form(request, doc_id, doc_name):
     doc_type = get_doc_type(doc_name)
     if not doc_type:
@@ -91,7 +93,6 @@ def doc_form(request, doc_id, doc_name):
     form_class = doc_type['form']
     formset_class = doc_type['formset']
     template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
-    print(datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
     if doc_id == 'new':
         doc = model(doc_date=datetime.datetime.now(), active=False)
     else:
@@ -105,8 +106,6 @@ def doc_form(request, doc_id, doc_name):
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
-            print(form_cd)
-            print(formset_cd)
             if 'reg_write' in request.POST:
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()
@@ -176,6 +175,7 @@ def operation_status(request, obj_type_name, obj_id, obj_name, status, operation
         return render(request, template_name, {'obj': obj, 'obj_name': obj_name, 'obj_type_name': obj_type_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
 
 
+# форма списка справочника
 def catlg_list(request, catlg_name):
     catlg_type = get_catlg_type(catlg_name)
     if not catlg_type:
@@ -186,6 +186,7 @@ def catlg_list(request, catlg_name):
     return render(request, template_name, {'catlg_list': catlg_list})
 
 
+# форма справочника
 def catlg_form(request, catlg_id, catlg_name):
     catlg_type = get_catlg_type(catlg_name)
     if not catlg_type:
@@ -230,7 +231,7 @@ def doc_reg_recs(request, doc_name, doc_id):
     reg_recs = {}
     doc = doc_model.objects.get(id=doc_id)
 
-    for reg in doc.REG_LIST:
+    for reg in doc._REG_LIST:
         reg_model = getattr(sys.modules[__name__], reg)
         reg_recs.update([(reg, reg_model.objects.filter(base_doc_type=base_doc_type, base_doc_id=doc_id))])
 

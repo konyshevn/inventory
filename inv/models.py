@@ -9,6 +9,7 @@ from functools import reduce
 
 
 #---------------Device---------------
+# Мета-класс справочник
 class Catalog(models.Model):
     # Метод "Запись данных в справочник".
     # Записывает переданные ему данные из формы в элемент справочника.
@@ -107,11 +108,30 @@ class Stock(Catalog):
 #
 #    def doc_create(self):
 
-
+# Мета-класс документ
 class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
+
+    # универсальный метод для записи регистров любого документа. НЕ РАБОЧИЙ!
+    def reg_write2(self):
+        for rec in self.get_table_unit():
+            for reg in self._REG_LIST:
+                new_rec = getattr(sys.modules[__name__], reg)(base_doc=self)
+                print(new_rec.__dict__)
+                for attr in new_rec.__dict__:
+                    if attr in self._REG_DOC_ATTR_MAP:
+                        print(attr + ': ' + str(getattr(self, self._REG_DOC_ATTR_MAP[attr])))
+                        setattr(new_rec, attr, getattr(self, self._REG_DOC_ATTR_MAP[attr]))
+                    elif attr in self._REG_TU_ATTR_MAP:
+                        print(attr + ': ' + str(getattr(rec, self._REG_TU_ATTR_MAP[attr])))
+                        setattr(new_rec, attr, getattr(rec, self._REG_TU_ATTR_MAP[attr]))
+                new_rec.save()
+        self.active = True
+        self.save()
+        status_errors = []
+        return (True, status_errors)
 
     # Метод "Запись данных в документ".
     # Записывает переданные ему данные из формы в документ.
@@ -129,7 +149,7 @@ class Document(models.Model):
                 setattr(self, attr, doc_attr[attr])
         self.save()
 
-        if self.table_unit:
+        if self._TABLE_UNIT_EXIST:
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
@@ -143,7 +163,7 @@ class Document(models.Model):
                     # проход по всем пользовательским атрибутам TableUnit, attr - наименование атрибута.
                     for attr in table_unit_model.__dict__.keys():
                         # если атрибут присутствует среди значений переданных из формы,
-                        # то присвоить соотвествующему атрибуту записи/строке TableUnit переданное значение из формы.
+                        # то присвоить соотвествующему атрибуту записи/строки TableUnit переданное значение из формы.
                         if attr in rec:
                             # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
                             # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
@@ -157,22 +177,25 @@ class Document(models.Model):
                         new_rec.save()
         self.save()
 
-
+    # Метод "получение табличной части документа". Возвращает набор QuerySet все объектов TableUnit для данного документа
     def get_table_unit(self):
         doc_type = self.__class__.__name__
-        if self.table_unit:
+        if self._TABLE_UNIT_EXIST:
             doc_table_unit = getattr(sys.modules[__name__], doc_type + 'TableUnit').objects.filter(doc=self)
         else:
             doc_table_unit = None
         return doc_table_unit
 
+    # Метод "удаление записей по регистрам для даннго документа"
     def reg_delete(self):
-        for reg in self.REG_LIST:
+        for reg in self._REG_LIST:
             base_doc_type = ContentType.objects.get_for_model(self)
             getattr(sys.modules[__name__], reg).objects.filter(base_doc_type=base_doc_type, base_doc_id=self.id).delete()
         self.active = False
         self.save()
 
+    # метод "запись по регистрам".
+    # Получет данные для записи, затем если нет ошибок, то делает записи
     def reg_write(self):
         status = self.get_data()
         status_list = list(status.values())
@@ -198,9 +221,24 @@ class DocWriteoff(Document):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocWriteoffTableUnit')
-    REG_LIST = ['RegDeviceStock']
-    table_unit = True
+    _REG_LIST = ['RegDeviceStock']
+    _TABLE_UNIT_EXIST = True
+    _REG_DOC_ATTR_MAP = {
+        'operation_type': '-',
+        'reg_date': 'doc_date',
+        'department_id': 'department',
+        'stock_id': 'stock',
+    }
+    _REG_TU_ATTR_MAP = {
+        'device_id': 'device',
+        'person_id': 'person',
+        'qty': 'qty',
+        'base_doc': 'doc',
+    }
 
+    # метод "получить данные для записи в регистр".
+    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
+    # надо переделать механизм записи в регистры!
     def get_data(self):
         status = {}
         status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
@@ -218,24 +256,6 @@ class DocWriteoff(Document):
         status['RegDeviceStock']['success'] = True
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
-
-    def doc_write2(self, doc_attr, table_unit):
-        self.doc_date = doc_attr['doc_date']
-        self.doc_num = doc_attr['doc_num']
-        self.department = doc_attr['department']
-        self.stock = doc_attr['stock']
-        self.save()
-        tableunit_recs = []
-        for rec in table_unit:
-            if rec:
-                tableunit_recs.append(DocWriteoffTableUnit(
-                    doc=self,
-                    device=rec['device'],
-                    person=rec['person'],
-                    qty=rec['qty'],
-                    comment=rec['comment']))
-        DocWriteoffTableUnit.objects.filter(doc=self).delete()
-        DocWriteoffTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
         return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
@@ -255,9 +275,12 @@ class DocMove(Document):
     stock_from = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, related_name='stock_from')
     stock_to = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, related_name='stock_to')
     devices = models.ManyToManyField(Device, through='DocMoveTableUnit')
-    REG_LIST = ['RegDeviceStock']
-    table_unit = True
+    _REG_LIST = ['RegDeviceStock']
+    _TABLE_UNIT_EXIST = True
 
+    # метод "получить данные для записи в регистр".
+    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
+    # надо переделать механизм записи в регистры!
     def get_data(self):
         status = {}
         status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
@@ -285,27 +308,6 @@ class DocMove(Document):
         status['RegDeviceStock']['recs'] = RegDeviceStock_recs
         return status
 
-    def doc_write2(self, doc_attr, table_unit):
-        self.doc_date = doc_attr['doc_date']
-        self.doc_num = doc_attr['doc_num']
-        self.department_from = doc_attr['department_from']
-        self.department_to = doc_attr['department_to']
-        self.stock_from = doc_attr['stock_from']
-        self.stock_to = doc_attr['stock_to']
-        self.save()
-        tableunit_recs = []
-        for rec in table_unit:
-            if rec:
-                tableunit_recs.append(DocMoveTableUnit(
-                    doc=self,
-                    device=rec['device'],
-                    person_from=rec['person_from'],
-                    person_to=rec['person_to'],
-                    qty=rec['qty'],
-                    comment=rec['comment']))
-        DocMoveTableUnit.objects.filter(doc=self).delete()
-        DocMoveTableUnit.objects.bulk_create(tableunit_recs)
-
     def __str__(self):
         return 'Перемещение №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
 
@@ -323,9 +325,12 @@ class DocIncome(Document):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocIncomeTableUnit')
-    REG_LIST = ['RegDeviceStock']
-    table_unit = True
-
+    _REG_LIST = ['RegDeviceStock']
+    _TABLE_UNIT_EXIST = True
+ 
+    # метод "получить данные для записи в регистр".
+    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
+    # надо переделать механизм записи в регистры!
     def get_data(self):
         status = {}
         status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
