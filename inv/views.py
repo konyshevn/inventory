@@ -109,7 +109,7 @@ def doc_form(request, doc_id, doc_name):
             if 'reg_write' in request.POST:
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()
-                rw = doc.reg_write()
+                rw = doc.reg_write2()
                 if (not dw) & (not rd) & (rw[0]):
                     print('-' * 50)
                     print('PERIOD total: ' + str(time.time() - start))

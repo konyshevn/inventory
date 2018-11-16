@@ -116,18 +116,59 @@ class Document(models.Model):
 
     # универсальный метод для записи регистров любого документа. НЕ РАБОЧИЙ!
     def reg_write2(self):
+
+        # Проход по экземплярам TableUnit
         for rec in self.get_table_unit():
+
+            # Проход по регистрам документа
             for reg in self._REG_LIST:
-                new_rec = getattr(sys.modules[__name__], reg)(base_doc=self)
-                print(new_rec.__dict__)
-                for attr in new_rec.__dict__:
-                    if attr in self._REG_DOC_ATTR_MAP:
-                        print(attr + ': ' + str(getattr(self, self._REG_DOC_ATTR_MAP[attr])))
-                        setattr(new_rec, attr, getattr(self, self._REG_DOC_ATTR_MAP[attr]))
-                    elif attr in self._REG_TU_ATTR_MAP:
-                        print(attr + ': ' + str(getattr(rec, self._REG_TU_ATTR_MAP[attr])))
-                        setattr(new_rec, attr, getattr(rec, self._REG_TU_ATTR_MAP[attr]))
-                new_rec.save()
+
+                if self._REG_CONST_ATTR_MAP[reg]['_MULTI']:
+                    attr_multi_count = self._REG_CONST_ATTR_MAP[reg]['_MULTI']
+                else:
+                    attr_multi_count = 1
+
+                for i in range(0, attr_multi_count):
+                    # новая запись в регистр
+                    new_rec = getattr(sys.modules[__name__], reg)(base_doc=self)
+
+                    # Проход по атрибутам регистра (новой записи в регистр)
+                    # new_rec._meta.fields - список атрибутов модели регистра ввиде объектов
+                    # attr_obj - объект атрибута модели регистра
+                    # attr - имя конкретного атрибута модели регистра
+                    for attr_obj in new_rec._meta.fields:
+                        attr = attr_obj.name
+                        attr_map_exist = False
+
+                        if attr in self._REG_DOC_ATTR_MAP[reg]:
+                            attr_doc_name = self._REG_DOC_ATTR_MAP[reg][attr]
+                            if isinstance(attr_doc_name, tuple):
+                                attr_value = getattr(self, attr_doc_name[i])
+                            else:
+                                attr_value = getattr(self, attr_doc_name)
+                            attr_map_exist = True
+
+                        elif attr in self._REG_TU_ATTR_MAP[reg]:
+                            attr_tu_name = self._REG_TU_ATTR_MAP[reg][attr]
+                            if isinstance(attr_tu_name, tuple):
+                                attr_value = getattr(rec, attr_tu_name[i])
+                            else:
+                                attr_value = getattr(rec, attr_tu_name)
+                            attr_map_exist = True
+
+                        elif attr in self._REG_CONST_ATTR_MAP[reg]:
+                            attr_const_name = self._REG_CONST_ATTR_MAP[reg][attr]
+                            if isinstance(attr_const_name, tuple):
+                                attr_value = attr_const_name[i]
+                            else:
+                                attr_value = attr_const_name
+                            attr_map_exist = True
+
+                        if attr_map_exist:
+                            setattr(new_rec, attr, attr_value)
+
+                    new_rec.check_rec()
+                    new_rec.save()
         self.active = True
         self.save()
         status_errors = []
@@ -224,16 +265,25 @@ class DocWriteoff(Document):
     _REG_LIST = ['RegDeviceStock']
     _TABLE_UNIT_EXIST = True
     _REG_DOC_ATTR_MAP = {
-        'operation_type': '-',
-        'reg_date': 'doc_date',
-        'department_id': 'department',
-        'stock_id': 'stock',
+        'RegDeviceStock': {
+            'reg_date': 'doc_date',
+            'department': 'department',
+            'stock': 'stock',
+        },
     }
     _REG_TU_ATTR_MAP = {
-        'device_id': 'device',
-        'person_id': 'person',
-        'qty': 'qty',
-        'base_doc': 'doc',
+        'RegDeviceStock': {
+            'device': 'device',
+            'person': 'person',
+            'qty': 'qty',
+            'base_doc': 'doc',
+        },
+    }
+    _REG_CONST_ATTR_MAP = {
+        'RegDeviceStock': {
+            '_MULTI': False,
+            'operation_type': '-',
+        },
     }
 
     # метод "получить данные для записи в регистр".
@@ -277,6 +327,36 @@ class DocMove(Document):
     devices = models.ManyToManyField(Device, through='DocMoveTableUnit')
     _REG_LIST = ['RegDeviceStock']
     _TABLE_UNIT_EXIST = True
+
+    # Карта соотвествия атрибутов Регистра и атрибудов Документа, Табличной части, Кностант
+    # Ключ - имя атрибута регистра
+    # Значение - имя атрибута Документа/Табличной части или константа
+    # Если один документ делает несколько движений,
+    # то имя атрибута Документа/Табличной части или константа указываются в кортеже, в том порядке в котором они должны быть записаны.
+    _REG_DOC_ATTR_MAP = {
+        'RegDeviceStock': {
+            'reg_date': 'doc_date',
+            'department': ('department_from', 'department_to'),
+            'stock': ('stock_from', 'stock_to'),
+        },
+    }
+    _REG_TU_ATTR_MAP = {
+        'RegDeviceStock': {
+            'device': 'device',
+            'person': ('person_from', 'person_to'),
+            'qty': 'qty',
+            'base_doc': 'doc',
+        },
+    }
+    # Карта для констант.
+    # Константа _MULTI обязательна.
+    # Она показывает сколько движений делает документ по регистру. Или False если не делает.
+    _REG_CONST_ATTR_MAP = {
+        'RegDeviceStock': {
+            '_MULTI': 2,
+            'operation_type': ('-', '+'),
+        },
+    }
 
     # метод "получить данные для записи в регистр".
     # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
@@ -327,7 +407,28 @@ class DocIncome(Document):
     devices = models.ManyToManyField(Device, through='DocIncomeTableUnit')
     _REG_LIST = ['RegDeviceStock']
     _TABLE_UNIT_EXIST = True
- 
+    _REG_DOC_ATTR_MAP = {
+        'RegDeviceStock': {
+            'reg_date': 'doc_date',
+            'department': 'department',
+            'stock': 'stock',
+        },
+    }
+    _REG_TU_ATTR_MAP = {
+        'RegDeviceStock': {
+            'device': 'device',
+            'person': 'person',
+            'qty': 'qty',
+            'base_doc': 'doc',
+        },
+    }
+    _REG_CONST_ATTR_MAP = {
+        'RegDeviceStock': {
+            '_MULTI': False,
+            'operation_type': '-',
+        },
+    }
+
     # метод "получить данные для записи в регистр".
     # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
     # надо переделать механизм записи в регистры!
@@ -399,6 +500,9 @@ class RegDeviceStock(Registry):
     device = models.ForeignKey(Device, on_delete=models.PROTECT, default=1)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField()
+
+    def check_rec(self):
+        pass
 
     def __str__(self):
         return self.operation_type + ' ' + str(self.base_doc)
