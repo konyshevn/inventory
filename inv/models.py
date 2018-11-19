@@ -4,6 +4,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db.models import Sum
 import sys
 from functools import reduce
+import datetime
+from dateutil import tz
 
 # Create your models here.
 
@@ -116,6 +118,7 @@ class Document(models.Model):
 
     # универсальный метод для записи регистров любого документа. НЕ РАБОЧИЙ!
     def reg_write2(self):
+        status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
 
         # Проход по экземплярам TableUnit
         for rec in self.get_table_unit():
@@ -167,12 +170,23 @@ class Document(models.Model):
                         if attr_map_exist:
                             setattr(new_rec, attr, attr_value)
 
-                    new_rec.check_rec()
-                    new_rec.save()
-        self.active = True
-        self.save()
-        status_errors = []
-        return (True, status_errors)
+                    new_rec_status = new_rec.check_rec()
+                    if not new_rec_status[0]:
+                        status[reg]['success'] = False
+                        status[reg]['errors'].extend(new_rec_status[1])
+                    else:
+                        new_rec.save()
+
+        status_list = list(status.values())
+        status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
+        status_errors = {k: v['errors'] for k, v in status.items() if not v['success']}
+        if status_sum:
+            self.active = True
+            self.save()
+            return (True, status_errors)
+        else:
+            self.reg_delete()
+            return (False, status_errors)
 
     # Метод "Запись данных в документ".
     # Записывает переданные ему данные из формы в документ.
@@ -308,7 +322,9 @@ class DocWriteoff(Document):
         return status
 
     def __str__(self):
-        return 'Списание №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
+        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
+        doc_desc = 'Списание №%s от %s' % (self.doc_num, local_date)
+        return doc_desc
 
 
 class DocWriteoffTableUnit(models.Model):
@@ -389,7 +405,9 @@ class DocMove(Document):
         return status
 
     def __str__(self):
-        return 'Перемещение №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
+        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
+        doc_desc = 'Перемещение №%s от %s' % (self.doc_num, local_date)
+        return doc_desc
 
 
 class DocMoveTableUnit(models.Model):
@@ -425,7 +443,7 @@ class DocIncome(Document):
     _REG_CONST_ATTR_MAP = {
         'RegDeviceStock': {
             '_MULTI': False,
-            'operation_type': '-',
+            'operation_type': '+',
         },
     }
 
@@ -469,7 +487,9 @@ class DocIncome(Document):
         DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
 
     def __str__(self):
-        return 'Оприходование №' + self.doc_num + ' от ' + str(self.doc_date.strftime('%d.%m.%Y %H:%M:%S'))
+        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
+        doc_desc = 'Оприходование №%s от %s' % (self.doc_num, local_date)
+        return doc_desc
 
 
 class DocIncomeTableUnit(models.Model):
@@ -502,7 +522,27 @@ class RegDeviceStock(Registry):
     qty = models.PositiveIntegerField()
 
     def check_rec(self):
-        pass
+        errors = []
+        devices_minus = list(RegDeviceStock.objects.filter(reg_date__lte=self.reg_date, device=self.device, operation_type='-').values('device').annotate(total=Sum('qty')))
+        devices_plus = list(RegDeviceStock.objects.filter(reg_date__lte=self.reg_date, device=self.device, operation_type='+').values('device').annotate(total=Sum('qty')))
+        if not devices_minus:
+            devices_minus = 0
+        else:
+            devices_minus = devices_minus[0]['total']
+        if not devices_plus:
+            devices_plus = 0
+        else:
+            devices_plus = devices_plus[0]['total']
+
+        print('devices_minus: %s' % devices_minus)
+        print('devices_plus: %s' % devices_plus)
+
+        if self.operation_type == '+':
+            if (devices_plus - devices_minus) > 0:
+                errors.append('Устройство %s было оприходовано ранее и на дату %s еще не списано.' % (self.device, self.reg_date.strftime('%d.%m.%Y %H:%M:%S')))
+                return (False, errors)
+
+        return (True, [])
 
     def __str__(self):
         return self.operation_type + ' ' + str(self.base_doc)
