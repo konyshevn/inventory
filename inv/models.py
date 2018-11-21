@@ -106,9 +106,50 @@ class Stock(Catalog):
 #---------------Document---------------
 
 
-#class DocumentManager(models.Manager):
-#
-#    def doc_create(self):
+class RegDeviceStockManager(models.Manager):
+    def saldo(self, device=None, date_from=None, date_to=None, department=None, stock=None, person=None):
+        filter_vals = {}
+        if device is not None:
+            filter_vals.update([('device', device)])
+
+        if date_from is not None:
+            filter_vals.update([('reg_date__gte', date_from)])
+
+        if date_to is not None:
+            filter_vals.update([('reg_date__lte', date_to)])
+
+        if department is not None:
+            filter_vals.update([('department', department)])
+
+        if stock is not None:
+            filter_vals.update([('stock', stock)])
+
+        if person is not None:
+            filter_vals.update([('person', person)])
+
+        filter_minus = filter_vals.copy()
+        filter_plus = filter_vals.copy()
+        filter_minus.update([('operation_type', '-')])
+        filter_plus.update([('operation_type', '+')])
+
+        qty_minus = list(self.filter(**filter_minus).values('device').annotate(total=Sum('qty')))
+        qty_plus = list(self.filter(**filter_plus).values('device').annotate(total=Sum('qty')))
+
+        print('qty_minus: %s' % str(qty_minus))
+        print('qty_plus: %s' % str(qty_plus))
+
+        if not qty_minus:
+            qty_minus = 0
+        else:
+            qty_minus = qty_minus[0]['total']
+
+        if not qty_plus:
+            qty_plus = 0
+        else:
+            qty_plus = qty_plus[0]['total']
+
+        return qty_plus - qty_minus
+
 
 # Мета-класс документ
 class Document(models.Model):
@@ -174,6 +215,8 @@ class Document(models.Model):
                     if not new_rec_status[0]:
                         status[reg]['success'] = False
                         status[reg]['errors'].extend(new_rec_status[1])
+                        # прервать цикл прохода по _MULTI движениям 
+                        break
                     else:
                         new_rec.save()
 
@@ -344,7 +387,7 @@ class DocMove(Document):
     _REG_LIST = ['RegDeviceStock']
     _TABLE_UNIT_EXIST = True
 
-    # Карта соотвествия атрибутов Регистра и атрибудов Документа, Табличной части, Кностант
+    # Карта соотвествия атрибутов Регистра и атрибудов Документа, Табличной части, Констант
     # Ключ - имя атрибута регистра
     # Значение - имя атрибута Документа/Табличной части или константа
     # Если один документ делает несколько движений,
@@ -520,26 +563,21 @@ class RegDeviceStock(Registry):
     device = models.ForeignKey(Device, on_delete=models.PROTECT, default=1)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField()
+    objects = RegDeviceStockManager()
 
     def check_rec(self):
         errors = []
-        devices_minus = list(RegDeviceStock.objects.filter(reg_date__lte=self.reg_date, device=self.device, operation_type='-').values('device').annotate(total=Sum('qty')))
-        devices_plus = list(RegDeviceStock.objects.filter(reg_date__lte=self.reg_date, device=self.device, operation_type='+').values('device').annotate(total=Sum('qty')))
-        if not devices_minus:
-            devices_minus = 0
-        else:
-            devices_minus = devices_minus[0]['total']
-        if not devices_plus:
-            devices_plus = 0
-        else:
-            devices_plus = devices_plus[0]['total']
-
-        print('devices_minus: %s' % devices_minus)
-        print('devices_plus: %s' % devices_plus)
 
         if self.operation_type == '+':
-            if (devices_plus - devices_minus) > 0:
+            saldo = RegDeviceStock.objects.saldo(device=self.device, date_to=self.reg_date)
+            if saldo > 0:
                 errors.append('Устройство %s было оприходовано ранее и на дату %s еще не списано.' % (self.device, self.reg_date.strftime('%d.%m.%Y %H:%M:%S')))
+                return (False, errors)
+
+        if self.operation_type == '-':
+            saldo = RegDeviceStock.objects.saldo(device=self.device, date_to=self.reg_date, department=self.department)
+            if saldo <= 0:
+                errors.append('Устройство %s не закреплено за подразделением %s на дату %s.' % (self.device, self.department, self.reg_date.strftime('%d.%m.%Y %H:%M:%S')))
                 return (False, errors)
 
         return (True, [])
