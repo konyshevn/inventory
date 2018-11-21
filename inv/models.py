@@ -157,8 +157,8 @@ class Document(models.Model):
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
 
-    # универсальный метод для записи регистров любого документа. НЕ РАБОЧИЙ!
-    def reg_write2(self):
+    # универсальный метод для записи регистров любого документа.
+    def reg_write(self):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
 
         # Проход по экземплярам TableUnit
@@ -275,7 +275,7 @@ class Document(models.Model):
                         new_rec.save()
         self.save()
 
-    # Метод "получение табличной части документа". Возвращает набор QuerySet все объектов TableUnit для данного документа
+    # Метод "получение табличной части документа". Возвращает набор QuerySet всех объектов TableUnit для данного документа
     def get_table_unit(self):
         doc_type = self.__class__.__name__
         if self._TABLE_UNIT_EXIST:
@@ -292,27 +292,13 @@ class Document(models.Model):
         self.active = False
         self.save()
 
-    # метод "запись по регистрам".
-    # Получет данные для записи, затем если нет ошибок, то делает записи
-    def reg_write(self):
-        status = self.get_data()
-        status_list = list(status.values())
-        status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
-        status_errors = {k: v['errors'] for k, v in status.items() if not v['success']}
-        if status_sum:
-            for reg in status:
-                getattr(sys.modules[__name__], reg).objects.bulk_create(status[reg]['recs'])
-            self.active = True
-            self.save()
-            return (True, status_errors)
-        else:
-            for reg in status:
-                if not status[reg]['success']:
-                    print('Ошибка проведения регистра ' + reg + ': ' + status[reg]['errors'])
-            return (False, status_errors)
-
     class Meta:
         abstract = True
+
+    def __str__(self):
+        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
+        doc_desc = '%s №%s от %s' % (self._meta.verbose_name.title(), self.doc_num, local_date)
+        return doc_desc
 
 
 class DocWriteoff(Document):
@@ -343,31 +329,9 @@ class DocWriteoff(Document):
         },
     }
 
-    # метод "получить данные для записи в регистр".
-    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
-    # надо переделать механизм записи в регистры!
-    def get_data(self):
-        status = {}
-        status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
-        RegDeviceStock_recs = []
-        for rec_table_unit in self.get_table_unit():
-            RegDeviceStock_recs.append(RegDeviceStock(
-                operation_type='-',
-                base_doc=self,
-                reg_date=self.doc_date,
-                department=self.department,
-                stock=self.stock,
-                device=rec_table_unit.device,
-                person=rec_table_unit.person,
-                qty=rec_table_unit.qty))
-        status['RegDeviceStock']['success'] = True
-        status['RegDeviceStock']['recs'] = RegDeviceStock_recs
-        return status
-
-    def __str__(self):
-        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
-        doc_desc = 'Списание №%s от %s' % (self.doc_num, local_date)
-        return doc_desc
+    class Meta:
+        verbose_name_plural = 'Списания'
+        verbose_name = 'Списание'
 
 
 class DocWriteoffTableUnit(models.Model):
@@ -417,40 +381,9 @@ class DocMove(Document):
         },
     }
 
-    # метод "получить данные для записи в регистр".
-    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
-    # надо переделать механизм записи в регистры!
-    def get_data(self):
-        status = {}
-        status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
-        RegDeviceStock_recs = []
-        for rec_table_unit in self.get_table_unit():
-            RegDeviceStock_recs.append(RegDeviceStock(
-                operation_type='-',
-                base_doc=self,
-                reg_date=self.doc_date,
-                department=self.department_from,
-                stock=self.stock_from,
-                device=rec_table_unit.device,
-                person=rec_table_unit.person_from,
-                qty=rec_table_unit.qty))
-            RegDeviceStock_recs.append(RegDeviceStock(
-                operation_type='+',
-                base_doc=self,
-                reg_date=self.doc_date,
-                department=self.department_to,
-                stock=self.stock_to,
-                device=rec_table_unit.device,
-                person=rec_table_unit.person_to,
-                qty=rec_table_unit.qty))
-        status['RegDeviceStock']['success'] = True
-        status['RegDeviceStock']['recs'] = RegDeviceStock_recs
-        return status
-
-    def __str__(self):
-        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
-        doc_desc = 'Перемещение №%s от %s' % (self.doc_num, local_date)
-        return doc_desc
+    class Meta:
+        verbose_name_plural = 'Перемещения'
+        verbose_name = 'Перемещение'
 
 
 class DocMoveTableUnit(models.Model):
@@ -490,49 +423,9 @@ class DocIncome(Document):
         },
     }
 
-    # метод "получить данные для записи в регистр".
-    # возвращает словарь вида {'Регистр1': {'recs':<данные для записи>, 'success':<есть ли логические ошибки данных>, 'errors': <ошибки>}}
-    # надо переделать механизм записи в регистры!
-    def get_data(self):
-        status = {}
-        status.update([('RegDeviceStock', {'recs': None, 'success': False, 'errors': []})])
-        RegDeviceStock_recs = []
-        for rec_table_unit in self.get_table_unit():
-            RegDeviceStock_recs.append(RegDeviceStock(
-                operation_type='+',
-                base_doc=self,
-                reg_date=self.doc_date,
-                department=self.department,
-                stock=self.stock,
-                device=rec_table_unit.device,
-                person=rec_table_unit.person,
-                qty=rec_table_unit.qty))
-        status['RegDeviceStock']['success'] = True
-        status['RegDeviceStock']['recs'] = RegDeviceStock_recs
-        return status
-
-    def doc_write2(self, doc_attr, table_unit):
-        self.doc_date = doc_attr['doc_date']
-        self.doc_num = doc_attr['doc_num']
-        self.department = doc_attr['department']
-        self.stock = doc_attr['stock']
-        self.save()
-        tableunit_recs = []
-        for rec in table_unit:
-            if rec:
-                tableunit_recs.append(DocIncomeTableUnit(
-                    doc=self,
-                    device=rec['device'],
-                    person=rec['person'],
-                    qty=rec['qty'],
-                    comment=rec['comment']))
-        DocIncomeTableUnit.objects.filter(doc=self).delete()
-        DocIncomeTableUnit.objects.bulk_create(tableunit_recs)
-
-    def __str__(self):
-        local_date = self.doc_date.replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y %H:%M:%S')
-        doc_desc = 'Оприходование №%s от %s' % (self.doc_num, local_date)
-        return doc_desc
+    class Meta:
+        verbose_name_plural = 'Оприходования'
+        verbose_name = 'Оприходование'
 
 
 class DocIncomeTableUnit(models.Model):
@@ -544,7 +437,6 @@ class DocIncomeTableUnit(models.Model):
 
 
 #---------------Registry---------------
-
 class Registry(models.Model):
     operation_types = (('+', '+'), ('-', '-'))
     operation_type = models.CharField(max_length=1, choices=operation_types)
