@@ -94,7 +94,8 @@ def doc_form(request, doc_id, doc_name):
     formset_class = doc_type['formset']
     template_name = 'doc/%s/%s_form.html' % (doc_name, model.__name__.lower())
     if doc_id == 'new':
-        doc = model(doc_date=datetime.datetime.now(), active=False)
+        doc_num = model.objects.get_doc_num()
+        doc = model(doc_num=doc_num, doc_date=datetime.datetime.now(), active=False)
     else:
         doc = model.objects.get(id=doc_id)
 
@@ -146,11 +147,10 @@ def doc_form(request, doc_id, doc_name):
                         status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
             return HttpResponseRedirect(status_url)
     else:
+        form = form_class(instance=doc)
         if doc_id == 'new':
-            form = form_class()
             formset = formset_class(queryset=model.objects.none())
         else:
-            form = form_class(instance=doc)
             formset = formset_class(queryset=doc.get_table_unit())
 
     return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
@@ -222,6 +222,7 @@ def catlg_form(request, catlg_id, catlg_name):
     return render(request, template_name, {'form': form, })
 
 
+# Вывод записей регистров по документу
 def doc_reg_recs(request, doc_name, doc_id):
     doc_type = get_doc_type(doc_name)
     if not doc_type:
@@ -238,6 +239,13 @@ def doc_reg_recs(request, doc_name, doc_id):
     template_name = 'reg/doc_reg_recs.html'
     print(reg_recs)
     return render(request, template_name, {'reg_recs': reg_recs, 'doc': doc})
+
+
+def report_current_location(request, dev_id, date_to):
+    for dev in Device.objects.filter(id=dev_id):
+        reg_rec = RegDeviceStock.objects.filter(device=dev, operation_type='+').order_by('reg_date')
+        print(reg_rec[0].department)
+        return 
 
 
 #--------------------------DONT USE NOW--------------------------------

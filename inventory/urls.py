@@ -31,4 +31,5 @@ urlpatterns = [
     re_path('catlg/(?P<catlg_name>\w+)/$', inv.views.catlg_list),
     re_path('catlg/(?P<catlg_name>\w+)/(?P<catlg_id>\w+)/$', inv.views.catlg_form),
     re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/reg/$', inv.views.doc_reg_recs),
- ]
+    re_path('report/current_location/$', inv.views.report_current_location, {'dev_id': 4, 'date_to': '31.10.2018 03:00:00'}),
+]

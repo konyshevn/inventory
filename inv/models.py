@@ -104,6 +104,10 @@ class Stock(Catalog):
 
 
 #---------------Document---------------
+class DocumentManager(models.Manager):
+    def get_doc_num(self):
+        doc_num = int(self.all().order_by('-doc_num')[0].doc_num) + 1
+        return doc_num
 
 
 class RegDeviceStockManager(models.Manager):
@@ -291,6 +295,8 @@ class Document(models.Model):
             getattr(sys.modules[__name__], reg).objects.filter(base_doc_type=base_doc_type, base_doc_id=self.id).delete()
         self.active = False
         self.save()
+
+    objects = DocumentManager()
 
     class Meta:
         abstract = True
