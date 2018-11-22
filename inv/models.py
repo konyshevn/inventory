@@ -253,30 +253,32 @@ class Document(models.Model):
 
         if self._TABLE_UNIT_EXIST:
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
+            
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
             for rec in table_unit:
-                # создать новую запись для TableUnit, потребуется далее в случае если это новая строка, а не модификация старой
                 print('-' * 50)
                 print(rec)
-                new_rec_flag = False
-                new_rec = table_unit_model(doc=self)
+
                 if rec:
+                    # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
+                    # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
+                    if rec['id'] is not None:
+                        table_unit_item = rec['id']
+                    else:
+                        table_unit_item = table_unit_model(doc=self)
+
                     # проход по всем пользовательским атрибутам TableUnit, attr - наименование атрибута.
-                    for attr in table_unit_model.__dict__.keys():
+                    for attr_obj in table_unit_model._meta.fields:
+                        attr = attr_obj.name
+
                         # если атрибут присутствует среди значений переданных из формы,
                         # то присвоить соотвествующему атрибуту записи/строки TableUnit переданное значение из формы.
-                        if attr in rec:
-                            # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
-                            # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
-                            if rec['id'] is not None:
-                                setattr(rec['id'], attr, rec[attr])
-                            else:
-                                new_rec_flag = True
-                                setattr(new_rec, attr, rec[attr])
-                    # после прохода по всем атрибутам сохранить новую запись
-                    if new_rec_flag:
-                        new_rec.save()
+                        if (attr in rec) & (attr != 'id'):
+                            setattr(table_unit_item, attr, rec[attr])
+
+                    # после прохода по всем атрибутам сохранить запись
+                    table_unit_item.save()
         self.save()
 
     # Метод "получение табличной части документа". Возвращает набор QuerySet всех объектов TableUnit для данного документа
