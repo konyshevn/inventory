@@ -15,6 +15,15 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
+    <!-- Bootstrap-table -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+
+    <!-- Bootstrap-table -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+
+    <!-- Bootstrap-table -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-ru-RU.min.js"></script>
+
     <script type="text/javascript" src="{% static "/js/doc_form.js" %}"></script>
     <script type="text/javascript" src="{% static "/custom/js/doc_form.js" %}"></script>
     <script type="text/javascript" src="{% static "/js/select2_all.js" %}"></script>
@@ -45,6 +54,10 @@
             <a href="/catlg/department/" class="btn btn-secondary">Подразделения</a>
             <a href="/catlg/stock/" class="btn btn-secondary">Склады</a>
             <a href="/catlg/person/" class="btn btn-secondary">Сотрудники</a>
+        </div>
+        <div>
+            <b>Отчеты:</b>
+            <a href="/report/current_location/" class="btn btn-primary">Местоположение на дату</a>
         </div>
         
         <hr>

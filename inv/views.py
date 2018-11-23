@@ -242,10 +242,51 @@ def doc_reg_recs(request, doc_name, doc_id):
 
 
 def report_current_location(request, dev_id, date_to):
-    for dev in Device.objects.filter(id=dev_id):
-        reg_rec = RegDeviceStock.objects.filter(device=dev, operation_type='+').order_by('reg_date')
-        print(reg_rec[0].department)
-        return 
+    location = {}
+    filter_vals = {}
+    if request.method == 'POST':
+        form = ReportCurrentLocationForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if not cd['device'] == '' and not cd['device'] is None:
+                devices = Device.objects.filter(id=cd['device'])
+            else:
+                devices = Device.objects.all()
+
+            if not cd['date_to'] == '' and not cd['date_to'] is None:
+                date_to = cd['date_to'] + datetime.timedelta(days=1)
+
+            if not cd['department'] == '' and not cd['department'] is None:
+                filter_vals.update([('department', cd['department'])])
+
+            location = {dev: {'department': '', 'stock': '', 'person': '', 'qty': None} for dev in devices}
+
+            for device in devices:
+                qty = RegDeviceStock.objects.saldo(device=device, date_to=date_to)
+                if qty == 1:
+                    reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date')
+
+                    if reg_rec[0].department is None:
+                        location[device]['department'] = ''
+                    else:
+                        location[device]['department'] = reg_rec[0].department
+
+                    if reg_rec[0].stock is None:
+                        location[device]['stock'] = ''
+                    else:
+                        location[device]['stock'] = reg_rec[0].stock
+
+                    if reg_rec[0].person is None:
+                        location[device]['person'] = ''
+                    else:
+                        location[device]['person'] = reg_rec[0].person
+
+                location[device]['qty'] = qty
+    else:
+        form = ReportCurrentLocationForm()
+
+    template_name = 'report/current_location.html'
+    return render(request, template_name, {'location': location, 'form': form})
 
 
 #--------------------------DONT USE NOW--------------------------------

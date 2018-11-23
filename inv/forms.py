@@ -1,6 +1,30 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
 from inv.models import *
+import datetime
+
+
+def device_list():
+    defaul_val = [('', '-----')]
+    devices = [(device.id, device) for device in Device.objects.all()]
+    devices = defaul_val + devices
+    return devices
+
+
+def department_list():
+    defaul_val = [('', '-----')]
+    departments = [(department, department) for department in Department.objects.all()]
+    departments = defaul_val + departments
+    return departments
+
+
+class ReportCurrentLocationForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ReportCurrentLocationForm, self).__init__(*args, **kwargs)
+        self.fields['device'] = forms.CharField(required=False, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
+        self.fields['department'] = forms.CharField(required=False, label='Подразделение', widget=forms.widgets.Select(choices=department_list()))
+
+    date_to = forms.DateTimeField(required=True, label='Дата', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
 
 
 class DocIncomeForm(ModelForm):
