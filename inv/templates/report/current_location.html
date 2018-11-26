@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Местоположение на дату{% endblock %}
+{% block content %}
+	<h1>Местоположение на дату</h1>
+	<form action="" method="post">
+		{% csrf_token %}
+		{{ form.as_table}}
+		<br>
+		<input type="submit" value="Сформировать">
+	</form>
+	<br>
+
+	{% for device, loc in location.items %}
+		{% if forloop.first %}
+			<table
+				id="table_report" 
+			 	data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">
+
+			<thead>
+			<tr>
+			<th data-field="device" data-filter-control="select" data-sortable="true">Устройство</th>
+			<th data-field="department" data-filter-control="select" data-sortable="true">Подразделение</th>
+			<th data-field="stock" data-filter-control="select" data-sortable="true">Склад</th>
+			<th data-field="person" data-filter-control="select" data-sortable="true">Сотрудник</th>
+			<th>Количество</th>
+			</tr>
+			</thead>
+			<tbody>	
+		{% endif %}
+		<tr>
+			<td>
+				{{ device }}
+			</td>
+			{% if loc.qty == 1 %}
+				<td>
+					{{ loc.department }}
+				</td>
+				<td>
+					{{ loc.stock }}
+				</td>
+				<td>
+					{{ loc.person }}
+				</td>
+			{% else %}
+				<td colspan="3">Не удалось определить местоположение</td>
+			{% endif %}
+			<td>
+				{{ loc.qty }}
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Местоположение на дату{% endblock %}
+{% block content %}
+	<h1>Местоположение на дату</h1>
+	<form action="" method="post">
+		{% csrf_token %}
+		{{ form.as_table}}
+		<br>
+		<input type="submit" value="Сформировать">
+	</form>
+	<br>
+
+	{% for device, loc in location.items %}
+		{% if forloop.first %}
+			<table border="1">	
+				<tr>
+					<th>Устройство</th>
+					<th>Подразделение</th>
+					<th>Склад</th>
+					<th>Сотрудник</th>
+					<th>Количество</th>
+				</tr>	
+		{% endif %}
+		<tr>
+			<td>
+				{{ device }}
+			</td>
+			{% if loc.qty == 1 %}
+				<td>
+					{{ loc.department }}
+				</td>
+				<td>
+					{{ loc.stock }}
+				</td>
+				<td>
+					{{ loc.person }}
+				</td>
+			{% else %}
+				<td colspan="3">Не удалось определить местоположение</td>
+			{% endif %}
+			<td>
+				{{ loc.qty }}
+			</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}
