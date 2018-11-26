@@ -18,13 +18,30 @@ def department_list():
     return departments
 
 
+def stock_list():
+    defaul_val = [('', '-----')]
+    stocks = [(stock, stock) for stock in Stock.objects.all()]
+    stocks = defaul_val + stocks
+    return stocks
+
+
+def person_list():
+    defaul_val = [('', '-----')]
+    persons = [(person, person) for person in Person.objects.all()]
+    persons = defaul_val + persons
+    return persons
+
+
 class ReportCurrentLocationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ReportCurrentLocationForm, self).__init__(*args, **kwargs)
         self.fields['device'] = forms.CharField(required=False, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
         self.fields['department'] = forms.CharField(required=False, label='Подразделение', widget=forms.widgets.Select(choices=department_list()))
-
-    date_to = forms.DateTimeField(required=True, label='Дата', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
+        self.fields['stock'] = forms.CharField(required=False, label='Склад', widget=forms.widgets.Select(choices=stock_list()))
+        self.fields['person'] = forms.CharField(required=False, label='Сотрудник', widget=forms.widgets.Select(choices=person_list()))
+    
+    current_date = datetime.datetime.now().replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y')
+    date_to = forms.DateTimeField(required=True, label='Дата', initial=current_date, input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
 
 
 class DocIncomeForm(ModelForm):

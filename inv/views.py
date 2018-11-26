@@ -36,6 +36,33 @@ OPERATION_DESCR = {
 }
 
 
+class DictDiffer(object):
+    """
+    Calculate the difference between two dictionaries as:
+    (1) items added
+    (2) items removed
+    (3) keys same in both but changed values
+    (4) keys same in both and unchanged values
+    """
+
+    def __init__(self, current_dict, past_dict):
+        self.current_dict, self.past_dict = current_dict, past_dict
+        self.set_current, self.set_past = set(current_dict.keys()), set(past_dict.keys())
+        self.intersect = self.set_current.intersection(self.set_past)
+
+    def added(self):
+        return self.set_current - self.intersect
+
+    def removed(self):
+        return self.set_past - self.intersect
+
+    def changed(self):
+        return set(o for o in self.intersect if self.past_dict[o] != self.current_dict[o])
+
+    def unchanged(self):
+        return set(o for o in self.intersect if self.past_dict[o] == self.current_dict[o])
+
+
 def get_doc_type(doc_name):
     if doc_name in DOCUMENT:
         return DOCUMENT[doc_name]
@@ -242,7 +269,7 @@ def doc_reg_recs(request, doc_name, doc_id):
 
 
 def report_current_location(request, dev_id, date_to):
-    location = {}
+    location = []
     filter_vals = {}
     if request.method == 'POST':
         form = ReportCurrentLocationForm(request.POST)
@@ -257,31 +284,40 @@ def report_current_location(request, dev_id, date_to):
                 date_to = cd['date_to'] + datetime.timedelta(days=1)
 
             if not cd['department'] == '' and not cd['department'] is None:
-                filter_vals.update([('department', cd['department'])])
+                filter_vals['department'] = cd['department']
 
-            location = {dev: {'department': '', 'stock': '', 'person': '', 'qty': None} for dev in devices}
+            if not cd['stock'] == '' and not cd['stock'] is None:
+                filter_vals['stock'] = cd['stock']
+
+            if not cd['person'] == '' and not cd['person'] is None:
+                filter_vals['person'] = cd['person']
 
             for device in devices:
+                location_rec = {'device': device, 'department': '', 'stock': '', 'person': '', 'qty': None}
                 qty = RegDeviceStock.objects.saldo(device=device, date_to=date_to)
                 if qty == 1:
                     reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date')
 
                     if reg_rec[0].department is None:
-                        location[device]['department'] = ''
+                        location_rec['department'] = ''
                     else:
-                        location[device]['department'] = reg_rec[0].department
+                        location_rec['department'] = str(reg_rec[0].department)
 
                     if reg_rec[0].stock is None:
-                        location[device]['stock'] = ''
+                        location_rec['stock'] = ''
                     else:
-                        location[device]['stock'] = reg_rec[0].stock
+                        location_rec['stock'] = str(reg_rec[0].stock)
 
                     if reg_rec[0].person is None:
-                        location[device]['person'] = ''
+                        location_rec['person'] = ''
                     else:
-                        location[device]['person'] = reg_rec[0].person
+                        location_rec['person'] = str(reg_rec[0].person)
 
-                location[device]['qty'] = qty
+                location_rec['qty'] = qty
+                filter_diff = DictDiffer(location_rec, filter_vals)
+                if len(filter_diff.changed()) == 0:
+                    location.append(location_rec)
+
     else:
         form = ReportCurrentLocationForm()
 
