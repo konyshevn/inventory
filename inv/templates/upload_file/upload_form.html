@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Импорт данных{% endblock %}
+{% block content %}
+	<h1>Выберете файл и загрузите его</h1>
+	{% if form.errors %}
+		<p style="color: red;">
+			Исправьте следующие ошибки.
+		</p>
+	{% endif %}
+
+	<br>
+	<form action="" enctype="multipart/form-data" method="post">
+		{% csrf_token %}	
+		<div class="field">
+			{{ form.date.errors }}
+			{{ form.date.label}}
+			{{ form.date}}
+		</div>
+		<div class="field">
+			{{ form.file.errors }}
+			{{ form.file.label }}
+			{{ form.file }}
+		</div>
+		<input type="submit" value="Отправить">
+	</form>
+	<br>
+	<b>Требования к файлу:</b>
+	<table border="1">
+		<tr>
+			<td>
+				Формат файла
+			</td>
+			<td>
+				CSV - разделитель точка с запятой - ;
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Поля
+			</td>
+			<td>
+				<ul>
+					<li>Department_name - Наименование подразделения</li>
+					<li>Person_surname - Фамилия сотрудника</li>
+					<li>Person_name - Имя сотрудника</li>
+					<li>Device_device_type - Тип устройства</li>
+					<li>Device_name - Номенклатура устройства</li>
+					<li>Device_serial_num - Серийный номер</li>
+					<li>Device_inv_num - Инвентарный номер</li>
+					<li>Device_comment - Комментарий к устройству</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Требования к полям
+			</td>
+			<td>
+				<ul>
+					<li>Все поля кроме "Device_comment" обязательны.</li>
+					<li>Серийный номер и инвентарный номер могут быть пустыми, но пара серийный-инвентарный номер должна быть уникальна.</li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+	<p>После загрузки формируются документы "Оприходования" на каждое подразделение от заданой выше даты, которые содержат перечень техники для данного подразделения. Документы будут не проведенными, их нужно провести.</p>
+	<p>Загрузка не идеальна. Если требования не будут соблюдены, то результат загрузки может быть не корретным.</p>
+	<p>P.S. В uploaded_files лежит пример :)</p>
+{% endblock %}

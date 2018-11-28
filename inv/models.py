@@ -58,7 +58,7 @@ class Device(Catalog):
     serial_num = models.CharField(max_length=30, blank=True)
     name = models.ForeignKey(Nomenclature, on_delete=models.PROTECT, null=True)
     device_type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, null=True)
-    comment = models.CharField(max_length=30, blank=True)
+    comment = models.CharField(max_length=100, blank=True)
 
     class Meta:
         verbose_name_plural = 'Устройства'
@@ -69,7 +69,7 @@ class Device(Catalog):
 
 
 class Department(Catalog):
-    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+    name = models.CharField(max_length=50, unique=True, verbose_name='Наименование')
 
     class Meta:
         verbose_name_plural = 'Подразделения'
@@ -80,8 +80,8 @@ class Department(Catalog):
 
 
 class Person(Catalog):
-    surname = models.CharField(max_length=30)
-    name = models.CharField(max_length=30)
+    surname = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
 
     class Meta:
@@ -106,7 +106,12 @@ class Stock(Catalog):
 #---------------Document---------------
 class DocumentManager(models.Manager):
     def get_doc_num(self):
-        doc_num = int(self.all().order_by('-doc_num')[0].doc_num) + 1
+        doc_all = self.all().order_by('-doc_num')
+        if doc_all:
+            last_num = int(doc_all[0].doc_num)
+        else:
+            last_num = 0
+        doc_num = last_num + 1
         return doc_num
 
 
@@ -138,9 +143,6 @@ class RegDeviceStockManager(models.Manager):
 
         qty_minus = list(self.filter(**filter_minus).values('device').annotate(total=Sum('qty')))
         qty_plus = list(self.filter(**filter_plus).values('device').annotate(total=Sum('qty')))
-
-        print('qty_minus: %s' % str(qty_minus))
-        print('qty_plus: %s' % str(qty_plus))
 
         if not qty_minus:
             qty_minus = 0
@@ -244,7 +246,9 @@ class Document(models.Model):
     # Ключ "id" - существующий объект TableUnit.
     def doc_write(self, doc_attr, table_unit):
         # проход по всем пользовательским атрибутам документа
-        for attr in self.__dict__.keys():
+        doc_model = self._meta.model
+        for attr_obj in doc_model._meta.fields:
+            attr = attr_obj.name
             # если атрибут присутствует среди значений переданных из формы,
             # то присвоить соотвествующему атрибуту документа переданное значение из формы.
             if attr in doc_attr:
@@ -253,13 +257,10 @@ class Document(models.Model):
 
         if self._TABLE_UNIT_EXIST:
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
-            
+
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
             for rec in table_unit:
-                print('-' * 50)
-                print(rec)
-
                 if rec:
                     # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
                     # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
@@ -459,9 +460,9 @@ class Registry(models.Model):
 
 class RegDeviceStock(Registry):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
-    stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
-    device = models.ForeignKey(Device, on_delete=models.PROTECT, default=1)
-    person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
+    stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, default='')
+    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, default='')
     qty = models.PositiveIntegerField()
     objects = RegDeviceStockManager()
 

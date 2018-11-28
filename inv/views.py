@@ -4,7 +4,8 @@ from django.db.models import Sum, F
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 import time, datetime
-
+from inv.config import *
+import csv
 
 from inv.models import *
 from inv.forms import *
@@ -268,7 +269,8 @@ def doc_reg_recs(request, doc_name, doc_id):
     return render(request, template_name, {'reg_recs': reg_recs, 'doc': doc})
 
 
-def report_current_location(request, dev_id, date_to):
+def report_current_location(request):
+    start = time.time()
     location = []
     filter_vals = {}
     if request.method == 'POST':
@@ -292,37 +294,156 @@ def report_current_location(request, dev_id, date_to):
             if not cd['person'] == '' and not cd['person'] is None:
                 filter_vals['person'] = cd['person']
 
+            total_device = 0
+            total_reg_rec = 0
+            total_if = 0.
+            total_diff = 0
             for device in devices:
                 location_rec = {'device': device, 'department': '', 'stock': '', 'person': '', 'qty': None}
                 qty = RegDeviceStock.objects.saldo(device=device, date_to=date_to)
                 if qty == 1:
-                    reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date')
+                    reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date').first()
+                    
+                    start_if = time.time()
+                    #if reg_rec[0].department is None:
+                    #    location_rec['department'] = ''
+                    #else:
+                    location_rec['department'] = str(reg_rec.department)
 
-                    if reg_rec[0].department is None:
-                        location_rec['department'] = ''
-                    else:
-                        location_rec['department'] = str(reg_rec[0].department)
-
-                    if reg_rec[0].stock is None:
+                    if reg_rec.stock is None:
                         location_rec['stock'] = ''
                     else:
-                        location_rec['stock'] = str(reg_rec[0].stock)
+                        location_rec['stock'] = str(reg_rec.stock)
 
-                    if reg_rec[0].person is None:
+                    if reg_rec.person is None:
                         location_rec['person'] = ''
                     else:
-                        location_rec['person'] = str(reg_rec[0].person)
+                        location_rec['person'] = str(reg_rec.person)
+
+                    total_if = total_if + time.time() - start_if
 
                 location_rec['qty'] = qty
                 filter_diff = DictDiffer(location_rec, filter_vals)
                 if len(filter_diff.changed()) == 0:
                     location.append(location_rec)
-
+        
+        print('-' * 50)
+        print('PERIOD total_if: ' + str(total_if))
     else:
         form = ReportCurrentLocationForm()
 
+    print('-' * 50)
+    print('PERIOD report_current_location total: ' + str(time.time() - start))
+    print('-' * 50)
+
     template_name = 'report/current_location.html'
     return render(request, template_name, {'location': location, 'form': form})
+
+
+def upload_file_success(request):
+    return render_to_response('upload_file/upload_success.html',)
+
+
+def upload_file_fail(request):
+    return render_to_response('upload_file/upload_fail.html',)
+
+
+def handle_uploaded_file(f):
+    try:
+        file_path = file_dir + f.name
+        destination = open(file_path, 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+        destination.close()
+    except Exception as err:
+        return (False, str(err))
+    else:
+        return (True, file_path)
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            huf = handle_uploaded_file(request.FILES['file'])
+            cd = form.cleaned_data
+            doc_date = cd['date']
+
+            if huf[0]:
+                doc_income_attr = {}
+                doc_num = DocIncome.objects.get_doc_num() - 1
+                with open(huf[1], newline='') as csvfile:
+                    reader = csv.DictReader(csvfile, delimiter=';')
+                    for line in reader:
+                        doc_attr = {}
+                        department = Department.objects.filter(name=line['Department_name'])
+                        if department:
+                            department = department[0]
+                        elif line['Department_name'] != '':
+                            department = Department(name=line['Department_name'])
+                            department.save()
+                        else:
+                            return HttpResponseRedirect('/upload_file/fail')
+
+                        if not str(department) in doc_income_attr:
+                            doc_num = doc_num + 1
+                            doc_attr['doc_num'] = doc_num
+                            doc_attr['doc_date'] = doc_date
+                            doc_attr['department'] = department
+                            doc_income_attr[str(department)] = {'doc_attr': doc_attr, 'table_unit': []}
+
+                        person = Person.objects.filter(surname=line['Person_surname'], name=line['Person_name'])
+                        if person:
+                            person = person[0]
+                        elif (line['Person_name'] != '') & (line['Person_surname'] != ''):
+                            person = Person(name=line['Person_name'], surname=line['Person_surname'], department=department)
+                            person.save()
+                        else:
+                            return HttpResponseRedirect('/upload_file/fail')
+
+                        device_type = DeviceType.objects.filter(name=line['Device_device_type'])
+                        if device_type:
+                            device_type = device_type[0]
+                        elif (line['Device_device_type'] != ''):
+                            device_type = DeviceType(name=line['Device_device_type'])
+                            device_type.save()
+                        else:
+                            return HttpResponseRedirect('/upload_file/fail')
+
+                        nomenclature = Nomenclature.objects.filter(name=line['Device_name'])
+                        if nomenclature:
+                            nomenclature = nomenclature[0]
+                        elif (line['Device_name'] != ''):
+                            nomenclature = Nomenclature(name=line['Device_name'])
+                            nomenclature.save()
+                        else:
+                            return HttpResponseRedirect('/upload_file/fail')
+
+                        device = Device.objects.filter(serial_num=line['Device_serial_num'], inv_num=line['Device_inv_num'])
+                        if device:
+                            device = device[0]
+                        else:
+                            device = Device(serial_num=line['Device_serial_num'], inv_num=line['Device_inv_num'], name=nomenclature, device_type=device_type, comment=line['Device_comment'])
+                            device.save()
+                        
+                        table_unit_rec = {}
+                        table_unit_rec['id'] = None
+                        table_unit_rec['device'] = device
+                        table_unit_rec['person'] = person
+                        table_unit_rec['qty'] = 1
+                        doc_income_attr[str(department)]['table_unit'].append(table_unit_rec)
+
+                for dep, attr in doc_income_attr.items():
+                    doc_income = DocIncome()
+                    doc_income.doc_write(doc_attr=attr['doc_attr'], table_unit=attr['table_unit'])
+                return HttpResponseRedirect('/upload_file/success')
+            else:
+                print('huf - False')
+                return HttpResponseRedirect('/upload_file/fail')
+    else:
+        form = UploadFileForm()
+    template_name = 'upload_file/upload_form.html'
+    return render(request, template_name, {'form': form})
 
 
 #--------------------------DONT USE NOW--------------------------------

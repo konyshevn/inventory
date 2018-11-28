@@ -4,6 +4,11 @@ from inv.models import *
 import datetime
 
 
+class UploadFileForm(forms.Form):
+    date = forms.DateTimeField(required=True, label='Дата нового оприходования', input_formats=('%d.%m.%Y %H:%M:%S',), widget=forms.DateTimeInput(format=('%d.%m.%Y %H:%M:%S',), attrs={'type': 'datetime-local'}))
+    file = forms.FileField(label='Файл')
+
+
 def device_list():
     defaul_val = [('', '-----')]
     devices = [(device.id, device) for device in Device.objects.all()]
