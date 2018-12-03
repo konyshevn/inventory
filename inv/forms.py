@@ -49,6 +49,15 @@ class ReportCurrentLocationForm(forms.Form):
     date_to = forms.DateTimeField(required=True, label='Дата', initial=current_date, input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
 
 
+class ReportStatementDocsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ReportStatementDocsForm, self).__init__(*args, **kwargs)
+        self.fields['device'] = forms.CharField(required=True, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
+    
+    date_from = forms.DateTimeField(required=False, label='Дата начала', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
+    date_to = forms.DateTimeField(required=False, label='Дата окончания', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
+
+
 class DocIncomeForm(ModelForm):
     class Meta:
         model = DocIncome

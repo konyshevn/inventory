@@ -340,6 +340,64 @@ def report_current_location(request):
     return render(request, template_name, {'location': location, 'form': form})
 
 
+def report_statement_docs(request):
+    location = []
+    filter_vals = {}
+    if request.method == 'POST':
+        form = ReportStatementDocsForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if not cd['device'] == '' and not cd['device'] is None:
+                filter_vals['device'] = Device.objects.get(id=cd['device'])
+
+            if not cd['date_to'] == '' and not cd['date_to'] is None:
+                filter_vals['reg_date__lte'] = cd['date_to'] + datetime.timedelta(days=1)
+            if not cd['date_from'] == '' and not cd['date_from'] is None:
+                filter_vals['reg_date__gte'] = cd['date_from']
+
+            reg_recs = RegDeviceStock.objects.filter(**filter_vals).order_by('-reg_date')
+
+            for row in reg_recs:
+                location_rec = {}
+                doc_multi_operation = row.base_doc._REG_CONST_ATTR_MAP['RegDeviceStock']['_MULTI']
+
+                if row.operation_type == '+':
+                    location_rec['base_doc'] = str(row.base_doc)
+                    location_rec['base_doc_id'] = row.base_doc.id
+                    location_rec['base_doc_type'] = row.base_doc._meta.model_name[3:]
+                    location_rec['qty'] = RegDeviceStock.objects.saldo(device=row.device, date_to=row.reg_date)
+                    location_rec['department'] = str(row.department)
+
+                    if row.stock is None:
+                        location_rec['stock'] = ''
+                    else:
+                        location_rec['stock'] = str(row.stock)
+
+                    if row.person is None:
+                        location_rec['person'] = ''
+                    else:
+                        location_rec['person'] = str(row.person)
+                    location_rec['date'] = row.reg_date
+                elif not doc_multi_operation:
+                    location_rec['base_doc'] = str(row.base_doc)
+                    location_rec['base_doc_id'] = row.base_doc.id
+                    location_rec['base_doc_type'] = row.base_doc._meta.model_name[3:]
+                    location_rec['qty'] = RegDeviceStock.objects.saldo(device=row.device, date_to=row.reg_date)
+                    location_rec['department'] = ''
+                    location_rec['stock'] = ''
+                    location_rec['person'] = ''
+                    location_rec['date'] = row.reg_date
+                else:
+                    continue
+                location.append(location_rec)
+
+    else:
+        form = ReportStatementDocsForm()
+
+    template_name = 'report/statement_docs.html'
+    return render(request, template_name, {'location': location, 'form': form})
+
+
 def upload_file_success(request):
     return render_to_response('upload_file/upload_success.html',)
 
