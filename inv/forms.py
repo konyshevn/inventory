@@ -182,6 +182,7 @@ class PersonForm(ModelForm):
             'surname': 'Фамилия',
             'name': 'Имя',
             'department': 'Подразделение'}
+        widgets = {'department': forms.Select, }
 
 
 class RegDeviceStockForm(ModelForm):

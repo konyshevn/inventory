@@ -20,6 +20,7 @@ import inv.models
 import inv.forms
 
 urlpatterns = [
+    re_path('^ajax/department/$', inv.views.department_query, name='department_query'),
     path('admin/', admin.site.urls),
     path('main/', inv.views.main),
     path('doc_type_error/', inv.views.doc_type_error),

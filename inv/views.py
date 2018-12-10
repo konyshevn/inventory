@@ -9,6 +9,9 @@ import csv
 
 from inv.models import *
 from inv.forms import *
+from django_ajax.decorators import ajax
+import json
+
 
 DOCUMENT = {
     'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
@@ -35,6 +38,17 @@ OPERATION_DESCR = {
     'doc_write': 'Запись документа',
     'catlg_write': 'Запись',
 }
+
+
+def department_query(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        departments = Department.objects.filter(name__icontains=q)
+    else:
+        departments = Department.objects.all()
+    response_dict = [{'text': department.name, 'value': department.id} for department in departments]
+    json_dict = json.dumps(response_dict)
+    return HttpResponse(json_dict)
 
 
 class DictDiffer(object):
