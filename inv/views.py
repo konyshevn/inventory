@@ -43,7 +43,9 @@ OPERATION_DESCR = {
 def department_query(request):
     if 'q' in request.GET:
         q = request.GET['q']
-        departments = Department.objects.filter(name__icontains=q)
+#        departments = Department.objects.filter(name__icontains=q)
+        departments = Department.objects.all()
+
     else:
         departments = Department.objects.all()
     response_dict = [{'text': department.name, 'value': department.id} for department in departments]

@@ -25,8 +25,21 @@ SECRET_KEY = 'lo@e%gethvb0^fz7gka7m2!f_zb&ugnmj)hsas#xw#7k0j7seu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.30', 'localhost', '217.77.50.253']
+ALLOWED_HOSTS = ['192.168.0.30', 'localhost', '217.77.50.253', '127.0.0.1']
 
+SELECTIZE_CACHE_BACKEND = 'selectize'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'default',
+    },
+    SELECTIZE_CACHE_BACKEND: {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'TIMEOUT': 60 * 60 * 5,
+        'LOCATION': SELECTIZE_CACHE_BACKEND,
+    }
+}
 
 # Application definition
 
