@@ -5,7 +5,7 @@ $(document).ready(function() {
     })
 
 
-    $('select').each(function(index) {
+    $('.selectize_widget').each(function(index) {
         var field_id = $(this).data("field_id")
         //console.log(field_id);
      

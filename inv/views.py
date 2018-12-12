@@ -370,6 +370,7 @@ def report_statement_docs(request):
     filter_vals = {}
     if request.method == 'POST':
         form = ReportStatementDocsForm(request.POST)
+        print(form)
         if form.is_valid():
             cd = form.cleaned_data
             if not cd['device'] == '' and not cd['device'] is None:

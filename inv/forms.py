@@ -5,6 +5,16 @@ import datetime
 from inv.selectize_widget import ModelSelectizeWidget
 
 
+class DeviceTypeSelectizeWidget(ModelSelectizeWidget):
+    model = DeviceType
+    search_fields = ['name__icontains']
+
+
+class NomenclatureSelectizeWidget(ModelSelectizeWidget):
+    model = Nomenclature
+    search_fields = ['name__icontains']
+
+
 class DepartmentSelectizeWidget(ModelSelectizeWidget):
     model = Department
     search_fields = ['name__icontains']
@@ -17,12 +27,12 @@ class StockSelectizeWidget(ModelSelectizeWidget):
 
 class PersonSelectizeWidget(ModelSelectizeWidget):
     model = Person
-    search_fields = ['name__icontains', 'surname__icontains', 'name__name__icontains']
+    search_fields = ['name__icontains', 'surname__icontains']
 
 
 class DeviceSelectizeWidget(ModelSelectizeWidget):
     model = Device
-    search_fields = ['inv_num__icontains', 'serial_num__icontains']
+    search_fields = ['name__name__icontains', 'inv_num__icontains', 'serial_num__icontains']
 
 
 class UploadFileForm(forms.Form):
@@ -59,22 +69,20 @@ def person_list():
 
 
 class ReportCurrentLocationForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(ReportCurrentLocationForm, self).__init__(*args, **kwargs)
-        self.fields['device'] = forms.CharField(required=False, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
-        self.fields['department'] = forms.CharField(required=False, label='Подразделение', widget=forms.widgets.Select(choices=department_list()))
-        self.fields['stock'] = forms.CharField(required=False, label='Склад', widget=forms.widgets.Select(choices=stock_list()))
-        self.fields['person'] = forms.CharField(required=False, label='Сотрудник', widget=forms.widgets.Select(choices=person_list()))
+    device = forms.CharField(required=False, label='Устройство', widget=DeviceSelectizeWidget)
+    department = forms.CharField(required=False, label='Подразделение', widget=DepartmentSelectizeWidget)
+    stock = forms.CharField(required=False, label='Склад', widget=StockSelectizeWidget)
+    person = forms.CharField(required=False, label='Сотрудник', widget=PersonSelectizeWidget)
     
     current_date = datetime.datetime.now().replace(tzinfo=tz.tzutc()).astimezone(tz=None).strftime('%d.%m.%Y')
     date_to = forms.DateTimeField(required=True, label='Дата', initial=current_date, input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
 
 
 class ReportStatementDocsForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(ReportStatementDocsForm, self).__init__(*args, **kwargs)
-        self.fields['device'] = forms.CharField(required=True, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
-    
+    #def __init__(self, *args, **kwargs):
+    #    super(ReportStatementDocsForm, self).__init__(*args, **kwargs)
+    #    self.fields['device'] = forms.CharField(required=True, label='Устройство', widget=forms.widgets.Select(choices=device_list()))
+    device = forms.CharField(required=True, label='Устройство', widget=DeviceSelectizeWidget)
     date_from = forms.DateTimeField(required=False, label='Дата начала', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
     date_to = forms.DateTimeField(required=False, label='Дата окончания', input_formats=('%d.%m.%Y',), widget=forms.DateTimeInput(format=('%d.%m.%Y',), attrs={'type': 'datetime-local'}))
 
@@ -120,6 +128,11 @@ class DocWriteoffForm(ModelForm):
             'doc_num': 'Номер',
             'department': 'Подразделение',
             'stock': 'Склад'}
+        widgets = {
+            'doc_date': forms.DateTimeInput,
+            'department': DepartmentSelectizeWidget,
+            'stock': StockSelectizeWidget,
+        }
 
 
 DocWriteoffTableUnitFormSet = modelformset_factory(
@@ -130,7 +143,14 @@ DocWriteoffTableUnitFormSet = modelformset_factory(
         'person': 'Сотрудник',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5)
+    fields=['device', 'person', 'qty', 'comment'],
+    can_delete=True,
+    extra=5,
+    widgets={
+        'device': DeviceSelectizeWidget,
+        'person': PersonSelectizeWidget,
+    }
+)
 
 
 class DocMoveForm(ModelForm):
@@ -144,6 +164,13 @@ class DocMoveForm(ModelForm):
             'department_to': 'Подразделение получатель',
             'stock_from': 'Склад отправитель',
             'stock_to': 'Склад получатель'}
+        widgets = {
+            'doc_date': forms.DateTimeInput,
+            'department_from': DepartmentSelectizeWidget,
+            'stock_from': StockSelectizeWidget,
+            'department_to': DepartmentSelectizeWidget,
+            'stock_to': StockSelectizeWidget,
+        }
 
 
 DocMoveTableUnitFormSet = modelformset_factory(
@@ -155,7 +182,15 @@ DocMoveTableUnitFormSet = modelformset_factory(
         'person_to': 'Сотрудник получатель',
         'qty': 'Количество',
         'comment': 'Комментарий'},
-    fields=['device', 'person_from', 'person_to', 'qty', 'comment'], can_delete=True, extra=5)
+    fields=['device', 'person_from', 'person_to', 'qty', 'comment'],
+    can_delete=True,
+    extra=5,
+    widgets={
+        'device': DeviceSelectizeWidget,
+        'person_from': PersonSelectizeWidget,
+        'person_to': PersonSelectizeWidget,
+    },
+)
 
 
 class DeviceForm(ModelForm):
@@ -168,6 +203,10 @@ class DeviceForm(ModelForm):
             'serial_num': 'Серийный номер',
             'inv_num': 'Инвентарный номер',
             'comment': 'Комментарий'}
+        widgets = {
+        'device_type': DeviceTypeSelectizeWidget,
+        'name': NomenclatureSelectizeWidget,
+        }
 
 
 class DeviceTypeForm(ModelForm):
