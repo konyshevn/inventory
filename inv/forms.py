@@ -17,7 +17,7 @@ class StockSelectizeWidget(ModelSelectizeWidget):
 
 class PersonSelectizeWidget(ModelSelectizeWidget):
     model = Person
-    search_fields = ['name__icontains', 'surname__icontains']
+    search_fields = ['name__icontains', 'surname__icontains', 'name__name__icontains']
 
 
 class DeviceSelectizeWidget(ModelSelectizeWidget):
