@@ -2,6 +2,27 @@ from django import forms
 from django.forms import ModelForm, modelformset_factory
 from inv.models import *
 import datetime
+from inv.selectize_widget import ModelSelectizeWidget
+
+
+class DepartmentSelectizeWidget(ModelSelectizeWidget):
+    model = Department
+    search_fields = ['name__icontains']
+
+
+class StockSelectizeWidget(ModelSelectizeWidget):
+    model = Stock
+    search_fields = ['name__icontains']
+
+
+class PersonSelectizeWidget(ModelSelectizeWidget):
+    model = Person
+    search_fields = ['name__icontains', 'surname__icontains']
+
+
+class DeviceSelectizeWidget(ModelSelectizeWidget):
+    model = Device
+    search_fields = ['inv_num__icontains', 'serial_num__icontains']
 
 
 class UploadFileForm(forms.Form):
@@ -67,7 +88,11 @@ class DocIncomeForm(ModelForm):
             'doc_num': 'Номер',
             'department': 'Подразделение',
             'stock': 'Склад'}
-        widgets = {'doc_date': forms.DateTimeInput}
+        widgets = {
+            'doc_date': forms.DateTimeInput,
+            'department': DepartmentSelectizeWidget,
+            'stock': StockSelectizeWidget,
+        }
 
 
 DocIncomeTableUnitFormSet = modelformset_factory(
@@ -79,7 +104,10 @@ DocIncomeTableUnitFormSet = modelformset_factory(
         'qty': 'Количество',
         'comment': 'Комментарий'},
     fields=['device', 'person', 'qty', 'comment'], can_delete=True, extra=5,
-    widgets={'device': forms.Select, }
+    widgets={
+        'device': DeviceSelectizeWidget,
+        'person': PersonSelectizeWidget,
+    }
     )
 
 
@@ -174,6 +202,8 @@ class StockForm(ModelForm):
             'name': 'Наименование'}
 
 
+
+
 class PersonForm(ModelForm):
     class Meta:
         model = Person
@@ -182,7 +212,7 @@ class PersonForm(ModelForm):
             'surname': 'Фамилия',
             'name': 'Имя',
             'department': 'Подразделение'}
-        widgets = {'department': forms.Select, }
+        widgets = {'department': DepartmentSelectizeWidget, }
 
 
 class RegDeviceStockForm(ModelForm):

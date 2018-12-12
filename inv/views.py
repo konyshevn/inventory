@@ -9,9 +9,9 @@ import csv
 
 from inv.models import *
 from inv.forms import *
-from django_ajax.decorators import ajax
 import json
-
+from django.core.cache import caches
+from django.core import signing
 
 DOCUMENT = {
     'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
@@ -40,17 +40,26 @@ OPERATION_DESCR = {
 }
 
 
-def department_query(request):
+def selectize_ajax_query(request):
+    cache = caches['selectize']
     if 'q' in request.GET:
         q = request.GET['q']
-#        departments = Department.objects.filter(name__icontains=q)
-        departments = Department.objects.all()
+        if 'field_id' not in request.GET:
+            raise Http404('No "field_id" provided.')
+        field_id = request.GET['field_id']
+        try:
+            widget_id = signing.loads(field_id)
+        except BadSignature:
+            raise Http404('Invalid "field_id".')
+        widget_attrs = cache.get('selectize_widget_%s' % widget_id)
+        if widget_attrs is None:
+                raise Http404('field_id not found')
+        widget = widget_attrs['cls'](**widget_attrs)
 
-    else:
-        departments = Department.objects.all()
-    response_dict = [{'text': department.name, 'value': department.id} for department in departments]
-    json_dict = json.dumps(response_dict)
-    return HttpResponse(json_dict)
+        search_result = widget.filter_queryset(q)
+        response_dict = [{'text': str(item), 'value': item.id} for item in search_result]
+        json_dict = json.dumps(response_dict)
+        return HttpResponse(json_dict)
 
 
 class DictDiffer(object):
