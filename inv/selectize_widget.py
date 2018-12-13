@@ -2,7 +2,7 @@ from django import forms
 from django.core.cache import caches
 from django.core import signing
 from django.db.models import Q
-from django.forms.models import ModelChoiceIterator
+from django.forms.models import ModelChoiceIterator, ModelChoiceField
 from functools import reduce
 
 cache = caches['selectize']
@@ -133,7 +133,10 @@ class ModelSelectizeWidget(forms.Select):
         if not self.is_required and not self.allow_multiple_selected:
             default[1].append(self.create_option(name, '', '', False, 0))
         if not isinstance(self.choices, ModelChoiceIterator):
-            return super(ModelSelectizeWidget, self).optgroups(name, value, attrs=attrs)
+            modelchoise_query = self.model.objects.all()
+            modelchoise_field = ModelChoiceField(modelchoise_query)
+            modelchoise_iter = ModelChoiceIterator(modelchoise_field)
+            self.choices = modelchoise_iter
         selected_choices = {
             c for c in selected_choices
             if c not in self.choices.field.empty_values
@@ -153,9 +156,6 @@ class ModelSelectizeWidget(forms.Select):
             index = len(default[1])
             subgroup = default[1]
             subgroup.append(self.create_option(name, option_value, option_label, selected_choices, index))
-        '''
-        '''
-
         return groups
 
     def label_from_instance(self, obj):

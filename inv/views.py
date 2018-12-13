@@ -370,11 +370,14 @@ def report_statement_docs(request):
     filter_vals = {}
     if request.method == 'POST':
         form = ReportStatementDocsForm(request.POST)
-        print(form)
+        #print(form)
         if form.is_valid():
             cd = form.cleaned_data
             if not cd['device'] == '' and not cd['device'] is None:
                 filter_vals['device'] = Device.objects.get(id=cd['device'])
+                print(form['device'])
+                print(cd['device'])
+                
 
             if not cd['date_to'] == '' and not cd['date_to'] is None:
                 filter_vals['reg_date__lte'] = cd['date_to'] + datetime.timedelta(days=1)
