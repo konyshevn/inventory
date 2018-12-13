@@ -1,15 +1,9 @@
 $(document).ready(function() {
 
-    $('#_id_department').selectize({
-        create: false,
-    })
-
-
     $('.selectize_widget').each(function(index) {
         var field_id = $(this).data("field_id")
         //console.log(field_id);
-     
-        $(this).selectize({
+        var $select = $(this).selectize({
             create: false,
             sortField: 'text',
             valueField: 'value',
@@ -43,7 +37,10 @@ $(document).ready(function() {
                     }
                 })
             },
-      
+        });
+        $select[0].selectize.on( 'dropdown_close', function () {
+            console.log('cleaning')
+            $select[0].selectize.clearOptions();
         });
     })
 })
