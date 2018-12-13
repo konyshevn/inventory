@@ -39,8 +39,15 @@ $(document).ready(function() {
             },
         });
         $select[0].selectize.on( 'dropdown_close', function () {
-            console.log('cleaning')
             $select[0].selectize.clearOptions();
         });
     })
+/*
+    clean_dropdown = function() {
+        console.log('cleaning')
+        $(this).clearOptions()
+    };
+    selectize_items = $('.selectize_widget')
+    selectize_items.on('dropdown_close', clean_dropdown);
+*/    
 })
