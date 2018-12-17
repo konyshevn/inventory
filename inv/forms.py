@@ -47,27 +47,6 @@ def device_list():
     return devices
 
 
-def department_list():
-    defaul_val = [('', '-----')]
-    departments = [(department, department) for department in Department.objects.all()]
-    departments = defaul_val + departments
-    return departments
-
-
-def stock_list():
-    defaul_val = [('', '-----')]
-    stocks = [(stock, stock) for stock in Stock.objects.all()]
-    stocks = defaul_val + stocks
-    return stocks
-
-
-def person_list():
-    defaul_val = [('', '-----')]
-    persons = [(person, person) for person in Person.objects.all()]
-    persons = defaul_val + persons
-    return persons
-
-
 class ReportCurrentLocationForm(forms.Form):
     device = forms.CharField(required=False, label='Устройство', widget=DeviceSelectizeWidget)
     department = forms.CharField(required=False, label='Подразделение', widget=DepartmentSelectizeWidget)
@@ -189,6 +168,48 @@ DocMoveTableUnitFormSet = modelformset_factory(
         'device': DeviceSelectizeWidget,
         'person_from': PersonSelectizeWidget,
         'person_to': PersonSelectizeWidget,
+    },
+)
+
+
+class DocInventoryForm(ModelForm):
+    class Meta:
+        model = DocInventory
+        fields = ['doc_num', 'doc_date', 'department', ]
+        labels = {
+            'doc_date': 'Дата',
+            'doc_num': 'Номер',
+            'department': 'Подразделение',
+        }
+        widgets = {
+            'doc_date': forms.DateTimeInput,
+            'department': DepartmentSelectizeWidget,
+        }
+
+
+DocInventoryTableUnitFormSet = modelformset_factory(
+    DocInventoryTableUnit,
+    form=DocInventoryForm,
+    labels={
+        'device': 'Устройство',
+        'person_accountg': 'Сотрудник (учет)',
+        'stock_accountg': 'Склад (учет)',
+        'qty_accountg': 'Количество (учет)',
+
+        'person_fact': 'Сотрудник (факт)',
+        'stock_fact': 'Склад (факт)',
+        'qty_fact': 'Количество (факт)',
+
+        'comment': 'Комментарий'},
+    fields=['device', 'person_accountg', 'stock_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment'],
+    can_delete=True,
+    extra=5,
+    widgets={
+        'device': DeviceSelectizeWidget,
+        'person_accountg': PersonSelectizeWidget,
+        'stock_accountg': StockSelectizeWidget,
+        'person_fact': PersonSelectizeWidget,
+        'stock_fact': StockSelectizeWidget,
     },
 )
 

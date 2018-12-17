@@ -17,6 +17,8 @@ DOCUMENT = {
     'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
     'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
+    'inventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
+
 }
 
 CATALOG = {
@@ -198,6 +200,12 @@ def doc_form(request, doc_id, doc_name):
                     else:
                         request.session['status_errors'] = (dw,)
                         status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
+            elif 'doc_inventory_fill_saldo' in request.POST:
+                doc.doc_write(doc_attr=form_cd, table_unit=doc.doc_inventory_fill_saldo())
+                form = form_class(instance=doc)
+                formset = formset_class(queryset=doc.get_table_unit())
+                return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
+
             return HttpResponseRedirect(status_url)
     else:
         form = form_class(instance=doc)
@@ -328,7 +336,7 @@ def report_current_location(request):
                 qty = RegDeviceStock.objects.saldo(device=device, date_to=date_to)
                 if qty == 1:
                     reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date').first()
-                    
+
                     start_if = time.time()
                     #if reg_rec[0].department is None:
                     #    location_rec['department'] = ''

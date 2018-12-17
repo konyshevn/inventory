@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db.models import Sum
 import sys
 from functools import reduce
-import datetime
+import datetime, time
 from dateutil import tz
 
 # Create your models here.
@@ -117,6 +117,7 @@ class DocumentManager(models.Manager):
 
 class RegDeviceStockManager(models.Manager):
     def saldo(self, device=None, date_from=None, date_to=None, department=None, stock=None, person=None):
+        start = time.time()
         filter_vals = {}
         if device is not None:
             filter_vals.update([('device', device)])
@@ -153,9 +154,21 @@ class RegDeviceStockManager(models.Manager):
             qty_plus = 0
         else:
             qty_plus = qty_plus[0]['total']
-
+        #print('saldo_TOTAL: %s' % str(time.time() - start))
         return qty_plus - qty_minus
 
+    def current_location(self, device, date):
+        start = time.time()
+        location = {'department': '', 'stock': '', 'person': '', 'qty': None}
+        qty = self.saldo(device=device, date_to=date)
+        if qty == 1:
+            reg_rec = self.filter(device=device, operation_type='+', reg_date__lte=date).order_by('-reg_date').first()
+            location['department'] = reg_rec.department
+            location['stock'] = reg_rec.stock
+            location['person'] = reg_rec.person
+            location['qty'] = qty
+        #print('current_location_TOTAL: %s' % str(time.time() - start))
+        return location
 
 # Мета-класс документ
 class Document(models.Model):
@@ -166,6 +179,9 @@ class Document(models.Model):
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
+
+        if len(self._REG_LIST) == 0:
+            return (True, [])
 
         # Проход по экземплярам TableUnit
         for rec in self.get_table_unit():
@@ -260,6 +276,7 @@ class Document(models.Model):
 
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
+            #print(table_unit)
             for rec in table_unit:
                 if rec:
                     # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
@@ -442,6 +459,63 @@ class DocIncomeTableUnit(models.Model):
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
+    comment = models.CharField(max_length=70, blank=True)
+
+
+class DocInventory(Document):
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    devices = models.ManyToManyField(Device, through='DocInventoryTableUnit')
+    _REG_LIST = []
+    _TABLE_UNIT_EXIST = True
+    _REG_DOC_ATTR_MAP = {
+    }
+    _REG_TU_ATTR_MAP = {
+    }
+    _REG_CONST_ATTR_MAP = {
+    }
+
+    def doc_inventory_fill_saldo(self):
+        start = time.time()
+        table_unit = []
+        for device in Device.objects.all():
+            qty = RegDeviceStock.objects.saldo(device=device, date_to=self.doc_date)
+            table_unit_rec = {
+                'device': device,
+                'person_accountg': None,
+                'stock_accountg': None,
+                'qty_accountg': qty,
+                'person_fact': None,
+                'stock_fact': None,
+                'qty_fact': qty,
+                'id': None,
+            }
+            if qty == 1:
+                location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
+                table_unit_rec['person_accountg'] = location['person']
+                table_unit_rec['stock_accountg'] = location['stock']
+                table_unit_rec['person_fact'] = location['person']
+                table_unit_rec['stock_fact'] = location['stock']
+            table_unit.append(table_unit_rec)
+        print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
+        return table_unit
+
+    class Meta:
+        verbose_name_plural = 'Инвентаризации'
+        verbose_name = 'Инвентаризация'
+
+
+class DocInventoryTableUnit(models.Model):
+    doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+
+    person_accountg = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_accountg')
+    stock_accountg = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, related_name='stock_accountg')
+    qty_accountg = models.PositiveIntegerField(default=1)
+
+    person_fact = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_fact')
+    stock_fact = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, related_name='stock_fact')
+    qty_fact = models.PositiveIntegerField(default=1)
+
     comment = models.CharField(max_length=70, blank=True)
 
 

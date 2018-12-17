@@ -5,6 +5,7 @@ from django.contrib import admin
 
 from inv.models import Nomenclature, DeviceType, Device
 from inv.models import DocIncome, DocIncomeTableUnit, Person, Department, Stock, DocMove, DocMoveTableUnit, DocWriteoff, DocWriteoffTableUnit
+from inv.models import DocInventory, DocInventoryTableUnit
 from inv.models import RegDeviceStock
 
 
@@ -20,6 +21,11 @@ class DocMoveTableUnitInline(admin.TabularInline):
 
 class DocWriteoffTableUnitInline(admin.TabularInline):
     model = DocWriteoffTableUnit
+    extra = 1
+
+
+class DocInventoryTableUnitInline(admin.TabularInline):
+    model = DocInventoryTableUnit
     extra = 1
 
 
@@ -64,6 +70,15 @@ class DocWriteoffTableUnitAdmin(admin.ModelAdmin):
 #    inlines = (IncomeTableUnitInline,)
 
 
+class DocInventoryAdmin(admin.ModelAdmin):
+    list_display = ('doc_date', 'doc_num', 'active', 'department',)
+    inlines = (DocInventoryTableUnitInline,)
+
+
+class DocInventoryTableUnitAdmin(admin.ModelAdmin):
+    list_display = ('doc', 'device', 'person_accountg', 'stock_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment')
+
+
 class PersonAdmin(admin.ModelAdmin):
     list_display = ('surname', 'name', 'department')
 
@@ -97,3 +112,5 @@ admin.site.register(DocMove, DocMoveAdmin)
 admin.site.register(DocMoveTableUnit, DocMoveTableUnitAdmin)
 admin.site.register(DocWriteoff, DocWriteoffAdmin)
 admin.site.register(DocWriteoffTableUnit, DocWriteoffTableUnitAdmin)
+admin.site.register(DocInventory, DocInventoryAdmin)
+admin.site.register(DocInventoryTableUnit, DocInventoryTableUnitAdmin)

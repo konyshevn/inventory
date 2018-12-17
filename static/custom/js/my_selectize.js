@@ -43,7 +43,7 @@ function selectize_widget_init(item) {
 
 $(document).ready(function() {
 
-    $('.selectize_widget').each(function(index) {
+    $('.selectize_widget').each(function() {
         selectize_widget_init($(this))
     })
 })
