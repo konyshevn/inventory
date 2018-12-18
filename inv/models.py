@@ -181,6 +181,8 @@ class Document(models.Model):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
 
         if len(self._REG_LIST) == 0:
+            self.active = True
+            self.save()
             return (True, [])
 
         # Проход по экземплярам TableUnit
