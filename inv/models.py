@@ -474,7 +474,7 @@ class DocInventory(Document):
     _REG_CONST_ATTR_MAP = {
     }
 
-    def doc_inventory_fill_saldo(self):
+    def doc_inventory_fill_saldo(self, department):
         start = time.time()
         table_unit = []
         for device in Device.objects.all():
@@ -495,7 +495,8 @@ class DocInventory(Document):
                 table_unit_rec['stock_accountg'] = location['stock']
                 table_unit_rec['person_fact'] = location['person']
                 table_unit_rec['stock_fact'] = location['stock']
-            table_unit.append(table_unit_rec)
+            if location['department'] == department:
+                table_unit.append(table_unit_rec)
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
         return table_unit
 

@@ -158,7 +158,8 @@ def doc_form(request, doc_id, doc_name):
         start = time.time()
         form = form_class(request.POST, instance=doc)
         formset = formset_class(request.POST, queryset=doc.get_table_unit())
-
+        print('form.is_valid() - %s' % form.is_valid())
+        print('formset.is_valid() - %s' % formset.is_valid())
         if form.is_valid() & formset.is_valid():
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
@@ -201,9 +202,11 @@ def doc_form(request, doc_id, doc_name):
                         request.session['status_errors'] = (dw,)
                         status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
             elif 'doc_inventory_fill_saldo' in request.POST:
-                doc.doc_write(doc_attr=form_cd, table_unit=doc.doc_inventory_fill_saldo())
+                print('doc_inventory_fill_saldo')
                 form = form_class(instance=doc)
-                formset = formset_class(queryset=doc.get_table_unit())
+                fromset_init_data = doc.doc_inventory_fill_saldo(form_cd['department'])
+                formset = formset_class(queryset=model.objects.none(), initial=fromset_init_data)
+                formset.extra += len(fromset_init_data)
                 return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
 
             return HttpResponseRedirect(status_url)

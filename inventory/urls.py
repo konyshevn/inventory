@@ -20,7 +20,7 @@ import inv.models
 import inv.forms
 
 urlpatterns = [
-    re_path('^selectize_ajax_query/$', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
+    re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
     path('admin/', admin.site.urls),
     path('main/', inv.views.main),
     path('doc_type_error/', inv.views.doc_type_error),
