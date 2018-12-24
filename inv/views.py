@@ -239,6 +239,42 @@ def operation_status(request, obj_type_name, obj_id, obj_name, status, operation
         return render(request, template_name, {'obj': obj, 'obj_name': obj_name, 'obj_type_name': obj_type_name, 'status_errors': request.session['status_errors'], 'operation': OPERATION_DESCR[operation]})
 
 
+def follower_manager(request, doc_leader_name, doc_leader_id, doc_follower_name):
+    doc_leader_type = get_doc_type(doc_leader_name)
+    model_leader = doc_leader_type['model']
+    doc_leader = model_leader.objects.get(id=doc_leader_id)
+    doc_follower_type = get_doc_type(doc_follower_name)
+    model_follower = doc_follower_type['model']
+    
+    table_unit = []
+    for rec in doc_leader.get_table_unit():
+        qty_diff = rec.qty_fact - rec.qty_accountg
+        if (qty_diff > 0) & (doc_follower_name == 'income'):
+            table_unit.append({
+                'device': rec.device,
+                'person': rec.person_fact,
+                'qty': qty_diff,
+                'comment': rec.comment,
+                'id': None,
+            })
+        elif (qty_diff < 0) & (doc_follower_name == 'writeoff'):
+            table_unit.append({
+                'device': rec.device,
+                'person': rec.person_fact,
+                'qty': qty_diff * -1,
+                'comment': rec.comment,
+                'id': None,
+            })
+
+    doc_attr = {
+        'doc_date': doc_leader.doc_date,
+        'doc_num': model_follower.objects.get_doc_num(),
+        'department': doc_leader.department,
+    }
+    doc_follower = model_follower()
+    doc_follower.doc_write(doc_attr=doc_attr, table_unit=table_unit)
+    return HttpResponseRedirect('/doc/%s/%s/' % (doc_follower_name, doc_follower.id))
+
 # форма списка справочника
 def catlg_list(request, catlg_name):
     catlg_type = get_catlg_type(catlg_name)

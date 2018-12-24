@@ -92,8 +92,10 @@ class StockAdmin(admin.ModelAdmin):
 
 
 class RegDeviceStockAdmin(admin.ModelAdmin):
-    list_display = ('operation_type', 'reg_date', 'base_doc_type', 'base_doc_id','base_doc', 'department', 'stock', 'device','person','qty')
+    list_display = ('operation_type', 'reg_date', 'base_doc_type', 'base_doc_id', 'base_doc', 'department', 'stock', 'device', 'person', 'qty')
     readonly_fields = ('base_doc',)
+    search_fields = ('department', )
+
 #    model = RegDeviceStock
 
 

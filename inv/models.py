@@ -480,6 +480,7 @@ class DocInventory(Document):
         start = time.time()
         table_unit = []
         for device in Device.objects.all():
+            '''
             qty = RegDeviceStock.objects.saldo(device=device, date_to=self.doc_date)
             table_unit_rec = {
                 'device': device,
@@ -491,14 +492,26 @@ class DocInventory(Document):
                 'qty_fact': qty,
                 'id': None,
             }
+
             if qty == 1:
                 location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
                 table_unit_rec['person_accountg'] = location['person']
                 table_unit_rec['stock_accountg'] = location['stock']
                 table_unit_rec['person_fact'] = location['person']
                 table_unit_rec['stock_fact'] = location['stock']
-            if location['department'] == department:
-                table_unit.append(table_unit_rec)
+            '''
+            location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
+            if (location['department'] == department) and (location['qty'] == 1):
+                table_unit.append({
+                    'device': device,
+                    'person_accountg': location['person'],
+                    'stock_accountg': location['stock'],
+                    'qty_accountg': location['qty'],
+                    'person_fact': location['person'],
+                    'stock_fact': location['stock'],
+                    'qty_fact': location['qty'],
+                    'id': None,
+                })
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
         return table_unit
 
