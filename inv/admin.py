@@ -71,12 +71,12 @@ class DocWriteoffTableUnitAdmin(admin.ModelAdmin):
 
 
 class DocInventoryAdmin(admin.ModelAdmin):
-    list_display = ('doc_date', 'doc_num', 'active', 'department',)
+    list_display = ('doc_date', 'doc_num', 'active', 'department', 'stock')
     inlines = (DocInventoryTableUnitInline,)
 
 
 class DocInventoryTableUnitAdmin(admin.ModelAdmin):
-    list_display = ('doc', 'device', 'person_accountg', 'stock_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment')
+    list_display = ('doc', 'device', 'person_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment')
 
 
 class PersonAdmin(admin.ModelAdmin):

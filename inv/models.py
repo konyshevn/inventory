@@ -170,11 +170,18 @@ class RegDeviceStockManager(models.Manager):
         #print('current_location_TOTAL: %s' % str(time.time() - start))
         return location
 
+
 # Мета-класс документ
 class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
+
+'''
+    leader_doc_type = models.ForeignKey(ContentType, on_delete=models.PROTECT,)
+    base_doc_id = models.PositiveIntegerField()
+    base_doc = GenericForeignKey('base_doc_type', 'base_doc_id')
+'''
 
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
@@ -466,6 +473,7 @@ class DocIncomeTableUnit(models.Model):
 
 class DocInventory(Document):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocInventoryTableUnit')
     _REG_LIST = []
     _TABLE_UNIT_EXIST = True
@@ -480,32 +488,11 @@ class DocInventory(Document):
         start = time.time()
         table_unit = []
         for device in Device.objects.all():
-            '''
-            qty = RegDeviceStock.objects.saldo(device=device, date_to=self.doc_date)
-            table_unit_rec = {
-                'device': device,
-                'person_accountg': None,
-                'stock_accountg': None,
-                'qty_accountg': qty,
-                'person_fact': None,
-                'stock_fact': None,
-                'qty_fact': qty,
-                'id': None,
-            }
-
-            if qty == 1:
-                location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
-                table_unit_rec['person_accountg'] = location['person']
-                table_unit_rec['stock_accountg'] = location['stock']
-                table_unit_rec['person_fact'] = location['person']
-                table_unit_rec['stock_fact'] = location['stock']
-            '''
             location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
             if (location['department'] == department) and (location['qty'] == 1):
                 table_unit.append({
                     'device': device,
                     'person_accountg': location['person'],
-                    'stock_accountg': location['stock'],
                     'qty_accountg': location['qty'],
                     'person_fact': location['person'],
                     'stock_fact': location['stock'],
@@ -525,7 +512,6 @@ class DocInventoryTableUnit(models.Model):
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
 
     person_accountg = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_accountg')
-    stock_accountg = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True, related_name='stock_accountg')
     qty_accountg = models.PositiveIntegerField(default=1)
 
     person_fact = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_fact')

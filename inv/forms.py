@@ -175,15 +175,17 @@ DocMoveTableUnitFormSet = modelformset_factory(
 class DocInventoryForm(ModelForm):
     class Meta:
         model = DocInventory
-        fields = ['doc_num', 'doc_date', 'department', ]
+        fields = ['doc_num', 'doc_date', 'department', 'stock']
         labels = {
             'doc_date': 'Дата',
             'doc_num': 'Номер',
             'department': 'Подразделение',
+            'stock': 'Склад',
         }
         widgets = {
             'doc_date': forms.DateTimeInput,
             'department': DepartmentSelectizeWidget,
+            'stock': StockSelectizeWidget,
         }
 
 
@@ -193,7 +195,6 @@ DocInventoryTableUnitFormSet = modelformset_factory(
     labels={
         'device': 'Устройство',
         'person_accountg': 'Сотрудник (учет)',
-        'stock_accountg': 'Склад (учет)',
         'qty_accountg': 'Количество (учет)',
 
         'person_fact': 'Сотрудник (факт)',
@@ -201,13 +202,12 @@ DocInventoryTableUnitFormSet = modelformset_factory(
         'qty_fact': 'Количество (факт)',
 
         'comment': 'Комментарий'},
-    fields=['device', 'person_accountg', 'stock_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment'],
+    fields=['device', 'person_accountg', 'qty_accountg', 'person_fact', 'stock_fact', 'qty_fact', 'comment'],
     can_delete=True,
     extra=5,
     widgets={
         'device': DeviceSelectizeWidget,
         'person_accountg': PersonSelectizeWidget,
-        'stock_accountg': StockSelectizeWidget,
         'person_fact': PersonSelectizeWidget,
         'stock_fact': StockSelectizeWidget,
     },

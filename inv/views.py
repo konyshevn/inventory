@@ -245,7 +245,8 @@ def follower_manager(request, doc_leader_name, doc_leader_id, doc_follower_name)
     doc_leader = model_leader.objects.get(id=doc_leader_id)
     doc_follower_type = get_doc_type(doc_follower_name)
     model_follower = doc_follower_type['model']
-    
+    template_name = 'doc/%s/doc%s_followers_new_list.html' % (doc_leader_name, doc_leader_name)
+
     table_unit = []
     for rec in doc_leader.get_table_unit():
         qty_diff = rec.qty_fact - rec.qty_accountg
@@ -260,20 +261,56 @@ def follower_manager(request, doc_leader_name, doc_leader_id, doc_follower_name)
         elif (qty_diff < 0) & (doc_follower_name == 'writeoff'):
             table_unit.append({
                 'device': rec.device,
-                'person': rec.person_fact,
+                'person': rec.person_accountg,
                 'qty': qty_diff * -1,
                 'comment': rec.comment,
                 'id': None,
             })
+        elif (qty_diff == 0) & (doc_follower_name == 'move') & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
+            print('MOVE')
+            table_unit_rec = {
+                'device': rec.device,
+                'person_from': rec.person_accountg,
+                'person_to': rec.person_fact,
+                'qty': rec.qty_fact,
+                'comment': rec.comment,
+                'id': None,
+            }
+            stock_to_flag = False
+            for row in table_unit:
+                if row['stock_to']:
+                    if row['stock_to'] == rec.stock_fact:
+                        row['table_unit'].append(table_unit_rec)
+                        stock_to_flag = True
+            if not stock_to_flag:
+                table_unit.append({'stock_to': rec.stock_fact, 'table_unit': [table_unit_rec, ]})
+
+    if doc_follower_name == 'move':
+        doc_follower_id = []
+        for row in table_unit:
+            doc_attr = {
+                'doc_date': doc_leader.doc_date,
+                'doc_num': model_follower.objects.get_doc_num(),
+                'department_from': doc_leader.department,
+                'department_to': doc_leader.department,
+                'stock_from': doc_leader.stock,
+                'stock_to': row['stock_to'],
+            }
+            doc_follower = model_follower()
+            doc_follower.doc_write(doc_attr=doc_attr, table_unit=row['table_unit'])
+            doc_follower_id.append({'name': str(doc_follower), 'id': doc_follower.id})
+        return render(request, template_name, {'doc_leader': str(doc_leader), 'doc_follower_name': doc_follower_name, 'doc_follower_id': doc_follower_id})
 
     doc_attr = {
         'doc_date': doc_leader.doc_date,
         'doc_num': model_follower.objects.get_doc_num(),
         'department': doc_leader.department,
+        'stock': doc_leader.stock,
     }
     doc_follower = model_follower()
     doc_follower.doc_write(doc_attr=doc_attr, table_unit=table_unit)
-    return HttpResponseRedirect('/doc/%s/%s/' % (doc_follower_name, doc_follower.id))
+    return render(request, template_name, {'doc_leader': str(doc_leader), 'doc_follower_name': doc_follower_name, 'doc_follower_id': [{'name': str(doc_follower), 'id': doc_follower.id}]})
+
 
 # форма списка справочника
 def catlg_list(request, catlg_name):
