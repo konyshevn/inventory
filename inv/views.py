@@ -298,6 +298,7 @@ def follower_manager(request, doc_leader_name, doc_leader_id, doc_follower_name)
             }
             doc_follower = model_follower()
             doc_follower.doc_write(doc_attr=doc_attr, table_unit=row['table_unit'])
+            doc_leader.follower.add(doc_follower)
             doc_follower_id.append({'name': str(doc_follower), 'id': doc_follower.id})
         return render(request, template_name, {'doc_leader': str(doc_leader), 'doc_follower_name': doc_follower_name, 'doc_follower_id': doc_follower_id})
 
@@ -309,7 +310,17 @@ def follower_manager(request, doc_leader_name, doc_leader_id, doc_follower_name)
     }
     doc_follower = model_follower()
     doc_follower.doc_write(doc_attr=doc_attr, table_unit=table_unit)
+    doc_leader.follower.add(doc_follower)
     return render(request, template_name, {'doc_leader': str(doc_leader), 'doc_follower_name': doc_follower_name, 'doc_follower_id': [{'name': str(doc_follower), 'id': doc_follower.id}]})
+
+
+def follower_hierarchy(request, doc_leader_name, doc_leader_id):
+    doc_leader_type = get_doc_type(doc_leader_name)
+    model_leader = doc_leader_type['model']
+    doc_leader = model_leader.objects.get(id=doc_leader_id)
+
+    template_name = 'doc/follower_hierarchy.html'
+    return render(request, template_name, {'hierarchy': doc_leader.follower_hierarchy()})
 
 
 # форма списка справочника

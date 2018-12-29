@@ -38,4 +38,6 @@ urlpatterns = [
     re_path('report/current_location/$', inv.views.report_current_location),
     re_path('report/statement_docs/$', inv.views.report_statement_docs),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/new/(?P<doc_follower_name>\w+)/$', inv.views.follower_manager),
+    re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/hierarchy/$', inv.views.follower_hierarchy),
+
 ]

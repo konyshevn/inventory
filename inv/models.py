@@ -6,6 +6,7 @@ import sys
 from functools import reduce
 import datetime, time
 from dateutil import tz
+from gm2m import GM2MField
 
 # Create your models here.
 
@@ -176,12 +177,7 @@ class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
-
-'''
-    leader_doc_type = models.ForeignKey(ContentType, on_delete=models.PROTECT,)
-    base_doc_id = models.PositiveIntegerField()
-    base_doc = GenericForeignKey('base_doc_type', 'base_doc_id')
-'''
+    follower = GM2MField(on_delete='CASCADE')
 
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
@@ -324,6 +320,15 @@ class Document(models.Model):
             getattr(sys.modules[__name__], reg).objects.filter(base_doc_type=base_doc_type, base_doc_id=self.id).delete()
         self.active = False
         self.save()
+
+    def follower_hierarchy(self):
+        hierarchy = {}
+        if (self.follower.count() > 0):
+            hierarchy['leader'] = self
+            hierarchy['follower'] = [{'leader': follower, 'follower': follower.follower_hierarchy()} for follower in self.follower.all()]
+        #else:
+        #    hierarchy['follower'] = {'leader': self.follower.get(), 'follower': []}
+        return hierarchy
 
     objects = DocumentManager()
 

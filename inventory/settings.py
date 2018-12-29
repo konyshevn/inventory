@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'inv',
     'django_ajax',
+    'gm2m',
 ]
 
 MIDDLEWARE = [
