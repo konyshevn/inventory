@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Инвентаризация{% endblock %}
+{% block content %}
+	<h1></h1>
+	<p>Были созданы следующие документы на основании документа {{ doc_leader }}</p>
+	<br>
+
+	<table border="0">	
+		{% for doc in doc_follower_id %}
+			<tr>
+			<td>
+				<a href="/doc/{{ doc_follower_name }}/{{ doc.id }}">{{ doc.name }}</a>
+			</td>
+			</tr>
+		{% endfor %}
+	</table>			
+{% endblock %}

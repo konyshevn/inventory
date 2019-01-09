@@ -1,0 +1,9 @@
+{% for row in hierarchy %}
+
+<p>{{ row.leader }}</p>
+
+        {% with row.follower as hierarchy %}
+            {% include "doc/follower_hierarchy_item.html" %}
+        {% endwith %}
+				
+{% endfor %}

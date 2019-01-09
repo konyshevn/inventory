@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Структура подчиненности{% endblock %}
+{% block content %}
+	<h1></h1>
+	<br>
+		
+		<p>{{ hierarchy.leader }}</p>
+
+	    {% with hierarchy.follower as hierarchy %}
+        	{% include "doc/follower_hierarchy_item.html" %}
+    	{% endwith %}
+		
+		
+{% endblock %}

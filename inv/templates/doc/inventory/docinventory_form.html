@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Инвентаризация{% endblock %}
+{% block content %}
+	<h1>Инвентаризация</h1>
+	<form action="" method="post">
+		{% csrf_token %}
+		
+		<div>
+			<a href="follower/hierarchy" target="_blank">Структура подчиненности</a>
+		</div>
+		<div>
+			Создать на основании:
+			<a href="follower/new/income" target="_blank">Оприходование</a>
+			<a href="follower/new/writeoff" target="_blank">Списание</a>
+			<a href="follower/new/move" target="_blank">Перемещение</a>
+		</div>
+		<br>
+
+		<div class="field">
+			{{ form.doc_num.errors }}
+			{{ form.doc_num.label}}
+			{{ form.doc_num}}
+			{{ form.doc_date.errors }}
+			{{ form.doc_date.label}}
+			{{ form.doc_date}}
+			{% if active %}
+				<a href="reg" target="_blank">Проведен</a>
+			{% else %}
+				Не проведен
+			{% endif %}
+		</div>
+		<br>
+		<div class="field">
+			{{ form.department.errors }}
+			{{ form.department.label }}
+			{{ form.department }}
+			{{ form.stock.errors }}
+			{{ form.stock.label }}
+			{{ form.stock }}
+		</div>
+		<br>
+		
+		<input type="button" value="Добавить" onClick="add_row();" />
+		<input type="submit" name="doc_inventory_fill_saldo" value="Заполнить">
+		
+		{{ formset.management_form }}
+				{% for field in form_rec.hidden_fields %}
+				{{ field }}
+				{% endfor %}
+		<!--
+		{{ formset.non_form_errors }}
+		{{ formset.errors }}
+		{{ formset.non_field_errors }}
+		-->
+		<table 
+			border="1"
+			id="table_unit"
+			>
+			{% for form_rec in formset %}
+				{% if forloop.first %}
+					<thead>
+						<th>{{ form_rec.device.label }}</th>
+						<th>{{ form_rec.person_accountg.label }}</th>
+						<th>{{ form_rec.qty_accountg.label }}</th>
+						<th>{{ form_rec.person_fact.label }}</th>
+						<th>{{ form_rec.qty_fact.label }}</th>
+						<th>{{ form_rec.stock_fact.label }}</th>
+						<th>{{ form_rec.comment.label }}</th>
+					</thead>
+					<tbody>
+				{% endif %}
+				<tr>
+					<td>
+						{{ form_rec.device.errors }}
+						{{ form_rec.device }}
+					</td>
+					<td>
+						{{ form_rec.person_accountg.errors }}
+						{{ form_rec.person_accountg }}
+					</td>
+					<td>
+						{{ form_rec.qty_accountg.errors }}
+						{{ form_rec.qty_accountg }}
+					</td>
+					<td>
+						{{ form_rec.person_fact.errors }}
+						{{ form_rec.person_fact }}
+					</td>
+					<td>
+						{{ form_rec.qty_fact.errors }}
+						{{ form_rec.qty_fact }}
+					</td>
+					<td>
+						{{ form_rec.stock_fact.errors }}
+						{{ form_rec.stock_fact }}
+					</td>
+					<td>
+						{{ form_rec.comment.errors }}
+						{{ form_rec.comment }}
+					</td>
+					<td class="hidden">{{ form_rec.id }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	<br>
+	<input type="submit" name="reg_write" value="Провести">
+	<input type="submit" name="reg_delete" value="Отмена проведения">	
+	<input type="submit" name="doc_write" value="Записать">
+	</form>	
+{% endblock %}
