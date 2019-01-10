@@ -178,6 +178,7 @@ class Document(models.Model):
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
     follower = GM2MField(on_delete='CASCADE')
+    leader = GM2MField(on_delete='CASCADE')
 
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
@@ -321,13 +322,13 @@ class Document(models.Model):
         self.active = False
         self.save()
 
+    @property
     def follower_hierarchy(self):
-        hierarchy = {}
-        if (self.follower.count() > 0):
-            hierarchy['leader'] = self
-            hierarchy['follower'] = [{'leader': follower, 'follower': follower.follower_hierarchy()} for follower in self.follower.all()]
-        #else:
-        #    hierarchy['follower'] = {'leader': self.follower.get(), 'follower': []}
+        #hierarchy = {}
+        #if (self.follower.count() > 0):
+        #    hierarchy['leader'] = self
+        #    hierarchy['follower'] = [{'leader': follower, 'follower': [follower.follower_hierarchy()]} for follower in self.follower.all()]
+        hierarchy = list(self.follower.all())
         return hierarchy
 
     objects = DocumentManager()

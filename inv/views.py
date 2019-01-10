@@ -318,9 +318,8 @@ def follower_hierarchy(request, doc_leader_name, doc_leader_id):
     doc_leader_type = get_doc_type(doc_leader_name)
     model_leader = doc_leader_type['model']
     doc_leader = model_leader.objects.get(id=doc_leader_id)
-
     template_name = 'doc/follower_hierarchy.html'
-    return render(request, template_name, {'hierarchy': doc_leader.follower_hierarchy()})
+    return render(request, template_name, {'hierarchy': doc_leader.follower_hierarchy, 'doc_leader': doc_leader})
 
 
 # форма списка справочника

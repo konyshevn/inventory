@@ -1,9 +1,11 @@
-{% for row in hierarchy %}
-
-<p>{{ row.leader }}</p>
-
-        {% with row.follower as hierarchy %}
+{% load staticfiles my_tags %}
+{% for doc in doc_leader.follower_hierarchy %}
+    <p style="text-indent: {{ i }}px;"><a target="_blank" href="/doc/{{ doc|doc_name }}/{{ doc.id }}">{{ doc }}</a></p>
+    
+        {% with doc_leader=doc i=i %}
+            {% increase i 25 as i %}
             {% include "doc/follower_hierarchy_item.html" %}
         {% endwith %}
-				
 {% endfor %}
+
+				
