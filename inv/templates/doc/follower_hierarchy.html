@@ -5,10 +5,12 @@
 
 	<h1></h1>
 	<br>
+        {% if doc_up_leader != None %}
+		  <p><a target="_blank" href="/doc/{{ doc_up_leader|doc_name }}/{{ doc_up_leader.id }}">{{ doc_up_leader }}</a></p>
+        {% endif %}
+		<p style="text-indent: 25px;"><b><a target="_blank" href="/doc/{{ doc_leader|doc_name }}/{{ doc_leader.id }}">{{ doc_leader }}</a></b></p>
 		
-		<p><b><a target="_blank" href="/doc/{{ doc_leader|doc_name }}/{{ doc_leader.id }}">{{ doc_leader }}</a></b></p>
-		
-		{% with doc_leader=doc_leader i=25 %}
+		{% with doc_leader=doc_leader i=50 %}
             	{% include "doc/follower_hierarchy_item.html" %}
        	{% endwith %}
 		

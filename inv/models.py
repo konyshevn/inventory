@@ -323,12 +323,16 @@ class Document(models.Model):
         self.save()
 
     @property
-    def follower_hierarchy(self):
-        #hierarchy = {}
-        #if (self.follower.count() > 0):
-        #    hierarchy['leader'] = self
-        #    hierarchy['follower'] = [{'leader': follower, 'follower': [follower.follower_hierarchy()]} for follower in self.follower.all()]
+    def get_follower(self):
         hierarchy = list(self.follower.all())
+        return hierarchy
+
+    @property
+    def get_leader(self):
+        if self.leader.count() == 1:
+            hierarchy = self.leader.get()
+        else:
+            hierarchy = None
         return hierarchy
 
     objects = DocumentManager()
@@ -507,6 +511,76 @@ class DocInventory(Document):
                 })
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
         return table_unit
+
+    def follower_create(self, doc_follower_name, model_follower):
+        table_unit = []
+        doc_leader = self
+        for rec in doc_leader.get_table_unit():
+            qty_diff = rec.qty_fact - rec.qty_accountg
+            if (qty_diff > 0) & (doc_follower_name == 'income'):
+                table_unit.append({
+                    'device': rec.device,
+                    'person': rec.person_fact,
+                    'qty': qty_diff,
+                    'comment': rec.comment,
+                    'id': None,
+                })
+            elif (qty_diff < 0) & (doc_follower_name == 'writeoff'):
+                table_unit.append({
+                    'device': rec.device,
+                    'person': rec.person_accountg,
+                    'qty': qty_diff * -1,
+                    'comment': rec.comment,
+                    'id': None,
+                })
+            elif (qty_diff == 0) & (doc_follower_name == 'move') & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
+                print('MOVE')
+                table_unit_rec = {
+                    'device': rec.device,
+                    'person_from': rec.person_accountg,
+                    'person_to': rec.person_fact,
+                    'qty': rec.qty_fact,
+                    'comment': rec.comment,
+                    'id': None,
+                }
+                stock_to_flag = False
+                for row in table_unit:
+                    if row['stock_to']:
+                        if row['stock_to'] == rec.stock_fact:
+                            row['table_unit'].append(table_unit_rec)
+                            stock_to_flag = True
+                if not stock_to_flag:
+                    table_unit.append({'stock_to': rec.stock_fact, 'table_unit': [table_unit_rec, ]})
+
+        if doc_follower_name == 'move':
+            doc_follower_id = []
+            for row in table_unit:
+                doc_attr = {
+                    'doc_date': doc_leader.doc_date,
+                    'doc_num': model_follower.objects.get_doc_num(),
+                    'department_from': doc_leader.department,
+                    'department_to': doc_leader.department,
+                    'stock_from': doc_leader.stock,
+                    'stock_to': row['stock_to'],
+                }
+                doc_follower = model_follower()
+                doc_follower.doc_write(doc_attr=doc_attr, table_unit=row['table_unit'])
+                doc_leader.follower.add(doc_follower)
+                doc_follower.leader.add(doc_leader)
+                doc_follower_id.append({'name': str(doc_follower), 'id': doc_follower.id})
+            return doc_follower_id
+
+        doc_attr = {
+            'doc_date': doc_leader.doc_date,
+            'doc_num': model_follower.objects.get_doc_num(),
+            'department': doc_leader.department,
+            'stock': doc_leader.stock,
+        }
+        doc_follower = model_follower()
+        doc_follower.doc_write(doc_attr=doc_attr, table_unit=table_unit)
+        doc_follower.leader.add(doc_leader)
+        doc_leader.follower.add(doc_follower)
+        return [{'name': str(doc_follower), 'id': doc_follower.id}]
 
     class Meta:
         verbose_name_plural = 'Инвентаризации'

@@ -1,5 +1,5 @@
 {% load staticfiles my_tags %}
-{% for doc in doc_leader.follower_hierarchy %}
+{% for doc in doc_leader.get_follower %}
     <p style="text-indent: {{ i }}px;"><a target="_blank" href="/doc/{{ doc|doc_name }}/{{ doc.id }}">{{ doc }}</a></p>
     
         {% with doc_leader=doc i=i %}
