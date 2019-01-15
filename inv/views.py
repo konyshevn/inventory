@@ -14,7 +14,7 @@ from django.core.cache import caches
 from django.core import signing
 
 DOCUMENT = {
-    'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
+    'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet, 'listform': DocIncomeFormSet},
     'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
     'inventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
@@ -134,9 +134,49 @@ def doc_list(request, doc_name):
     if not doc_type:
         return HttpResponseRedirect('/doc_type_error/')
     model = doc_type['model']
+    if request.method == 'POST':
+        if 'delete' in request.POST:
+            print(dict(request.POST))
+            delete_doc_id = [k[7:] for k, v in dict(request.POST).items() if k[0:7] == 'doc_id_']
+            print(delete_doc_id)
+
+            doc_exist_follower = []
+            for doc_id in delete_doc_id:
+                doc = model.objects.get(id=doc_id)
+                dd = doc.doc_delete()
+                if not dd[0]:
+                    doc_exist_follower.append(doc)
+            if doc_exist_follower:
+                print(doc_exist_follower)
+                template_name = 'delete_fail.html'
+                return render(request, template_name, {'doc_delete_errors': doc_exist_follower})
+
     doc_list = model.objects.all().order_by('doc_date')
     template_name = 'doc/%s/%s_list.html' % (doc_name, model.__name__.lower())
     return render(request, template_name, {'doc_list': doc_list})
+
+
+def doc_delete_status(request, status, doc_name):
+    if not status:
+        template_name = 'doc/delete_fail.html'
+    else:
+        template_name = 'doc/delete_success.html'
+    return render(request, template_name)
+
+
+def doc_listform(request, doc_name):
+    doc_type = get_doc_type(doc_name)
+    if not doc_type:
+        return HttpResponseRedirect('/doc_type_error/')
+    formlist_class = doc_type['listform']
+    model = doc_type['model']
+    if request.method == 'POST':
+        form = formlist_class(request.POST)
+    else:
+        form = formlist_class()
+
+    template_name = 'doc/%s/%s_listform.html' % (doc_name, model.__name__.lower())
+    return render(request, template_name, {'form': form})
 
 
 # Форма документа

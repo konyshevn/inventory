@@ -4,14 +4,15 @@
 	<h1>Оприходования</h1>
 	<br>
 
-	<form action="{{ request.path }}new">
-    	<button type="submit" class="btn btn-primary">Новый</button>
-	</form>
-	
+	<form action="" method="post">
+		{% csrf_token %}
+		<a class="btn btn-primary" href="{{ request.path }}new">Новый</a>
+		<input type="submit" class="btn btn-primary" name="delete" value="Удалить">
 	{% for doc in doc_list %}
 		{% if forloop.first %}
 			<table border="1">	
 				<tr>
+					<th>Удалить</th>
 					<th>Дата</th>
 					<th>Номер</th>
 					<th>Проведен</th>
@@ -21,6 +22,7 @@
 		{% endif %}
 		
 		<tr>
+			<td><input type="checkbox" name="doc_id_{{ doc.id }}"></td>
 			<td>{{ doc.doc_date|date:"d.m.Y H:i:s" }}</td>
 			<td><a href="/doc/income/{{ doc.id }}"> {{ doc.doc_num }} </a></td>
 			<td>{% if doc.active %}
@@ -41,4 +43,6 @@
 		{% endif %}
 
 	{% endfor %}
+	</form>
+
 {% endblock %}

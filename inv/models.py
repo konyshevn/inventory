@@ -177,8 +177,8 @@ class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
-    follower = GM2MField(on_delete='CASCADE')
-    leader = GM2MField(on_delete='CASCADE')
+    follower = GM2MField()
+    leader = GM2MField()
 
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
@@ -321,6 +321,14 @@ class Document(models.Model):
             getattr(sys.modules[__name__], reg).objects.filter(base_doc_type=base_doc_type, base_doc_id=self.id).delete()
         self.active = False
         self.save()
+
+    def doc_delete(self):
+        if self.follower.count() != 0:
+            print('Followers exist - %s - %s' % (self.follower.count(), str(self.follower.all())))
+            return (False, )
+        self.reg_delete()
+        self.delete()
+        return (True, )
 
     @property
     def get_follower(self):

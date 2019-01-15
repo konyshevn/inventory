@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Удаление не выполнено{% endblock %}
+{% block content %}
+{% load staticfiles my_tags %}
+	<h1></h1>
+    <p>Не удалось выполнить удаление следующих документов:</p>
+  
+    {% for doc in doc_delete_errors %}
+        <p><a href="/doc/{{ doc|doc_name }}/{{ doc.id }}">{{ doc|doc_str }}</a>: На документ ссылаются другие документы</p>
+    {% endfor %}
+
+{% endblock %}

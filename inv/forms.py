@@ -3,6 +3,14 @@ from django.forms import ModelForm, modelformset_factory
 from inv.models import *
 import datetime
 from inv.selectize_widget import ModelSelectizeWidget
+from django.forms import widgets
+
+
+class StringWidget(widgets.Input):
+    def render(self, name, value, attrs=None):
+        # Create a hidden field first
+        hidden_field = widgets.HiddenField(attrs) 
+        return mark_safe("<p>%s</p>%s" % (value, hidden_field.render(value, attrs)))
 
 
 class DeviceTypeSelectizeWidget(ModelSelectizeWidget):
@@ -82,6 +90,25 @@ class DocIncomeForm(ModelForm):
         }
 
 
+
+DocIncomeFormSet = modelformset_factory(
+    DocIncome,
+    labels={
+        'doc_date': 'Дата',
+        'doc_num': 'Номер',
+        'department': 'Подразделение',
+        'stock': 'Склад'},
+    fields=['doc_num', 'doc_date', 'department', 'stock'],
+#    widgets={
+#        'doc_date': HiddenInputWithText,
+#        'doc_num': HiddenInputWithText,
+#        'department': HiddenInputWithText,
+#        'stock': HiddenInputWithText,
+#    },
+    can_delete=True,
+)
+
+
 DocIncomeTableUnitFormSet = modelformset_factory(
     DocIncomeTableUnit,
     form=DocIncomeForm,
@@ -95,7 +122,7 @@ DocIncomeTableUnitFormSet = modelformset_factory(
         'device': DeviceSelectizeWidget,
         'person': PersonSelectizeWidget,
     }
-    )
+)
 
 
 class DocWriteoffForm(ModelForm):

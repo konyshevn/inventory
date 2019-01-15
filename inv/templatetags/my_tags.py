@@ -21,3 +21,8 @@ def increase(val, inc):
 @register.filter(is_safe=True)
 def doc_name(obj):
     return obj._meta.model.__name__.lower()[3:]
+
+
+@register.filter()
+def doc_str(obj):
+    return str(obj)

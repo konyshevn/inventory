@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Оприходования{% endblock %}
+{% block content %}
+	<h1>Оприходования</h1>
+	<br>
+
+	<form action="">
+    	<button type="submit" class="btn btn-primary">Новый</button>
+		{{ form.as_table }}
+	</form>
+	
+	
+{% endblock %}

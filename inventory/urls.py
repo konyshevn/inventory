@@ -32,6 +32,7 @@ urlpatterns = [
     re_path('doc/(?P<doc_name>\w+)/$', inv.views.doc_list),
     re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/$', inv.views.doc_form),
     re_path('(?P<obj_type_name>\w+)/(?P<obj_name>\w+)/(?P<obj_id>\w+)/status/(?P<operation>\w+)/(?P<status>\d)/$', inv.views.operation_status),
+    re_path('doc/(doc_name>\w+)/status/doc_delete/(?P<status>\d)$', inv.views.doc_delete_status),
     re_path('catlg/(?P<catlg_name>\w+)/$', inv.views.catlg_list),
     re_path('catlg/(?P<catlg_name>\w+)/(?P<catlg_id>\w+)/$', inv.views.catlg_form),
     re_path('doc/(?P<doc_name>\w+)/(?P<doc_id>\w+)/reg/$', inv.views.doc_reg_recs),
