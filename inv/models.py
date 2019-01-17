@@ -175,7 +175,7 @@ class RegDeviceStockManager(models.Manager):
 # Мета-класс документ
 class Document(models.Model):
     doc_date = models.DateTimeField()
-    doc_num = models.CharField(unique_for_date='doc_date', max_length=15)
+    doc_num = models.IntegerField(unique_for_date='doc_date', max_length=15)
     active = models.BooleanField(default=False)
     follower = GM2MField()
     leader = GM2MField()
