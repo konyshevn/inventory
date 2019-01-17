@@ -238,6 +238,16 @@ def doc_form(request, doc_id, doc_name):
                 formset.extra += len(fromset_init_data)
                 return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
 
+            elif 'doc_delete' in request.POST:
+                dd = doc.doc_delete()
+                doc_exist_follower = []
+                if not dd[0]:
+                    doc_exist_follower.append({'id': doc.id, 'name': str(doc)})
+                    request.session['doc_delete_errors'] = doc_exist_follower
+                    status_url = '/doc/%s/status/doc_delete/0' % (doc_name, )
+                    #return HttpResponseRedirect(doc_delete_status_url)
+                else:
+                    status_url = '/doc/%s' % doc_name
             return HttpResponseRedirect(status_url)
     else:
         form = form_class(instance=doc)
