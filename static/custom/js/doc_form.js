@@ -21,3 +21,17 @@ function add_row() {
 
     tu.append(cloned);
 }  
+
+function delete_row() {
+    var table = document.getElementById('table_unit');  
+    var inputs = table.getElementsByTagName("input");
+    var i = inputs.length;
+    while (i--) {
+        var input = inputs[i];
+        if (input.checked == true) {
+            var tr = input.parentNode.parentNode;
+            $(tr).attr("style", "display:none");
+            //table.deleteRow(tr.rowIndex);
+        }
+    }
+}

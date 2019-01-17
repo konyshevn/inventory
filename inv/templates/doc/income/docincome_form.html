@@ -32,7 +32,8 @@
 		</div>
 		<br>
 		
-		<input type="button" value="Добавить" onClick="add_row();" />
+		<input type="button" value="Добавить строку" onClick="add_row();" />
+		<input type="button" value="Удалить строку" onClick="delete_row();" />
 		{{ formset.management_form }}
 		<table border="1" id="table_unit" class="table_unit">
 			{% for form_rec in formset %}
@@ -42,6 +43,7 @@
 				{% if forloop.first %}
 					<thead>
 						<tr>
+							<th>Удалить</th>
 							<th>{{ form_rec.device.label }}</th>
 							<th>{{ form_rec.person.label }}</th>
 							<th>{{ form_rec.qty.label }}</th>
@@ -52,6 +54,10 @@
 				{% endif %}
 
 				<tr>
+					<td>
+						{{ form_rec.DELETE.errors }}
+						{{ form_rec.DELETE }}
+					</td>
 					<td>
 						{{ form_rec.device.errors }}
 						{{ form_rec.device }}
@@ -78,6 +84,6 @@
 	<input type="submit" name="doc_write" value="Записать">
 	</form>
 	<script type="text/javascript">
-
+ 
 	</script>
 {% endblock %}

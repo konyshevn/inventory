@@ -90,25 +90,6 @@ class DocIncomeForm(ModelForm):
         }
 
 
-
-DocIncomeFormSet = modelformset_factory(
-    DocIncome,
-    labels={
-        'doc_date': 'Дата',
-        'doc_num': 'Номер',
-        'department': 'Подразделение',
-        'stock': 'Склад'},
-    fields=['doc_num', 'doc_date', 'department', 'stock'],
-#    widgets={
-#        'doc_date': HiddenInputWithText,
-#        'doc_num': HiddenInputWithText,
-#        'department': HiddenInputWithText,
-#        'stock': HiddenInputWithText,
-#    },
-    can_delete=True,
-)
-
-
 DocIncomeTableUnitFormSet = modelformset_factory(
     DocIncomeTableUnit,
     form=DocIncomeForm,
@@ -121,7 +102,7 @@ DocIncomeTableUnitFormSet = modelformset_factory(
     widgets={
         'device': DeviceSelectizeWidget,
         'person': PersonSelectizeWidget,
-    }
+    },
 )
 
 

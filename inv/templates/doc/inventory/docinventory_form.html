@@ -40,7 +40,8 @@
 		</div>
 		<br>
 		
-		<input type="button" value="Добавить" onClick="add_row();" />
+		<input type="button" value="Добавить строку" onClick="add_row();" />
+		<input type="button" value="Удалить строку" onClick="delete_row();" />
 		<input type="submit" name="doc_inventory_fill_saldo" value="Заполнить">
 		
 		{{ formset.management_form }}
@@ -59,6 +60,7 @@
 			{% for form_rec in formset %}
 				{% if forloop.first %}
 					<thead>
+						<th>Удалить</th>
 						<th>{{ form_rec.device.label }}</th>
 						<th>{{ form_rec.person_accountg.label }}</th>
 						<th>{{ form_rec.qty_accountg.label }}</th>
@@ -70,6 +72,10 @@
 					<tbody>
 				{% endif %}
 				<tr>
+					<td>
+						{{ form_rec.DELETE.errors }}
+						{{ form_rec.DELETE }}
+					</td>
 					<td>
 						{{ form_rec.device.errors }}
 						{{ form_rec.device }}

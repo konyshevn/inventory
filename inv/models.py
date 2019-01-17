@@ -285,6 +285,12 @@ class Document(models.Model):
             #print(table_unit)
             for rec in table_unit:
                 if rec:
+                    # удалить помеченные в форме записи TableUnit
+                    if (('DELETE' in rec) and (rec['DELETE'])):
+                        if rec['id'] is not None:
+                            rec['id'].delete()
+                        continue
+
                     # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
                     # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
                     if rec['id'] is not None:
