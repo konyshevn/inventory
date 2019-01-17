@@ -4,14 +4,16 @@
 	<h1>Устройства</h1>
 	<br>
 
-	<form action="{{ request.path }}new">
-    	<button type="submit" class="btn btn-primary">Новый</button>
-	</form>
+	<form action="" method="post">
+		{% csrf_token %}
+		<a class="btn btn-primary" href="{{ request.path }}new">Новый</a>
+		<input type="submit" class="btn btn-primary" name="delete" value="Удалить">
 	
 	{% for catlg in catlg_list %}
 		{% if forloop.first %}
 			<table border="1">	
 				<tr>
+					<th>Удалить</th>
 					<th>Тип</th>
 					<th>Наименование</th>
 					<th>Серийный номер</th>
@@ -21,6 +23,7 @@
 		{% endif %}
 		
 		<tr>
+			<td><input type="checkbox" name="catlg_id_{{ catlg.id }}"></td>
 			<td>{{ catlg.device_type }}</td>
 			<td><a href="/catlg/device/{{ catlg.id }}"> {{ catlg.name }} </a></td>
 			<td>{{ catlg.serial_num }}</td>
@@ -33,4 +36,5 @@
 		{% endif %}
 
 	{% endfor %}
+</form>
 {% endblock %}

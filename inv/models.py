@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db.models import Sum
+from django.db.models.deletion import ProtectedError
 import sys
 from functools import reduce
 import datetime, time
@@ -27,6 +28,14 @@ class Catalog(models.Model):
             if attr in catlg_attr:
                 setattr(self, attr, catlg_attr[attr])
         self.save()
+
+    def catlg_delete(self):
+        try:
+            self.delete()
+        except ProtectedError as err:
+            return(False, str(err))
+        else:
+            return (True, )
 
     class Meta:
         abstract = True
@@ -175,7 +184,7 @@ class RegDeviceStockManager(models.Manager):
 # Мета-класс документ
 class Document(models.Model):
     doc_date = models.DateTimeField()
-    doc_num = models.IntegerField(unique_for_date='doc_date', max_length=15)
+    doc_num = models.IntegerField(unique_for_date='doc_date')
     active = models.BooleanField(default=False)
     follower = GM2MField()
     leader = GM2MField()

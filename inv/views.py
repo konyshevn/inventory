@@ -182,16 +182,12 @@ def doc_form(request, doc_id, doc_name):
         form = form_class(request.POST, instance=doc)
         formset = formset_class(request.POST, queryset=doc.get_table_unit())
 
-        #print('DELETED: %s' % formset.deleted_forms)
         print('form.is_valid() - %s' % form.is_valid())
         print('formset.is_valid() - %s' % formset.is_valid())
         if form.is_valid() & formset.is_valid():
 
             form_cd = form.cleaned_data
             formset_cd = formset.cleaned_data
-            #formset_cd_clean = [item for item in formset_cd if (('DELETE' in item) and (not item['DELETE']))]
-            #formset_cd = formset_cd_clean
-            #print('formset_cd: %s' % formset_cd)
             if 'reg_write' in request.POST:
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()
@@ -304,9 +300,33 @@ def catlg_list(request, catlg_name):
     if not catlg_type:
         return HttpResponseRedirect('/catlg_type_error/')
     model = catlg_type['model']
+
+    if request.method == 'POST':
+        if 'delete' in request.POST:
+            print(dict(request.POST))
+            delete_catlg_id = [k[9:] for k, v in dict(request.POST).items() if k[0:9] == 'catlg_id_']
+            print(delete_catlg_id)
+
+            catlg_exist_ref = []
+            for catlg_id in delete_catlg_id:
+                catlg = model.objects.get(id=catlg_id)
+                cd = catlg.catlg_delete()
+                if not cd[0]:
+                    catlg_exist_ref.append({'id': catlg.id, 'name': str(catlg)})
+            if catlg_exist_ref:
+                print(catlg_exist_ref)
+                request.session['catlg_delete_errors'] = catlg_exist_ref
+                catlg_delete_status_url = '/catlg/%s/status/catlg_delete/0' % (catlg_name, )
+                return HttpResponseRedirect(catlg_delete_status_url)
+
     catlg_list = model.objects.all().order_by(catlg_type['order_by'])
     template_name = 'catlg/%s/%s_list.html' % (catlg_name, model.__name__.lower())
     return render(request, template_name, {'catlg_list': catlg_list})
+
+
+def catlg_delete_status(request, status, catlg_name):
+    template_name = 'catlg_delete_fail.html'
+    return render(request, template_name, {'catlg_name': catlg_name, 'catlg_delete_errors': request.session['catlg_delete_errors']})
 
 
 # форма справочника

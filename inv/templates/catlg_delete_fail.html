@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Удаление не выполнено{% endblock %}
+{% block content %}
+
+	<h1></h1>
+    <p>Не удалось выполнить удаление следующих элементов справочника:</p>
+
+    {% for catlg in catlg_delete_errors %}  
+         <p><a href="/catlg/{{ catlg_name }}/{{ catlg.id }}">{{ catlg.name }}</a>: С элементом связаны другие объекты (Документы/Справочники)</p>
+    {% endfor %}
+
+{% endblock %}

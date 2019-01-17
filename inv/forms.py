@@ -6,13 +6,6 @@ from inv.selectize_widget import ModelSelectizeWidget
 from django.forms import widgets
 
 
-class StringWidget(widgets.Input):
-    def render(self, name, value, attrs=None):
-        # Create a hidden field first
-        hidden_field = widgets.HiddenField(attrs) 
-        return mark_safe("<p>%s</p>%s" % (value, hidden_field.render(value, attrs)))
-
-
 class DeviceTypeSelectizeWidget(ModelSelectizeWidget):
     model = DeviceType
     search_fields = ['name__icontains']
