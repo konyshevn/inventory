@@ -355,6 +355,16 @@ def catlg_form(request, catlg_id, catlg_name):
                 else:
                     request.session['status_errors'] = (cw, )
                     status_url = '/catlg/%s/%s/status/catlg_write/0' % (catlg_name, catlg.id)
+            elif 'catlg_delete' in request.POST:
+                
+                cd = catlg.catlg_delete()
+                catlg_exist_ref = []
+                if not cd[0]:
+                    catlg_exist_ref.append({'id': catlg.id, 'name': str(catlg)})
+                    request.session['catlg_delete_errors'] = catlg_exist_ref
+                    status_url = '/catlg/%s/status/catlg_delete/0' % (catlg_name, )
+                else:
+                    status_url = '/catlg/%s' % catlg_name
             return HttpResponseRedirect(status_url)
     else:
         if catlg_id == 'new':
