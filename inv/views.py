@@ -152,7 +152,7 @@ def doc_list(request, doc_name):
                 doc_delete_status_url = '/doc/%s/status/doc_delete/0' % (doc_name, )
                 return HttpResponseRedirect(doc_delete_status_url)
 
-    doc_list = model.objects.all().order_by('doc_date')
+    doc_list = model.objects.all().order_by('-doc_date', '-doc_num')
     template_name = 'doc/%s/%s_list.html' % (doc_name, model.__name__.lower())
     return render(request, template_name, {'doc_list': doc_list})
 
@@ -185,7 +185,7 @@ def doc_form(request, doc_id, doc_name):
         print('form.is_valid() - %s' % form.is_valid())
         print('formset.is_valid() - %s' % formset.is_valid())
         
-        print('%s\n%s\n%s' % ('-'*20, formset, '-'*20))
+        #print('%s\n%s\n%s' % ('-'*20, formset, '-'*20))
         
         if form.is_valid() & formset.is_valid():
 

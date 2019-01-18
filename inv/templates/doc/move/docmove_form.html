@@ -44,6 +44,10 @@
 		<input type="button" value="Добавить строку" onClick="add_row();" />
 		<input type="button" value="Удалить строку" onClick="delete_row();" />
 		{{ formset.management_form }}
+		{% if formset.errors %}
+			{{ formset.errors }}
+			{{ formset.non_form_errors }}
+		{% endif %}
 		<table id="table_unit" class="table_unit"
 			data-toggle="table"
 			data-filter-control="true" 
@@ -92,6 +96,7 @@
 						{{ form_rec.comment.errors }}
 						{{ form_rec.comment }}
 					</td>
+					<td class="hidden">{{ form_rec.id }}</td>
 				</tr>
 			{% endfor %}
 		</table>
