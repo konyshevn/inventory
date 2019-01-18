@@ -53,10 +53,13 @@
 		{{ formset.errors }}
 		{{ formset.non_field_errors }}
 		-->
-		<table 
-			border="1"
-			id="table_unit"
-			>
+		<table id="table_unit"
+			data-toggle="table"
+			data-filter-control="true" 
+			data-show-export="true"
+			data-click-to-select="true"
+			data-toolbar="#toolbar"
+			class="table table-hover">
 			{% for form_rec in formset %}
 				{% if forloop.first %}
 					<thead>

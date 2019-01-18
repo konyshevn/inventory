@@ -13,20 +13,29 @@
 	
 	{% for catlg in catlg_list %}
 		{% if forloop.first %}
-			<table border="1">	
+			<table 
+				data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">	
+				<thead>	
 				<tr>
-					<th>Удалить</th>
+					<th data-width="50">Удалить</th>
 					<th>Фамилия</th>
 					<th>Имя</th>
 					<th>Подразделение</th>
-				</tr>	
+				</tr>
+				</thead>	
 		{% endif %}
 		
 		<tr>
 			<td><input type="checkbox" name="catlg_id_{{ catlg.id }}"></td>
-			<td><a href="/catlg/person/{{ catlg.id }}"> {{ catlg.surname }} </a></td>
-			<td>{{ catlg.name }}</td>
-			<td>{{ catlg.department }}</td>
+			<td data-sortable="true"><a href="/catlg/person/{{ catlg.id }}"> {{ catlg.surname }} </a></td>
+			<td data-sortable="true">{{ catlg.name }}</td>
+			<td data-sortable="true">{{ catlg.department }}</td>
 		</tr>
 		
 		{% if forloop.last %}

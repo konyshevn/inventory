@@ -12,15 +12,24 @@
 		<input type="checkbox" name="set" onclick="checkboxes_sel_all(this)"> Выделить/снять все
 	{% for catlg in catlg_list %}
 		{% if forloop.first %}
-			<table border="1">	
+			<table 
+				data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">	
+				<thead>	
 				<tr>
-					<th>Удалить</th>
-					<th>Тип</th>
-					<th>Наименование</th>
-					<th>Серийный номер</th>
-					<th>Инвентарный номер</th>
-					<th>Комментарий</th>
-				</tr>	
+					<th data-width="50">Удалить</th>
+					<th data-sortable="true">Тип</th>
+					<th data-sortable="true">Наименование</th>
+					<th data-sortable="true">Серийный номер</th>
+					<th data-sortable="true">Инвентарный номер</th>
+					<th data-sortable="true">Комментарий</th>
+				</tr>
+				</thead>	
 		{% endif %}
 		
 		<tr>

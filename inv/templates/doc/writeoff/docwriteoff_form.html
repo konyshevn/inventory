@@ -37,17 +37,27 @@
 		<input type="button" value="Добавить строку" onClick="add_row();" />
 		<input type="button" value="Удалить строку" onClick="delete_row();" />
 		{{ formset.management_form }}
-		<table border="1" id="table_unit">
+		<table id="table_unit"
+			data-toggle="table"
+			data-filter-control="true" 
+			data-show-export="true"
+			data-click-to-select="true"
+			data-toolbar="#toolbar"
+			class="table table-hover">
 			{% for form_rec in formset %}
 				{% for field in form_rec.hidden_fields %}
 				{{ field }}
 				{% endfor %}
 				{% if forloop.first %}
+				<thead>
+					<tr>
 				  	<th>Удалить</th>
 					<th>{{ form_rec.device.label }}</th>
 					<th>{{ form_rec.person.label }}</th>
 					<th>{{ form_rec.qty.label }}</th>
 					<th>{{ form_rec.comment.label }}</th>
+					</tr>
+				</thead>
 				{% endif %}
 				<tr>
 					<td>

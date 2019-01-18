@@ -13,15 +13,24 @@
 
 	{% for doc in doc_list %}
 		{% if forloop.first %}
-			<table border="1">	
+			<table 
+				data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">	
+				<thead>	
 				<tr>
-					<th>Удалить</th>
-					<th>Дата</th>
-					<th>Номер</th>
-					<th>Проведен</th>
-					<th>Подразделение</th>
-					<th>Склад</th>
-				</tr>	
+					<th data-width="50">Удалить</th>
+					<th data-sortable="true">Дата</th>
+					<th data-sortable="true">Номер</th>
+					<th data-sortable="true">Проведен</th>
+					<th data-sortable="true">Подразделение</th>
+					<th data-sortable="true">Склад</th>
+				</tr>
+				</thead>	
 		{% endif %}
 		
 		<tr>

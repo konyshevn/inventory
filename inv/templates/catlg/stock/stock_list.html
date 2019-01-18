@@ -13,16 +13,25 @@
 	
 	{% for catlg in catlg_list %}
 		{% if forloop.first %}
-			<table border="1">	
+			<table id="obj_list"
+				data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">	
+				<thead>	
 				<tr>
-					<th>Удалить</th>
+					<th data-width="50">Удалить</th>
 					<th>Наименование</th>
-				</tr>	
+				</tr>
+				</thead>	
 		{% endif %}
 		
 		<tr>
 			<td><input type="checkbox" name="catlg_id_{{ catlg.id }}"></td>
-			<td><a href="/catlg/stock/{{ catlg.id }}"> {{ catlg.name }} </a></td>
+			<td data-sortable="true"><a href="/catlg/stock/{{ catlg.id }}"> {{ catlg.name }} </a></td>
 		</tr>
 		
 		{% if forloop.last %}
