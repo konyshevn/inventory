@@ -35,3 +35,27 @@ function delete_row() {
         }
     }
 }
+
+function checkboxes_sel_all(obj)
+  {
+  // Получаем NodeList дочерних элементов input формы:
+  var items = obj.form.getElementsByTagName("input"), len, i;
+ 
+  for (i = 0, len = items.length; i < len; i += 1)
+    {
+    // Если текущий элемент является чекбоксом
+    if (items.item(i).type && items.item(i).type === "checkbox")
+      {
+      if (obj.checked)
+        {
+        // Устанавливаем отметки всем чекбоксам
+        items.item(i).checked = true;
+        }
+      else
+        {
+        // Иначе снимаем отметки со всех чекбоксов:
+        items.item(i).checked = false;
+        }      
+      }
+    }
+  }

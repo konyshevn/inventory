@@ -4,19 +4,24 @@
 	<h1>Склады</h1>
 	<br>
 
-	<form action="{{ request.path }}new">
-    	<button type="submit" class="btn btn-primary">Новый</button>
-	</form>
+	<form action="" method="post">
+		{% csrf_token %}
+		<a class="btn btn-primary" href="{{ request.path }}new">Новый</a>
+		<input type="submit" class="btn btn-primary" name="delete" value="Удалить">
+		<br>
+		<input type="checkbox" name="set" onclick="checkboxes_sel_all(this)"> Выделить/снять все
 	
 	{% for catlg in catlg_list %}
 		{% if forloop.first %}
 			<table border="1">	
 				<tr>
+					<th>Удалить</th>
 					<th>Наименование</th>
 				</tr>	
 		{% endif %}
 		
 		<tr>
+			<td><input type="checkbox" name="catlg_id_{{ catlg.id }}"></td>
 			<td><a href="/catlg/stock/{{ catlg.id }}"> {{ catlg.name }} </a></td>
 		</tr>
 		
@@ -25,4 +30,5 @@
 		{% endif %}
 
 	{% endfor %}
+</form>
 {% endblock %}

@@ -321,7 +321,7 @@ def catlg_list(request, catlg_name):
 
     catlg_list = model.objects.all().order_by(catlg_type['order_by'])
     template_name = 'catlg/%s/%s_list.html' % (catlg_name, model.__name__.lower())
-    return render(request, template_name, {'catlg_list': catlg_list})
+    return render(request, template_name, {'catlg_list': catlg_list, 'model': model})
 
 
 def catlg_delete_status(request, status, catlg_name):

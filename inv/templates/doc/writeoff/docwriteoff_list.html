@@ -8,7 +8,8 @@
 		{% csrf_token %}
 		<a class="btn btn-primary" href="{{ request.path }}new">Новый</a>
 		<input type="submit" class="btn btn-primary" name="delete" value="Удалить">
-
+		<br>
+		<input type="checkbox" name="set" onclick="checkboxes_sel_all(this)"> Выделить/снять все
 
 	{% for doc in doc_list %}
 		{% if forloop.first %}
