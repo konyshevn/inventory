@@ -5,17 +5,26 @@
 	<br>
 	{% for reg, recs in reg_recs.items %}
 	       	<p>Регистр {{ reg }}</p>
-			<table border="1">	
+			<table 
+				data-toggle="table"
+			 	data-search="true"
+			 	data-filter-control="true" 
+			 	data-show-export="true"
+			 	data-click-to-select="true"
+			 	data-toolbar="#toolbar"
+			 	class="table table-hover">	
+				<thead>	
 				<tr>
-					<th>Операция</th>
-					<th>Документ-основание</th>
-					<th>Дата</th>
-					<th>Устройство</th>
-					<th>Подразделение</th>
-					<th>Склад</th>
-					<th>Сотрудник</th>
-					<th>Количество</th>
+					<th data-sortable="true">Операция</th>
+					<th data-sortable="true">Документ-основание</th>
+					<th data-sortable="true">Дата</th>
+					<th data-sortable="true">Устройство</th>
+					<th data-sortable="true">Подразделение</th>
+					<th data-sortable="true">Склад</th>
+					<th data-sortable="true">Сотрудник</th>
+					<th data-sortable="true">Количество</th>
 				</tr>	
+				</thead>
 			{% for rec in recs %}
 				<tr>
 					<td>{{ rec.operation_type }}</td>

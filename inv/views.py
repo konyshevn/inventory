@@ -184,6 +184,9 @@ def doc_form(request, doc_id, doc_name):
 
         print('form.is_valid() - %s' % form.is_valid())
         print('formset.is_valid() - %s' % formset.is_valid())
+        
+        print('%s\n%s\n%s' % ('-'*20, formset, '-'*20))
+        
         if form.is_valid() & formset.is_valid():
 
             form_cd = form.cleaned_data
@@ -356,7 +359,7 @@ def catlg_form(request, catlg_id, catlg_name):
                     request.session['status_errors'] = (cw, )
                     status_url = '/catlg/%s/%s/status/catlg_write/0' % (catlg_name, catlg.id)
             elif 'catlg_delete' in request.POST:
-                
+
                 cd = catlg.catlg_delete()
                 catlg_exist_ref = []
                 if not cd[0]:

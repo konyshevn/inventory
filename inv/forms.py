@@ -3,7 +3,6 @@ from django.forms import ModelForm, modelformset_factory
 from inv.models import *
 import datetime
 from inv.selectize_widget import ModelSelectizeWidget
-from django.forms import widgets
 
 
 class DeviceTypeSelectizeWidget(ModelSelectizeWidget):
