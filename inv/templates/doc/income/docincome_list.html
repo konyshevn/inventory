@@ -28,6 +28,7 @@
 					<th data-sortable="true">Проведен</th>
 					<th data-sortable="true">Подразделение</th>
 					<th data-sortable="true">Склад</th>
+					<th data-sortable="true">Комментарий</th>
 				</tr>
 				</thead>	
 		{% endif %}
@@ -47,6 +48,7 @@
 					{{ doc.stock }}
 				{% endif %}
 			</td>
+			<td>{{ doc.comment }}</td>
 		</tr>
 		
 		{% if forloop.last %}

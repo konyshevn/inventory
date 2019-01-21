@@ -30,6 +30,7 @@
 					<th data-sortable="true">Подразделение получатель</th>
 					<th data-sortable="true">Склад отправитель</th>
 					<th data-sortable="true">Склад получатель</th>
+					<th data-sortable="true">Комментарий</th>
 				</tr>
 				</thead>	
 		{% endif %}
@@ -54,6 +55,7 @@
 					{{ doc.stock_to }}
 				{% endif %}
 			</td>
+			<td>{{ doc.comment }}</td>
 		</tr>
 		
 		{% if forloop.last %}

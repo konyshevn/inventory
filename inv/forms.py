@@ -69,12 +69,13 @@ class ReportStatementDocsForm(forms.Form):
 class DocIncomeForm(ModelForm):
     class Meta:
         model = DocIncome
-        fields = ['doc_num', 'doc_date', 'department', 'stock']
+        fields = ['doc_num', 'doc_date', 'department', 'stock', 'comment']
         labels = {
             'doc_date': 'Дата',
             'doc_num': 'Номер',
             'department': 'Подразделение',
-            'stock': 'Склад'}
+            'stock': 'Склад',
+            'comment': 'Комментарий', }
         widgets = {
             'doc_date': forms.DateTimeInput,
             'department': DepartmentSelectizeWidget,
@@ -101,12 +102,14 @@ DocIncomeTableUnitFormSet = modelformset_factory(
 class DocWriteoffForm(ModelForm):
     class Meta:
         model = DocWriteoff
-        fields = ['doc_num', 'doc_date', 'department', 'stock']
+        fields = ['doc_num', 'doc_date', 'department', 'stock', 'comment']
         labels = {
             'doc_date': 'Дата',
             'doc_num': 'Номер',
             'department': 'Подразделение',
-            'stock': 'Склад'}
+            'stock': 'Склад',
+            'comment': 'Комментарий',
+        }
         widgets = {
             'doc_date': forms.DateTimeInput,
             'department': DepartmentSelectizeWidget,
@@ -135,14 +138,16 @@ DocWriteoffTableUnitFormSet = modelformset_factory(
 class DocMoveForm(ModelForm):
     class Meta:
         model = DocMove
-        fields = ['doc_num', 'doc_date', 'department_from', 'department_to', 'stock_from', 'stock_to']
+        fields = ['doc_num', 'doc_date', 'department_from', 'department_to', 'stock_from', 'stock_to', 'comment']
         labels = {
             'doc_date': 'Дата',
             'doc_num': 'Номер',
             'department_from': 'Подразделение отправитель',
             'department_to': 'Подразделение получатель',
             'stock_from': 'Склад отправитель',
-            'stock_to': 'Склад получатель'}
+            'stock_to': 'Склад получатель',
+            'comment': 'Комментарий',
+        }
         widgets = {
             'doc_date': forms.DateTimeInput,
             'department_from': DepartmentSelectizeWidget,
@@ -175,12 +180,13 @@ DocMoveTableUnitFormSet = modelformset_factory(
 class DocInventoryForm(ModelForm):
     class Meta:
         model = DocInventory
-        fields = ['doc_num', 'doc_date', 'department', 'stock']
+        fields = ['doc_num', 'doc_date', 'department', 'stock', 'comment']
         labels = {
             'doc_date': 'Дата',
             'doc_num': 'Номер',
             'department': 'Подразделение',
             'stock': 'Склад',
+            'comment': 'Комментарий',
         }
         widgets = {
             'doc_date': forms.DateTimeInput,

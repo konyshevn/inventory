@@ -188,6 +188,7 @@ class Document(models.Model):
     active = models.BooleanField(default=False)
     follower = GM2MField()
     leader = GM2MField()
+    comment = models.CharField(max_length=70, blank=True)
 
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
