@@ -296,7 +296,7 @@ class Document(models.Model):
                 if rec:
                     # удалить помеченные в форме записи TableUnit
                     if (('DELETE' in rec) and (rec['DELETE'])):
-                        if rec['id'] is not None:
+                        if (('id' in rec) and (rec['id'] is not None)):
                             rec['id'].delete()
                         continue
 
@@ -517,12 +517,12 @@ class DocInventory(Document):
     _REG_CONST_ATTR_MAP = {
     }
 
-    def doc_inventory_fill_saldo(self, department):
+    def doc_inventory_fill_saldo(self, department, stock=None):
         start = time.time()
         table_unit = []
         for device in Device.objects.all():
             location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
-            if (location['department'] == department) and (location['qty'] == 1):
+            if (location['department'] == department) and (location['qty'] == 1) and ((location['stock'] == stock) * (stock is not None)):
                 table_unit.append({
                     'device': device,
                     'person_accountg': location['person'],

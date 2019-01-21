@@ -232,7 +232,7 @@ def doc_form(request, doc_id, doc_name):
             elif 'doc_inventory_fill_saldo' in request.POST:
                 print('doc_inventory_fill_saldo')
                 form = form_class(instance=doc)
-                fromset_init_data = doc.doc_inventory_fill_saldo(form_cd['department'])
+                fromset_init_data = doc.doc_inventory_fill_saldo(form_cd['department'], form_cd['stock'])
                 formset = formset_class(queryset=model.objects.none(), initial=fromset_init_data)
                 formset.extra += len(fromset_init_data)
                 return render(request, template_name, {'form': form, 'formset': formset, 'active': doc.active})
@@ -398,13 +398,13 @@ def doc_reg_recs(request, doc_name, doc_id):
 
 
 def report_current_location(request):
-    start = time.time()
     location = []
     filter_vals = {}
     if request.method == 'POST':
         form = ReportCurrentLocationForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
+
             if not cd['device'] == '' and not cd['device'] is None:
                 devices = Device.objects.filter(id=cd['device'])
             else:
@@ -414,55 +414,33 @@ def report_current_location(request):
                 date_to = cd['date_to'] + datetime.timedelta(days=1)
 
             if not cd['department'] == '' and not cd['department'] is None:
-                filter_vals['department'] = cd['department']
+                filter_vals['department'] = Department.objects.get(id=cd['department'])
 
             if not cd['stock'] == '' and not cd['stock'] is None:
-                filter_vals['stock'] = cd['stock']
+                filter_vals['stock'] = Stock.objects.get(id=cd['stock'])
 
             if not cd['person'] == '' and not cd['person'] is None:
-                filter_vals['person'] = cd['person']
+                filter_vals['person'] = Person.objects.get(id=cd['person'])
 
-            total_device = 0
-            total_reg_rec = 0
-            total_if = 0.
-            total_diff = 0
             for device in devices:
-                location_rec = {'device': device, 'department': '', 'stock': '', 'person': '', 'qty': None}
-                qty = RegDeviceStock.objects.saldo(device=device, date_to=date_to)
-                if qty == 1:
-                    reg_rec = RegDeviceStock.objects.filter(device=device, operation_type='+', reg_date__lte=date_to).order_by('-reg_date').first()
-
-                    start_if = time.time()
-                    #if reg_rec[0].department is None:
-                    #    location_rec['department'] = ''
-                    #else:
-                    location_rec['department'] = str(reg_rec.department)
-
-                    if reg_rec.stock is None:
-                        location_rec['stock'] = ''
-                    else:
-                        location_rec['stock'] = str(reg_rec.stock)
-
-                    if reg_rec.person is None:
-                        location_rec['person'] = ''
-                    else:
-                        location_rec['person'] = str(reg_rec.person)
-
-                    total_if = total_if + time.time() - start_if
-
-                location_rec['qty'] = qty
+                location_rec = RegDeviceStock.objects.current_location(device=device, date=date_to)
                 filter_diff = DictDiffer(location_rec, filter_vals)
                 if len(filter_diff.changed()) == 0:
+                    location_rec['department'] = str(location_rec['department'])
+
+                    if location_rec['stock'] is None:
+                        location_rec['stock'] = ''
+                    else:
+                        location_rec['stock'] = str(location_rec['stock'])
+
+                    if location_rec['person'] is None:
+                        location_rec['person'] = ''
+                    else:
+                        location_rec['person'] = str(location_rec['person'])
+                    location_rec['device'] = str(device)
                     location.append(location_rec)
-        
-        print('-' * 50)
-        print('PERIOD total_if: ' + str(total_if))
     else:
         form = ReportCurrentLocationForm()
-
-    print('-' * 50)
-    print('PERIOD report_current_location total: ' + str(time.time() - start))
-    print('-' * 50)
 
     template_name = 'report/current_location.html'
     return render(request, template_name, {'location': location, 'form': form})

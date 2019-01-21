@@ -99,7 +99,10 @@
 				<td colspan="3">Не удалось определить местоположение</td>
 			{% endif %}
 			<td>
+				{% if loc.qty != None %}
 				{{ loc.qty }}
+
+				{% endif %}
 			</td>
 		</tr>
 	{% endfor %}
