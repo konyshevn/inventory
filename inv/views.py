@@ -184,9 +184,6 @@ def doc_form(request, doc_id, doc_name):
 
         print('form.is_valid() - %s' % form.is_valid())
         print('formset.is_valid() - %s' % formset.is_valid())
-        
-        #print('%s\n%s\n%s' % ('-'*20, formset, '-'*20))
-        
         if form.is_valid() & formset.is_valid():
 
             form_cd = form.cleaned_data

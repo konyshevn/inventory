@@ -8,9 +8,13 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js">
     </script>
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    
 
     <!-- Bootstrap-table -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
@@ -45,33 +49,57 @@
 </head>
 <body>
     <div class="container">
-        <div>
-            <a href="/main/" class="btn btn-success">Главная</a>
-            <a href="/admin/" class="btn btn-warning">Admin</a>
-            <a href="/upload_file/" class="btn btn-warning">Импорт</a>
+
+    <div class="btn-group">
+         <button type="button" id="menu_service" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Сервис
+        </button>
+        <div class="dropdown-menu" aria-labelledby="menu_service">
+            <a class="dropdown-item "href="/main/">Главная</a>
+            <a class="dropdown-item "href="/admin/">Admin</a>
+            <a class="dropdown-item" href="/upload_file/">Импорт</a>
         </div>
-        <div>
-            <b>Документы:</b> 
-            <a href="/doc/income/" class="btn btn-info">Оприходование</a>
-            <a href="/doc/move/" class="btn btn-info">Перемещение</a>
-            <a href="/doc/writeoff/" class="btn btn-info">Списание</a>
-            <a href="/doc/inventory/" class="btn btn-info">Инвентаризация</a>
+    </div>
+
+    <div class="btn-group">   
+        <button type="button" id="menu_docs" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Документы
+        </button>
+        <div class="dropdown-menu" aria-labelledby="menu_docs">
+            <a class="dropdown-item" href="/doc/income/">Оприходование</a>
+            <a class="dropdown-item" href="/doc/move/">Перемещение</a>
+            <a class="dropdown-item" href="/doc/writeoff/">Списание</a>
+            <a class="dropdown-item" href="/doc/inventory/">Инвентаризация</a>
         </div>
-        <div>
-            <b>Справочники:</b>
-            <a href="/catlg/device/" class="btn btn-secondary">Устройства</a>
-            <a href="/catlg/devicetype/" class="btn btn-secondary">Типы устройств</a>
-            <a href="/catlg/nomenclature/" class="btn btn-secondary">Номенклатура</a>
-            <a href="/catlg/department/" class="btn btn-secondary">Подразделения</a>
-            <a href="/catlg/stock/" class="btn btn-secondary">Склады</a>
-            <a href="/catlg/person/" class="btn btn-secondary">Сотрудники</a>
+    </div>
+
+    <div class="btn-group">   
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Справочники
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="/catlg/device/">Устройства</a>
+            <a class="dropdown-item" href="/catlg/devicetype/">Типы устройств</a>
+            <a class="dropdown-item" href="/catlg/nomenclature/">Номенклатура</a>
+            <a class="dropdown-item" href="/catlg/department/">Подразделения</a>
+            <a class="dropdown-item" href="/catlg/stock/">Склады</a>
+            <a class="dropdown-item" href="/catlg/person/">Сотрудники</a>
         </div>
-        <div>
-            <b>Отчеты:</b>
-            <a href="/report/current_location/" class="btn btn-primary">Местоположение на дату</a>
-            <a href="/report/statement_docs/" class="btn btn-primary">Ведомость</a>
+    </div>
+    
+    <div class="btn-group">   
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Отчеты
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="/report/current_location/">Местоположение на дату</a>
+            <a class="dropdown-item" href="/report/statement_docs/">Ведомость</a>
 
         </div>
+    </div>
+
+
+
         
         <hr>
     	{% block content %}{% load staticfiles my_tags %}{% endblock %}
