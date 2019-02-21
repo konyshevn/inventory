@@ -13,6 +13,10 @@ import json
 from django.core.cache import caches
 from django.core import signing
 
+
+def home(request):
+    return render(request, 'index.html')
+
 DOCUMENT = {
     'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
     'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},

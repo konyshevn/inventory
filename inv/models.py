@@ -523,7 +523,7 @@ class DocInventory(Document):
         table_unit = []
         for device in Device.objects.all():
             location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
-            if (location['department'] == department) and (location['qty'] == 1) and ((location['stock'] == stock) * (stock is not None)):
+            if (location['department'] == department) and (location['qty'] == 1) and ((location['stock'] == stock) or (stock is not None)):
                 table_unit.append({
                     'device': device,
                     'person_accountg': location['person'],

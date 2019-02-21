@@ -18,6 +18,8 @@ from django.urls import path, re_path
 import inv.views
 import inv.models
 import inv.forms
+from django.views.generic import TemplateView
+from django.contrib.staticfiles.views import serve
 
 urlpatterns = [
     re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
@@ -41,5 +43,8 @@ urlpatterns = [
     re_path('report/statement_docs/$', inv.views.report_statement_docs),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/new/(?P<doc_follower_name>\w+)/$', inv.views.follower_manager),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/hierarchy/$', inv.views.follower_hierarchy),
+    re_path('^.*$', TemplateView.as_view(template_name="index.html"), name="home"),
+#    re_path('^.*$/app', inv.views.home),
 
 ]
+

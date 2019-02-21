@@ -70,7 +70,7 @@ ROOT_URLCONF = 'inventory.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'static/custom/dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,7 +143,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static/custom"), )
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static/custom"), os.path.join(BASE_DIR, "static/custom/dist"))
 
 DATETIME_INPUT_FORMATS = ['%d.%m.%Y %H:%M:%S', ]
 DATE_INPUT_FORMATS = ['%d.%m.%Y %H:%M:%S', ]
