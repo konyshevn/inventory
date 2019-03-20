@@ -14,6 +14,21 @@ from django.core.cache import caches
 from django.core import signing
 
 
+# Create your views here.
+from rest_framework import viewsets
+from . import serializers
+
+
+class DocIncomeViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.DocIncomeSerializer
+    queryset = DocIncome.objects.all()
+
+
+class RegDeviceStockViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.RegDeviceStockSerializer
+    queryset = RegDeviceStock.objects.all()
+
+
 def home(request):
     return render(request, 'index.html')
 

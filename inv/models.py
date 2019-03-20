@@ -75,7 +75,7 @@ class Device(Catalog):
         verbose_name = 'Устройство'
 
     def __str__(self):
-        return str(self.name) + ' (sn: ' + str(self.serial_num) + ')'
+        return str(self.device_type) + ' ' + str(self.name) + ' (sn: ' + str(self.serial_num) + ')'
 
 
 class Department(Catalog):
@@ -498,7 +498,7 @@ class DocIncome(Document):
 
 
 class DocIncomeTableUnit(models.Model):
-    doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE)
+    doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE, related_name='doc_to_device')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)

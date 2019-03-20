@@ -14,12 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 import inv.views
 import inv.models
 import inv.forms
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.views import serve
+
+
+from rest_framework import routers
+router = routers.DefaultRouter()
+router.register('docincome', inv.views.DocIncomeViewSet)
+router.register('regdevicestock', inv.views.RegDeviceStockViewSet)
+
 
 urlpatterns = [
     re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
@@ -43,8 +50,8 @@ urlpatterns = [
     re_path('report/statement_docs/$', inv.views.report_statement_docs),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/new/(?P<doc_follower_name>\w+)/$', inv.views.follower_manager),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/hierarchy/$', inv.views.follower_hierarchy),
-    re_path('^.*$', TemplateView.as_view(template_name="index.html"), name="home"),
-#    re_path('^.*$/app', inv.views.home),
+    path('', include(router.urls)),
+#    re_path('^.*$', TemplateView.as_view(template_name="index.html"), name="home"),
 
 ]
 

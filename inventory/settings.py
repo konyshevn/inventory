@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'inv',
-    'django_ajax',
     'gm2m',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
