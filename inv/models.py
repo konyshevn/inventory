@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.db.models import Sum
 from django.db.models.deletion import ProtectedError
 import sys
@@ -186,10 +186,14 @@ class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.IntegerField(unique_for_date='doc_date')
     active = models.BooleanField(default=False)
-    follower = GM2MField()
-    leader = GM2MField()
+    #follower = GM2MField()
+    #leader = GM2MField()
     comment = models.CharField(max_length=70, blank=True)
-
+    
+    leader_type = models.ForeignKey(ContentType, on_delete=models.PROTECT,null=True)
+    leader_id = models.PositiveIntegerField(null=True)
+    leader = GenericForeignKey('leader_type', 'leader_id')
+    _FOLLOWER_TYPES = []
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
@@ -339,24 +343,29 @@ class Document(models.Model):
         self.save()
 
     def doc_delete(self):
-        if self.follower.count() != 0:
-            print('Followers exist - %s - %s' % (self.follower.count(), str(self.follower.all())))
+        if len(self.get_follower) != 0:
+            print('Followers exist - %s - %s' % (len(self.get_follower), str(self.get_follower)))
             return (False, )
         self.reg_delete()
         self.delete()
         return (True, )
 
+    def set_leader(self, leader_doc):
+        self.leader = leader_doc
+        self.save()
+
     @property
     def get_follower(self):
-        hierarchy = list(self.follower.all())
+        hierarchy = []
+        for follower_type in self._FOLLOWER_TYPES:
+            leader_typec = ContentType.objects.get_for_model(self._meta.model)
+            hierarchy.extend(list(follower_type.objects.filter(leader_id=self.id, leader_type=leader_typec)))
+        print(hierarchy)
         return hierarchy
 
     @property
     def get_leader(self):
-        if self.leader.count() == 1:
-            hierarchy = self.leader.get()
-        else:
-            hierarchy = None
+        hierarchy = self.leader
         return hierarchy
 
     objects = DocumentManager()
@@ -509,6 +518,7 @@ class DocInventory(Document):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocInventoryTableUnit')
+    _FOLLOWER_TYPES = [DocIncome, DocWriteoff, DocMove]
     _REG_LIST = []
     _TABLE_UNIT_EXIST = True
     _REG_DOC_ATTR_MAP = {
@@ -589,8 +599,7 @@ class DocInventory(Document):
                 }
                 doc_follower = model_follower()
                 doc_follower.doc_write(doc_attr=doc_attr, table_unit=row['table_unit'])
-                doc_leader.follower.add(doc_follower)
-                doc_follower.leader.add(doc_leader)
+                doc_follower.set_leader(doc_leader)
                 doc_follower_id.append({'name': str(doc_follower), 'id': doc_follower.id})
             return doc_follower_id
 
@@ -602,8 +611,7 @@ class DocInventory(Document):
         }
         doc_follower = model_follower()
         doc_follower.doc_write(doc_attr=doc_attr, table_unit=table_unit)
-        doc_follower.leader.add(doc_leader)
-        doc_leader.follower.add(doc_follower)
+        doc_follower.set_leader(doc_leader)
         return [{'name': str(doc_follower), 'id': doc_follower.id}]
 
     class Meta:

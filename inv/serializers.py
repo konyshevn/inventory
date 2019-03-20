@@ -26,9 +26,9 @@ class followerField(serializers.RelatedField):
 
 
 class DocIncomeSerializer(serializers.ModelSerializer):
-    doc_to_device = DocIncomeTableUnitSerializer(many=True)
-    leader = leaderField(many=True, read_only=True)
-    follower = followerField(many=True, read_only=True)
+    #doc_to_device = DocIncomeTableUnitSerializer(many=True)
+    #leader = leaderField(many=True, read_only=True)
+    #follower = followerField(many=True, read_only=True)
 
     class Meta:
         model = models.DocIncome
