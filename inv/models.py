@@ -507,7 +507,7 @@ class DocIncome(Document):
 
 
 class DocIncomeTableUnit(models.Model):
-    doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE, related_name='doc_to_device')
+    doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
