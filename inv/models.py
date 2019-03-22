@@ -9,7 +9,13 @@ import datetime, time
 from dateutil import tz
 from gm2m import GM2MField
 
+
 # Create your models here.
+def check_operation(operation, status):
+    if not operation['success']:
+        status['success'] = False
+        status['data'].extend(operation['data'])
+
 
 
 #---------------Device---------------
@@ -124,6 +130,31 @@ class DocumentManager(models.Manager):
         doc_num = last_num + 1
         return doc_num
 
+    def create_doc(self, doc_attr, table_unit):
+        status = {'success': True, 'data': []}
+
+        if doc_attr['doc_num'] is None:
+            doc_attr['doc_num'] = self.get_doc_num()
+
+        if doc_attr['doc_date'] is None:
+            doc_attr['doc_date'] = datetime.datetime.now()
+
+        doc = self.model()
+        dw = doc.doc_write(doc_attr=doc_attr, table_unit=table_unit)
+        print(doc)
+        check_operation(operation=dw, status=status)
+
+        rd = doc.reg_delete()
+        check_operation(operation=rd, status=status)
+
+        if doc_attr['active']:
+            rw = doc.reg_write()
+            check_operation(operation=rw, status=status)
+        
+        if status['success']:
+            status['data'] = doc
+        return status
+
 
 class RegDeviceStockManager(models.Manager):
     def saldo(self, device=None, date_from=None, date_to=None, department=None, stock=None, person=None):
@@ -186,14 +217,12 @@ class Document(models.Model):
     doc_date = models.DateTimeField()
     doc_num = models.IntegerField(unique_for_date='doc_date')
     active = models.BooleanField(default=False)
-    #follower = GM2MField()
-    #leader = GM2MField()
     comment = models.CharField(max_length=70, blank=True)
-    
     leader_type = models.ForeignKey(ContentType, on_delete=models.PROTECT,null=True)
     leader_id = models.PositiveIntegerField(null=True)
     leader = GenericForeignKey('leader_type', 'leader_id')
     _FOLLOWER_TYPES = []
+    
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
@@ -264,14 +293,17 @@ class Document(models.Model):
 
         status_list = list(status.values())
         status_sum = reduce((lambda x, y: x & y['success']), status_list, status_list[0]['success'])
-        status_errors = {k: v['errors'] for k, v in status.items() if not v['success']}
+        #status_errors = {k: v['errors'] for k, v in status.items() if not v['success']}
+        status_errors0 = [['Регистр %s: %s' % (k, err) for err in v['errors']] for k, v in status.items() if not v['success']]
+        status_errors = [item for sublist in status_errors0 for item in sublist]
+        print(status_errors)
         if status_sum:
             self.active = True
             self.save()
-            return (True, status_errors)
+            return {'success': True, 'data': status_errors}
         else:
             self.reg_delete()
-            return (False, status_errors)
+            return {'success': False, 'data': status_errors}
 
     # Метод "Запись данных в документ".
     # Записывает переданные ему данные из формы в документ.
@@ -289,7 +321,10 @@ class Document(models.Model):
             # то присвоить соотвествующему атрибуту документа переданное значение из формы.
             if attr in doc_attr:
                 setattr(self, attr, doc_attr[attr])
-        self.save()
+        try:
+            self.save()
+        except Exception as err:
+            return {'success': False, 'data': [err]}
 
         if self._TABLE_UNIT_EXIST:
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
@@ -322,8 +357,16 @@ class Document(models.Model):
                             setattr(table_unit_item, attr, rec[attr])
 
                     # после прохода по всем атрибутам сохранить запись
-                    table_unit_item.save()
-        self.save()
+                    try:
+                        table_unit_item.save()
+                    except Exception as err:
+                        return {'success': False, 'data': [err]}
+        try:
+            self.save()
+        except Exception as err:
+            return {'success': False, 'data': [err]}
+
+        return {'success': True, 'data': []}
 
     # Метод "получение табличной части документа". Возвращает набор QuerySet всех объектов TableUnit для данного документа
     def get_table_unit(self):
@@ -340,7 +383,11 @@ class Document(models.Model):
             base_doc_type = ContentType.objects.get_for_model(self)
             getattr(sys.modules[__name__], reg).objects.filter(base_doc_type=base_doc_type, base_doc_id=self.id).delete()
         self.active = False
-        self.save()
+        try:
+            self.save()
+        except Exception as err:
+            return {'success': False, 'data': [err]}
+        return {'success': True, 'data': []}
 
     def doc_delete(self):
         if len(self.get_follower) != 0:

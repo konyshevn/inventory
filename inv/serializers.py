@@ -37,14 +37,17 @@ class DocIncomeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         print(validated_data)
         print(dict(validated_data['table_unit'][0]))
-        doc = self.Meta.model()
-        dw = doc.doc_write(doc_attr=validated_data, table_unit=validated_data['table_unit'])
-        rd = doc.reg_delete()
-        rw = doc.reg_write()
+        dc = self.Meta.model.objects.create_doc(doc_attr=validated_data, table_unit=validated_data['table_unit'])
+        #doc = self.Meta.model()
+        #dw = doc.doc_write(doc_attr=validated_data, table_unit=validated_data['table_unit'])
+        #rd = doc.reg_delete()
+        #rw = doc.reg_write()
         #if validated_data['name'] == 'err':
         #    raise serializers.ValidationError('This field must be an integer value.')
         #return self.Meta.model.objects.create(**validated_data)
-        return doc
+        if not dc['success']:
+            raise serializers.ValidationError(dc['data'])
+        return dc['data']
 
 
 class RegDeviceStockSerializer(serializers.ModelSerializer):

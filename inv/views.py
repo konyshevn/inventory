@@ -211,20 +211,20 @@ def doc_form(request, doc_id, doc_name):
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()
                 rw = doc.reg_write()
-                if (not dw) & (not rd) & (rw[0]):
+                if (dw['success']) & (rd['success']) & (rw['success']):
                     print('-' * 50)
                     print('PERIOD total: ' + str(time.time() - start))
                     status_url = '/doc/%s/%s/status/reg_write/1' % (doc_name, doc.id)
                 else:
-                    request.session['status_errors'] = (dw, rd, rw[1])
+                    request.session['status_errors'] = (dw['data'], rd['data'], rw['data'])
                     status_url = '/doc/%s/%s/status/reg_write/0' % (doc_name, doc.id)
 
             elif 'reg_delete' in request.POST:
                 rd = doc.reg_delete()
-                if not rd:
+                if rd['success']:
                     status_url = '/doc/%s/%s/status/reg_delete/1' % (doc_name, doc.id)
                 else:
-                    request.session['status_errors'] = (rd,)
+                    request.session['status_errors'] = (rd['data'],)
                     status_url = '/doc/%s/%s/status/reg_delete/0' % (doc_name, doc.id)
 
             elif 'doc_write' in request.POST:
@@ -233,17 +233,17 @@ def doc_form(request, doc_id, doc_name):
                     rd = doc.reg_delete()
                     rw = doc.reg_write()
 
-                    if (not dw) & (not rd) & (rw[0]):
+                    if (dw['success']) & (rd['success']) & (rw['success']):
                         status_url = '/doc/%s/%s/status/doc_write/1' % (doc_name, doc.id)
                     else:
-                        request.session['status_errors'] = (dw, rd, rw[1])
+                        request.session['status_errors'] = (dw['data'], rd['data'], rw['data'])
                         status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
                 else:
                     dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
-                    if not dw:
+                    if dw['success']:
                         status_url = '/doc/%s/%s/status/doc_write/1' % (doc_name, doc.id)
                     else:
-                        request.session['status_errors'] = (dw,)
+                        request.session['status_errors'] = (dw['data'],)
                         status_url = '/doc/%s/%s/status/doc_write/0' % (doc_name, doc.id)
             elif 'doc_inventory_fill_saldo' in request.POST:
                 print('doc_inventory_fill_saldo')
