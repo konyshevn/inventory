@@ -150,9 +150,9 @@ class DocumentManager(models.Manager):
         if doc_attr['active']:
             rw = doc.reg_write()
             check_operation(operation=rw, status=status)
-        
+
         if status['success']:
-            status['data'] = doc
+            status['data'] = [doc]
         return status
 
 
@@ -218,7 +218,7 @@ class Document(models.Model):
     doc_num = models.IntegerField(unique_for_date='doc_date')
     active = models.BooleanField(default=False)
     comment = models.CharField(max_length=70, blank=True)
-    leader_type = models.ForeignKey(ContentType, on_delete=models.PROTECT,null=True)
+    leader_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
     leader_id = models.PositiveIntegerField(null=True)
     leader = GenericForeignKey('leader_type', 'leader_id')
     _FOLLOWER_TYPES = []
@@ -343,7 +343,10 @@ class Document(models.Model):
                     # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
                     # если ключ id НЕ None, то в значении ключа id объект TableUnit, который нужно модифийировать
                     if rec['id'] is not None:
-                        table_unit_item = rec['id']
+                        if isinstance(rec['id'], int):
+                             table_unit_item = table_unit_model.objects.get(id=rec['id'])
+                        else:
+                            table_unit_item = rec['id']
                     else:
                         table_unit_item = table_unit_model(doc=self)
 
@@ -354,6 +357,7 @@ class Document(models.Model):
                         # если атрибут присутствует среди значений переданных из формы,
                         # то присвоить соотвествующему атрибуту записи/строки TableUnit переданное значение из формы.
                         if (attr in rec) & (attr != 'id'):
+
                             setattr(table_unit_item, attr, rec[attr])
 
                     # после прохода по всем атрибутам сохранить запись
@@ -396,6 +400,31 @@ class Document(models.Model):
         self.reg_delete()
         self.delete()
         return (True, )
+
+    def update_doc(self, doc_attr, table_unit):
+        status = {'success': True, 'data': []}
+
+        if doc_attr['doc_num'] is None:
+            doc_attr['doc_num'] = self.doc_num
+
+        if doc_attr['doc_date'] is None:
+            doc_attr['doc_date'] = self.doc_date
+
+        doc = self
+        dw = doc.doc_write(doc_attr=doc_attr, table_unit=table_unit)
+        print(doc)
+        check_operation(operation=dw, status=status)
+
+        rd = doc.reg_delete()
+        check_operation(operation=rd, status=status)
+
+        if doc_attr['active']:
+            rw = doc.reg_write()
+            check_operation(operation=rw, status=status)
+
+        if status['success']:
+            status['data'] = [doc]
+        return status
 
     def set_leader(self, leader_doc):
         self.leader = leader_doc
