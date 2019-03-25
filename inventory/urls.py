@@ -25,6 +25,7 @@ from django.contrib.staticfiles.views import serve
 from rest_framework import routers
 router = routers.DefaultRouter()
 router.register('docincome', inv.views.DocIncomeViewSet)
+router.register('docinventory', inv.views.DocInventoryViewSet)
 router.register('regdevicestock', inv.views.RegDeviceStockViewSet)
 
 

@@ -222,7 +222,7 @@ class Document(models.Model):
     leader_id = models.PositiveIntegerField(null=True)
     leader = GenericForeignKey('leader_type', 'leader_id')
     _FOLLOWER_TYPES = []
-    
+
     # универсальный метод для записи регистров любого документа.
     def reg_write(self):
         status = {reg: {'success': True, 'errors': []} for reg in self._REG_LIST}
@@ -230,7 +230,7 @@ class Document(models.Model):
         if len(self._REG_LIST) == 0:
             self.active = True
             self.save()
-            return (True, [])
+            return {'success': True, 'data': []}
 
         # Проход по экземплярам TableUnit
         for rec in self.get_table_unit():
@@ -394,12 +394,20 @@ class Document(models.Model):
         return {'success': True, 'data': []}
 
     def doc_delete(self):
+        status = {'success': True, 'data': []}
         if len(self.get_follower) != 0:
             print('Followers exist - %s - %s' % (len(self.get_follower), str(self.get_follower)))
-            return (False, )
-        self.reg_delete()
-        self.delete()
-        return (True, )
+            status['success'] = False
+            status['data'] = 'Не удалось удалить. На основании документа созданы документы: %s' % str(', '.join([str(item) for item in self.get_follower]))
+            return status
+        rd = self.reg_delete()
+        check_operation(operation=rd, status=status)
+        try:
+            self.delete()
+        except Exception as err:
+            status['success'] = False
+            status['data'].extend(str(err))
+        return status
 
     def update_doc(self, doc_attr, table_unit):
         status = {'success': True, 'data': []}
@@ -489,7 +497,7 @@ class DocWriteoff(Document):
 
 
 class DocWriteoffTableUnit(models.Model):
-    doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE)
+    doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
@@ -541,7 +549,7 @@ class DocMove(Document):
 
 
 class DocMoveTableUnit(models.Model):
-    doc = models.ForeignKey(DocMove, on_delete=models.CASCADE)
+    doc = models.ForeignKey(DocMove, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person_from = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_from')
     person_to = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_to')
@@ -696,7 +704,7 @@ class DocInventory(Document):
 
 
 class DocInventoryTableUnit(models.Model):
-    doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE)
+    doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
 
     person_accountg = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_accountg')

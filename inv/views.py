@@ -14,14 +14,30 @@ from django.core.cache import caches
 from django.core import signing
 
 
-# Create your views here.
-from rest_framework import viewsets
+# DRF
+from rest_framework import viewsets, status
 from . import serializers
+from rest_framework.response import Response
 
 
-class DocIncomeViewSet(viewsets.ModelViewSet):
+class DocumentViewSet(viewsets.ViewSet):
+    def destroy(self, request, pk, format=None):
+        doc = self.get_object()
+        dd = doc.doc_delete()
+        if dd['success']:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(dd['data'], status=status.HTTP_400_BAD_REQUEST)
+
+
+class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):
     serializer_class = serializers.DocIncomeSerializer
     queryset = DocIncome.objects.all()
+
+
+class DocInventoryViewSet(DocumentViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DocInventorySerializer
+    queryset = DocInventory.objects.all()
 
 
 class RegDeviceStockViewSet(viewsets.ModelViewSet):
@@ -163,7 +179,7 @@ def doc_list(request, doc_name):
             for doc_id in delete_doc_id:
                 doc = model.objects.get(id=doc_id)
                 dd = doc.doc_delete()
-                if not dd[0]:
+                if not dd['success']:
                     doc_exist_follower.append({'id': doc.id, 'name': str(doc)})
             if doc_exist_follower:
                 print(doc_exist_follower)
@@ -211,7 +227,8 @@ def doc_form(request, doc_id, doc_name):
                 dw = doc.doc_write(doc_attr=form_cd, table_unit=formset_cd)
                 rd = doc.reg_delete()
                 rw = doc.reg_write()
-                if (dw['success']) & (rd['success']) & (rw['success']):
+                print(rw)
+                if dw['success'] & rd['success'] & rw['success']:
                     print('-' * 50)
                     print('PERIOD total: ' + str(time.time() - start))
                     status_url = '/doc/%s/%s/status/reg_write/1' % (doc_name, doc.id)
@@ -233,7 +250,7 @@ def doc_form(request, doc_id, doc_name):
                     rd = doc.reg_delete()
                     rw = doc.reg_write()
 
-                    if (dw['success']) & (rd['success']) & (rw['success']):
+                    if dw['success'] & rd['success'] & rw['success']:
                         status_url = '/doc/%s/%s/status/doc_write/1' % (doc_name, doc.id)
                     else:
                         request.session['status_errors'] = (dw['data'], rd['data'], rw['data'])
@@ -256,7 +273,7 @@ def doc_form(request, doc_id, doc_name):
             elif 'doc_delete' in request.POST:
                 dd = doc.doc_delete()
                 doc_exist_follower = []
-                if not dd[0]:
+                if not dd['success']:
                     doc_exist_follower.append({'id': doc.id, 'name': str(doc)})
                     request.session['doc_delete_errors'] = doc_exist_follower
                     status_url = '/doc/%s/status/doc_delete/0' % (doc_name, )
