@@ -35,6 +35,16 @@ class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):
     queryset = DocIncome.objects.all()
 
 
+class DocWriteoffViewSet(DocumentViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DocWriteoffSerializer
+    queryset = DocWriteoff.objects.all()
+
+
+class DocMoveViewSet(DocumentViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DocMoveSerializer
+    queryset = DocMove.objects.all()
+
+
 class DocInventoryViewSet(DocumentViewSet, viewsets.ModelViewSet):
     serializer_class = serializers.DocInventorySerializer
     queryset = DocInventory.objects.all()

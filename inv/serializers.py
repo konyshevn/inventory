@@ -52,6 +52,38 @@ class DocIncomeSerializer(DocumentSerializer, serializers.ModelSerializer):
         exclude = ('devices', )
 
 
+class DocWriteoffTableUnitSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=models.DocWriteoffTableUnit()._meta.get_field('id'), allow_null=True)
+
+    class Meta:
+        model = models.DocWriteoffTableUnit
+        exclude = ('doc',)
+
+
+class DocWriteoffSerializer(DocumentSerializer, serializers.ModelSerializer):
+    table_unit = DocWriteoffTableUnitSerializer(many=True)
+
+    class Meta:
+        model = models.DocWriteoff
+        exclude = ('devices', )
+
+
+class DocMoveTableUnitSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=models.DocMoveTableUnit()._meta.get_field('id'), allow_null=True)
+
+    class Meta:
+        model = models.DocMoveTableUnit
+        exclude = ('doc',)
+
+
+class DocMoveSerializer(DocumentSerializer, serializers.ModelSerializer):
+    table_unit = DocMoveTableUnitSerializer(many=True)
+
+    class Meta:
+        model = models.DocMove
+        exclude = ('devices', )
+
+
 class DocInventoryTableUnitSerializer(serializers.ModelSerializer):
     id = serializers.ModelField(model_field=models.DocInventoryTableUnit()._meta.get_field('id'), allow_null=True)
 

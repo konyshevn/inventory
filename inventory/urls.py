@@ -24,9 +24,11 @@ from django.contrib.staticfiles.views import serve
 
 from rest_framework import routers
 router = routers.DefaultRouter()
-router.register('docincome', inv.views.DocIncomeViewSet)
-router.register('docinventory', inv.views.DocInventoryViewSet)
-router.register('regdevicestock', inv.views.RegDeviceStockViewSet)
+router.register('api/docincome', inv.views.DocIncomeViewSet)
+router.register('api/docwriteoff', inv.views.DocWriteoffViewSet)
+router.register('api/docmove', inv.views.DocMoveViewSet)
+router.register('api/docinventory', inv.views.DocInventoryViewSet)
+router.register('api/regdevicestock', inv.views.RegDeviceStockViewSet)
 
 
 urlpatterns = [
