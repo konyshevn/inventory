@@ -9,15 +9,13 @@ class RegDeviceStockSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
-class DeviceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Device
-        exclude = ()
-
-
 class leaderField(serializers.RelatedField):
     def to_representation(self, value):
         return {'doc_id': value.id, 'contenttype_id': ContentType.objects.get_for_model(value).id}
+
+
+class CatalogSerializer(serializers.Serializer):
+    pass
 
 
 class DocumentSerializer(serializers.Serializer):
@@ -99,11 +97,20 @@ class DocInventorySerializer(DocumentSerializer, serializers.ModelSerializer):
         model = models.DocInventory
         exclude = ('devices', )
 
-'''
-class DeviceSerializer(DocumentSerializer, serializers.ModelSerializer):
-    table_unit = DocInventoryTableUnitSerializer(many=True)
 
+class DeviceSerializer(CatalogSerializer, serializers.ModelSerializer):
     class Meta:
-        model = models.DocInventory
-        exclude = ('devices', )
-'''
+        model = models.Device
+        exclude = ()
+
+
+class DepartmentSerializer(CatalogSerializer, serializers.ModelSerializer):
+    class Meta:
+        model = models.Department
+        exclude = ()
+
+
+class StockSerializer(CatalogSerializer, serializers.ModelSerializer):
+    class Meta:
+        model = models.Stock
+        exclude = ()

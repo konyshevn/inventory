@@ -30,6 +30,16 @@ class DocumentViewSet(viewsets.ViewSet):
             return Response(dd['data'], status=status.HTTP_400_BAD_REQUEST)
 
 
+class CatalogViewSet(viewsets.ViewSet):
+    def destroy(self, request, pk, format=None):
+        catlg = self.get_object()
+        cd = catlg.catlg_delete()
+        if cd['success']:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(cd['data'], status=status.HTTP_400_BAD_REQUEST)
+
+
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):
     serializer_class = serializers.DocIncomeSerializer
     queryset = DocIncome.objects.all()
@@ -53,6 +63,21 @@ class DocInventoryViewSet(DocumentViewSet, viewsets.ModelViewSet):
 class RegDeviceStockViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RegDeviceStockSerializer
     queryset = RegDeviceStock.objects.all()
+
+
+class DeviceViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DeviceSerializer
+    queryset = Device.objects.all()
+
+
+class DepartmentViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DepartmentSerializer
+    queryset = Department.objects.all()
+
+
+class StockViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.StockSerializer
+    queryset = Stock.objects.all()
 
 
 def home(request):
@@ -357,7 +382,7 @@ def catlg_list(request, catlg_name):
             for catlg_id in delete_catlg_id:
                 catlg = model.objects.get(id=catlg_id)
                 cd = catlg.catlg_delete()
-                if not cd[0]:
+                if cd['success']:
                     catlg_exist_ref.append({'id': catlg.id, 'name': str(catlg)})
             if catlg_exist_ref:
                 print(catlg_exist_ref)
@@ -396,16 +421,16 @@ def catlg_form(request, catlg_id, catlg_name):
             form_cd = form.cleaned_data
             if 'catlg_write' in request.POST:
                 cw = catlg.catlg_write(catlg_attr=form_cd)
-                if (not cw):
+                if cw['success']:
                     status_url = '/catlg/%s/%s/status/catlg_write/1' % (catlg_name, catlg.id)
                 else:
-                    request.session['status_errors'] = (cw, )
+                    request.session['status_errors'] = cw['data']
                     status_url = '/catlg/%s/%s/status/catlg_write/0' % (catlg_name, catlg.id)
             elif 'catlg_delete' in request.POST:
 
                 cd = catlg.catlg_delete()
                 catlg_exist_ref = []
-                if not cd[0]:
+                if cd['success']:
                     catlg_exist_ref.append({'id': catlg.id, 'name': str(catlg)})
                     request.session['catlg_delete_errors'] = catlg_exist_ref
                     status_url = '/catlg/%s/status/catlg_delete/0' % (catlg_name, )

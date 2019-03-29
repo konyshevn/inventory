@@ -27,21 +27,29 @@ class Catalog(models.Model):
     # метод принимает только "чистые/проверенные" данные для записи.
     # catlg_attr - словарь: ключ - наименование атрибута справочника
     def catlg_write(self, catlg_attr):
+        status = {'success': True, 'data': []}
         # проход по всем пользовательским атрибутам справочника
         for attr in self.__dict__.keys():
             # если атрибут присутствует среди значений переданных из формы,
             # то присвоить соотвествующему атрибуту справочника переданное значение из формы.
             if attr in catlg_attr:
                 setattr(self, attr, catlg_attr[attr])
-        self.save()
+        try:
+            self.save()
+        except Exception as err:
+            status['success'] = False
+            status['data'] = [str(err)]
+        return status
 
     def catlg_delete(self):
+        status = {'success': True, 'data': []}
         try:
             self.delete()
         except ProtectedError as err:
-            return(False, str(err))
-        else:
-            return (True, )
+            status['success'] = False
+            status['data'] = ['Ошибка. Данный элемент используется в: %s' % [str(item) for item in err.protected_objects]]
+            #print('Ошибка. Данный элемент используется в: %s' % [str(item) for item in err.protected_objects])
+        return status
 
     class Meta:
         abstract = True
@@ -596,6 +604,9 @@ class DocIncomeTableUnit(models.Model):
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
+
+    def __str__(self):
+        return str(self.doc)
 
 
 class DocInventory(Document):
