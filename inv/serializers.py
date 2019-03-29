@@ -98,3 +98,12 @@ class DocInventorySerializer(DocumentSerializer, serializers.ModelSerializer):
     class Meta:
         model = models.DocInventory
         exclude = ('devices', )
+
+'''
+class DeviceSerializer(DocumentSerializer, serializers.ModelSerializer):
+    table_unit = DocInventoryTableUnitSerializer(many=True)
+
+    class Meta:
+        model = models.DocInventory
+        exclude = ('devices', )
+'''
