@@ -1,30 +1,23 @@
 <template>
-  <div class="doc-income-list container">
-    <table class="table table-bordered">
+  <div class="doc-income-item container">
+
+        <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Дата</th>
-          <th>Номер</th>
-          <th>Проведен</th>
-          <th>Подразделение</th>
-          <th>Склад</th>
+          <th>Устройство</th>
+          <th>Сотрудник</th>
+          <th>Количество</th>
           <th>Комментарий</th>
         </tr>
       </thead>
       <tbody>
-      <tr v-for="doc in docs" :key="doc.id" v-on:dblclick="clickRow(doc.id)">
-        <td>{{doc.doc_date | formatDate}}</td>
-        <td>{{doc.doc_num}}</td>
-        <td>
-          <span v-if="doc.active">Да</span>
-          <span v-else></span>
-       </td>
-        <td>{{getCatlgItemName(doc.department, 'department')}}</td>
-        <td>{{getCatlgItemName(doc.stock, 'stock')}}</td>
-        <td>{{doc.comment}}</td>
-        <a href="123"></a>
+      <tr v-for="rec in doc.table_unit" :key="rec.id">
+        <td>{{getCatlgItemName(rec.device, 'device')}}</td>
+        <td>{{getCatlgItemName(rec.person, 'person')}}</td>
+        <td>{{rec.qty}}</td>
+        <td>{{rec.comment}}</td>
       </tr>
-    </tbody>
+      </tbody>
     </table>
     <pre> {{$data}} </pre>
   </div>
@@ -47,7 +40,7 @@ Vue.filter('formatDate', function(value) {
 
 
 export default {
-  name: 'DocIncomeList',
+  name: 'DocIncomeItem',
   props: {
     //msg: String
   },
@@ -56,23 +49,19 @@ export default {
       catlgs: {
         'department': [],
         'stock': [],
-        'device': []
+        'device': [],
+        'person': []
       },
-      docs: []
+      doc: {}
     }
   },
   methods: {
-    fetchDocs: function () {
+    fetchDoc: function (id) {
       var vm = this;
-      HTTP.get('docincome/')
+      HTTP.get('docincome/' + id + '/')
         .then(function (response) {
-          // установить данные в vm
-          var DocsReady = response.data.map(function (doc) {
-            return doc
-          })
-          vm.docs = DocsReady;
-
-        });
+          vm.doc = response.data;
+        })
     },
 
     fetchCatlg: function(catlgType){
@@ -94,16 +83,28 @@ export default {
 
     clickRow: function (id) {
       console.log(id);
+    },
+
+    resolveLabel: function(item, mapFields){
+      var vm = this;
+      for (var itemField in mapFields){
+        var model = mapFields[itemField][0]
+        var modelField = mapFields[itemField][1]
+        console.log(model)
+        console.log(modelField)
+      }
     }
      
   },
   mounted: function () {
-    this.fetchDocs();
+    this.fetchDoc(245);
     this.fetchCatlg('department');
     this.fetchCatlg('stock');
-    //this.fetchCatlg('device');
-
-  },
+    this.fetchCatlg('person');
+    this.fetchCatlg('device');
+    this.resolveLabel({'name': 652, 'device_type': 128}, {'name':['nomenclature', 'name'], 'device_type': ['device_type', 'name']})
+  }
+    
 }
 
 

@@ -32,6 +32,7 @@ router.register('api/regdevicestock', inv.views.RegDeviceStockViewSet)
 router.register('api/device', inv.views.DeviceViewSet)
 router.register('api/department', inv.views.DepartmentViewSet)
 router.register('api/stock', inv.views.StockViewSet)
+router.register('api/person', inv.views.PersonViewSet)
 
 urlpatterns = [
     re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),

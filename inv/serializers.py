@@ -114,3 +114,9 @@ class StockSerializer(CatalogSerializer, serializers.ModelSerializer):
     class Meta:
         model = models.Stock
         exclude = ()
+
+
+class PersonSerializer(CatalogSerializer, serializers.ModelSerializer):
+    class Meta:
+        model = models.Person
+        exclude = ()

@@ -1,16 +1,20 @@
 <template>
   <div id="app">
-    <DocIncomeList></DocIncomeList>
+    <DocIncomeItem></DocIncomeItem>
+<!--   <DocIncomeList></DocIncomeList>
+-->
   </div>
 </template>
 
 <script>
 import DocIncomeList from './components/DocIncomeList.vue'
+import DocIncomeItem from './components/DocIncomeItem.vue'
 
 export default {
   name: 'app',
   components: {
-    DocIncomeList
+    DocIncomeList,
+    DocIncomeItem
   }
 }
 </script>

@@ -80,6 +80,11 @@ class StockViewSet(CatalogViewSet, viewsets.ModelViewSet):
     queryset = Stock.objects.all()
 
 
+class PersonViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.PersonSerializer
+    queryset = Person.objects.all()
+
+
 def home(request):
     return render(request, 'index.html')
 
