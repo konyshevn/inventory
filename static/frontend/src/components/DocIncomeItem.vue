@@ -50,7 +50,9 @@ export default {
         'department': [],
         'stock': [],
         'device': [],
-        'person': []
+        'person': [],
+        'nomenclature': [{'id': 652, 'name': 'HP ProBook xxx'}],
+        'device_type': [{'id': 128, 'name': 'Ноутбук'}]
       },
       doc: {}
     }
@@ -90,8 +92,9 @@ export default {
       for (var itemField in mapFields){
         var model = mapFields[itemField][0]
         var modelField = mapFields[itemField][1]
-        console.log(model)
-        console.log(modelField)
+        var modelItem = _.find(vm.catlgs[model], function(o){ return o['id'] == item[itemField]})
+        var modelItemLabel = modelItem[modelField]
+        console.log(modelItemLabel)
       }
     }
      
