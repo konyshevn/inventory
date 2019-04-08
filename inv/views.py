@@ -85,6 +85,16 @@ class PersonViewSet(CatalogViewSet, viewsets.ModelViewSet):
     queryset = Person.objects.all()
 
 
+class NomenclatureViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.NomenclatureSerializer
+    queryset = Nomenclature.objects.all()
+
+
+class DeviceTypeViewSet(CatalogViewSet, viewsets.ModelViewSet):
+    serializer_class = serializers.DeviceTypeSerializer
+    queryset = DeviceType.objects.all()
+
+
 def home(request):
     return render(request, 'index.html')
 

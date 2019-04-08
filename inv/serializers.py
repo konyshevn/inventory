@@ -120,3 +120,15 @@ class PersonSerializer(CatalogSerializer, serializers.ModelSerializer):
     class Meta:
         model = models.Person
         exclude = ()
+
+
+class NomenclatureSerializer(CatalogSerializer, serializers.ModelSerializer):
+    class Meta:
+        model = models.Nomenclature
+        exclude = ()
+
+
+class DeviceTypeSerializer(CatalogSerializer, serializers.ModelSerializer):
+    class Meta:
+        model = models.DeviceType
+        exclude = ()

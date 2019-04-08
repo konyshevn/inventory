@@ -1,7 +1,7 @@
 <template>
   <div class="doc-income-item container">
 
-        <table class="table table-bordered">
+    <table class="table table-bordered">
       <thead>
         <tr>
           <th>Устройство</th>
@@ -12,20 +12,20 @@
       </thead>
       <tbody>
       <tr v-for="rec in doc.table_unit" :key="rec.id">
-        <td>{{getCatlgItemName(rec.device, 'device')}}</td>
-        <td>{{getCatlgItemName(rec.person, 'person')}}</td>
+        <td>{{getCatlgLabel(rec.device, 'device')}}</td>
+        <td>{{getCatlgLabel(rec.person, 'person')}}</td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
       </tr>
       </tbody>
     </table>
-    <pre> {{$data}} </pre>
+
   </div>
 </template>
 
 
 <script>
-
+/* eslint-disable no-console */
 import Vue from 'vue'
 import {HTTP} from '../http-common'
 import moment from 'moment'
@@ -51,8 +51,8 @@ export default {
         'stock': [],
         'device': [],
         'person': [],
-        'nomenclature': [{'id': 652, 'name': 'HP ProBook xxx'}],
-        'device_type': [{'id': 128, 'name': 'Ноутбук'}]
+        'nomenclature': [],
+        'devicetype': []
       },
       doc: {}
     }
@@ -74,41 +74,54 @@ export default {
         }) 
     },
 
-    getCatlgItemName: function (id, catlgType) {
+    getCatlgItem: function (id, catlgType) {
       var vm = this;
       if (id === null) {
         return "";
       }
       var catlgItem = _.find(vm.catlgs[catlgType], function(item){ return item['id'] == id });
-      return catlgItem['name']
+      return catlgItem
     },
 
     clickRow: function (id) {
       console.log(id);
     },
 
-    resolveLabel: function(item, mapFields){
+    getCatlgLabel: function(id, catlgName){
       var vm = this;
-      for (var itemField in mapFields){
-        var model = mapFields[itemField][0]
-        var modelField = mapFields[itemField][1]
-        var modelItem = _.find(vm.catlgs[model], function(o){ return o['id'] == item[itemField]})
-        var modelItemLabel = modelItem[modelField]
-        console.log(modelItemLabel)
+      var label = "unknown";
+      var item = vm.getCatlgItem(id, catlgName);
+      switch(catlgName){
+        case 'device':
+          var devicetype = vm.getCatlgItem(item['device_type'], 'devicetype')['name'];
+          var nomenclature = vm.getCatlgItem(item['name'], 'nomenclature')['name'];
+          label = devicetype + ' ' + nomenclature;
+          break;
+
+        case 'person':
+          label = item['surname'] + ' ' + item['name'];
+          break;
+
+        case 'department':
+          label = item['name'];
+          break;
       }
-    }
+      return label;
+    },
      
   },
   mounted: function () {
-    this.fetchDoc(245);
     this.fetchCatlg('department');
     this.fetchCatlg('stock');
     this.fetchCatlg('person');
     this.fetchCatlg('device');
-    this.resolveLabel({'name': 652, 'device_type': 128}, {'name':['nomenclature', 'name'], 'device_type': ['device_type', 'name']})
+    this.fetchCatlg('devicetype');
+    this.fetchCatlg('nomenclature');
+    this.fetchDoc(225);
   }
-    
 }
+   
+
 
 
 </script>

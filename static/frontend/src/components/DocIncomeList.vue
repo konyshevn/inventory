@@ -19,22 +19,23 @@
           <span v-if="doc.active">Да</span>
           <span v-else></span>
        </td>
-        <td>{{getCatlgItemName(doc.department, 'department')}}</td>
+        <td>{{getCatlgLabel(doc.department, 'department')}}</td>
         <td>{{getCatlgItemName(doc.stock, 'stock')}}</td>
         <td>{{doc.comment}}</td>
         <a href="123"></a>
       </tr>
     </tbody>
     </table>
-    <pre> {{$data}} </pre>
+
   </div>
 </template>
 
 
 <script>
-
+/* eslint-disable no-console */
 import Vue from 'vue'
 import {HTTP} from '../http-common'
+import CatlgCommon from './CatlgCommon.vue'
 import moment from 'moment'
 var _ = require('lodash');
 
@@ -51,6 +52,7 @@ export default {
   props: {
     //msg: String
   },
+  mixins: [CatlgCommon],
   data () {
     return {
       catlgs: {

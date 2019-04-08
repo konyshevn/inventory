@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <DocIncomeItem></DocIncomeItem>
-<!--   <DocIncomeList></DocIncomeList>
--->
+    <DocIncomeList></DocIncomeList>
+
   </div>
 </template>
 
