@@ -7,22 +7,22 @@ from inv.selectize_widget import ModelSelectizeWidget
 
 class DeviceTypeSelectizeWidget(ModelSelectizeWidget):
     model = DeviceType
-    search_fields = ['name__icontains']
+    search_fields = ['label__icontains']
 
 
 class NomenclatureSelectizeWidget(ModelSelectizeWidget):
     model = Nomenclature
-    search_fields = ['name__icontains']
+    search_fields = ['label__icontains']
 
 
 class DepartmentSelectizeWidget(ModelSelectizeWidget):
     model = Department
-    search_fields = ['name__icontains']
+    search_fields = ['label__icontains']
 
 
 class StockSelectizeWidget(ModelSelectizeWidget):
     model = Stock
-    search_fields = ['name__icontains']
+    search_fields = ['label__icontains']
 
 
 class PersonSelectizeWidget(ModelSelectizeWidget):
@@ -32,7 +32,7 @@ class PersonSelectizeWidget(ModelSelectizeWidget):
 
 class DeviceSelectizeWidget(ModelSelectizeWidget):
     model = Device
-    search_fields = ['name__name__icontains', 'inv_num__icontains', 'serial_num__icontains']
+    search_fields = ['name__label__icontains', 'inv_num__icontains', 'serial_num__icontains']
 
 
 class UploadFileForm(forms.Form):
@@ -239,33 +239,33 @@ class DeviceForm(ModelForm):
 class DeviceTypeForm(ModelForm):
     class Meta:
         model = DeviceType
-        fields = ['name']
+        fields = ['label']
         labels = {
-            'name': 'Наименование'}
+            'label': 'Наименование'}
 
 
 class NomenclatureForm(ModelForm):
     class Meta:
         model = Nomenclature
-        fields = ['name']
+        fields = ['label']
         labels = {
-            'name': 'Наименование'}
+            'label': 'Наименование'}
 
 
 class DepartmentForm(ModelForm):
     class Meta:
         model = Department
-        fields = ['name']
+        fields = ['label']
         labels = {
-            'name': 'Наименование'}
+            'label': 'Наименование'}
 
 
 class StockForm(ModelForm):
     class Meta:
         model = Stock
-        fields = ['name']
+        fields = ['label']
         labels = {
-            'name': 'Наименование'}
+            'label': 'Наименование'}
 
 
 

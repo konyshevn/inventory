@@ -56,25 +56,25 @@ class Catalog(models.Model):
 
 
 class Nomenclature(Catalog):
-    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+    label = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
 
     class Meta:
         verbose_name_plural = 'Номенклатура'
         verbose_name = 'Номенклатура'
 
     def __str__(self):
-        return self.name
+        return self.label
 
 
 class DeviceType(Catalog):
-    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+    label = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
 
     class Meta:
         verbose_name_plural = 'Типы устройств'
         verbose_name = 'Тип устройства'
 
     def __str__(self):
-        return self.name
+        return self.label
 
 
 class Device(Catalog):
@@ -93,14 +93,14 @@ class Device(Catalog):
 
 
 class Department(Catalog):
-    name = models.CharField(max_length=50, unique=True, verbose_name='Наименование')
+    label = models.CharField(max_length=50, unique=True, verbose_name='Наименование')
 
     class Meta:
         verbose_name_plural = 'Подразделения'
         verbose_name = 'Подразделение'
 
     def __str__(self):
-        return self.name
+        return self.label
 
 
 class Person(Catalog):
@@ -117,14 +117,14 @@ class Person(Catalog):
 
 
 class Stock(Catalog):
-    name = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
+    label = models.CharField(max_length=30, unique=True, verbose_name='Наименование')
 
     class Meta:
         verbose_name_plural = 'Склады'
         verbose_name = 'Склад'
 
     def __str__(self):
-        return self.name
+        return self.label
 
 
 #---------------Document---------------

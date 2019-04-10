@@ -30,11 +30,11 @@ class DocInventoryTableUnitInline(admin.TabularInline):
 
 
 class DeviceTypeAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('label',)
 
 
 class NomenclatureAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('label',)
 
 
 class DeviceAdmin(admin.ModelAdmin):
@@ -84,11 +84,11 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('label',)
 
 
 class StockAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('label',)
 
 
 class RegDeviceStockAdmin(admin.ModelAdmin):
