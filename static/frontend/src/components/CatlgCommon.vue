@@ -30,11 +30,15 @@ export default {
       var vm = this;
       HTTP.get(catlgType + '/')
         .then(function (response) {
-          var catlgReady = response.data.map(function(item){
-            item.label = vm.getCatlgLabel(catlgType, item)
-            return item
-          })
-          Vue.set(vm.catlgs, catlgType, response.data);
+          if ( !('label' in response.data[0])) {
+            var catlgReady = response.data.map(function(item){
+              item.label = vm.getCatlgLabel(catlgType, item)
+              return item
+            })
+          } else {
+            var catlgReady = response.data
+          }
+          Vue.set(vm.catlgs, catlgType, catlgReady);
         }) 
     },
 
@@ -51,50 +55,24 @@ export default {
       var vm = this;
       var label = "unknown";
       if (isNaN(id)){
-        var item = id; //не число, значит передан объект
+        var catlgItem = id; //не число, значит передан объект
       } else {
-        var item = vm.getCatlgItem(catlgName, id); //число, значит передано id 
+        var catlgItem = vm.getCatlgItem(catlgName, id); //число, значит передано id 
       }
       switch(catlgName){
         case 'device':
-          var devicetype = vm.getCatlgItem('devicetype', item['device_type'])['name'];
-          var nomenclature = vm.getCatlgItem('nomenclature', item['name'])['name'];
+          var devicetype = vm.getCatlgItem('devicetype', catlgItem['device_type'])['label'];
+          var nomenclature = vm.getCatlgItem('nomenclature', catlgItem['name'])['label'];
           label = devicetype + ' ' + nomenclature;
           break;
 
         case 'person':
-          label = item['surname'] + ' ' + item['name'];
-          break;
-
-        case 'department':
-          label = item['name'];
-          break;
-
-        case 'stock':
-          label = item['name'];
+          label = catlgItem['surname'] + ' ' + catlgItem['name'];
           break;
       }
       return label;
     },
 
-    addCatlgLabel: function (){
-      var vm = this;
-      console.log(vm.catlgs['device']);
-      for (var catlg in vm.catlgs){
-        //console.log(catlg);
-        //console.log(vm.catlgs[catlg]);
-        /*
-        var labeledCatlg = vm.catlgs[catlg].map(function (catlgItem) {
-            catlgItem.label = vm.getCatlgLabel(catlg, catlgItem['id'])
-            console.log(catlgItem)
-            return catlgItem
-          })
-        */
-        //console.log(labeledCatlg);
-        //vm.catlgs[catlg] = labeledCatlg;
-      }
-    },
-     
   },
   mounted: function () {
     this.fetchCatlg('department');

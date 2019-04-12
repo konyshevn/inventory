@@ -19,8 +19,8 @@
           <span v-if="doc.active">Да</span>
           <span v-else></span>
         </td>
-        <td>{{getCatlgLabel('department', doc.department)}}</td>
-        <td>{{getCatlgLabel('stock', doc.stock)}}</td>
+        <td>{{getCatlgItem('department', doc.department).label}}</td>
+        <td>{{getCatlgItem('stock', doc.stock).label}}</td>
         <td>{{doc.comment}}</td>
       </tr>
     </tbody>

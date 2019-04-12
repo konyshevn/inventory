@@ -7,6 +7,9 @@ Vue.use(Vuetify, {
   iconfont: 'md'
 })
 
+require("selectize/dist/css/selectize.bootstrap3.css");
+
+
 Vue.config.productionTip = false
 
 new Vue({
