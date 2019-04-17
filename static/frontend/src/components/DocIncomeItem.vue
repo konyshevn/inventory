@@ -1,13 +1,9 @@
 <template>
   <div class="doc-income-item container">
-
-    <selectize 
-          v-model="select_model" :settings="getSelectizeSettings">
-    </selectize>
+    <br>
     <br>
 
-    <v-app>
-    <table class="table table-bordered">
+    <table class="table table-bordered table_unit">
       <thead>
         <tr>
           <th>Устройство</th>
@@ -19,18 +15,38 @@
       <tbody>
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
-          <selectize 
-          v-model="select_model" :settings="getSelectizeSettings">
-          </selectize>
+          <div style="position:relative;display:block">
+          <cool-select 
+          v-model="rec['device']" 
+          :items="catlgs['device']"
+          item-value="id"
+          item-text="label"
+          arrowsDisableInstantSelection="true"
+          scrollItemsLimit="10"
+          >
+            <template slot="no-data">
+              <span>Не найдено</span>
+            </template>
+            <template slot="item" slot-scope="{ item }">
+              <div class="item">
+                <span class="item-name"> {{ item.label }} </span>
+              </div>
+            </template>
+          </cool-select>
+          </div>
         </td>
         <td>
-          <v-autocomplete 
+          <div style="position:relative;display:block">
+          <cool-select 
+          v-model="rec['person']" 
           :items="catlgs['person']"
-          item-text="label"
           item-value="id"
-          v-model="rec['person']"
-          :loading="false">
-          </v-autocomplete>
+          item-text="label"
+          arrowsDisableInstantSelection="true"
+          scrollItemsLimit="10">
+          </cool-select>
+            
+          </div>
         </td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
@@ -38,7 +54,6 @@
       </tbody>
     </table>
 
-    </v-app> 
   </div>
 </template>
 
@@ -51,7 +66,7 @@ import moment from 'moment';
 var _ = require('lodash');
 import CatlgCommon from './CatlgCommon.vue';
 import DocCommon from './DocCommon.vue';
-import Selectize from 'vue2-selectize';
+import { CoolSelect } from 'vue-cool-select'
 
 
 Vue.filter('formatDate', function(value) {
@@ -64,7 +79,7 @@ Vue.filter('formatDate', function(value) {
 export default {
   name: 'DocIncomeItem',
   components: {
-    Selectize
+    CoolSelect
   },
   props: {
     //msg: String
@@ -74,30 +89,6 @@ export default {
   
   data () {
     return {
-      select_model: 1,
-      selectize_settings: {
-        create: false,
-        sortField: 'label',
-        valueField: 'id',
-        labelField: 'label',
-        searchField: ['label'],
-        openOnFocus: true,
-        //  closeAfterSelect: true,
-
-        render: {
-            option: function (item, escape) {
-                return '<div>' + escape(item.text) + '</div>';
-            }
-        },
-
-        load: function(query, callback) {
-            var vm=this;
-            if (!query.length) return callback();
-            callback(this.catlgs['device']);
-            
-        },
-  
-    }
     }
   },
 
@@ -107,34 +98,13 @@ export default {
       console.log(id);
     },
 
+    getLabel (item) {
+      return item.label
+    },
      
   },
 
   computed: {
-    getSelectizeSettings: function(){
-      var vm = this;
-      var settings = {
-        create: false,
-        sortField: 'label',
-        valueField: 'id',
-        labelField: 'label',
-        searchField: ['label'],
-        openOnFocus: true,
-        //  closeAfterSelect: true,
-
-        render: {
-            option: function (item, escape) {
-                return '<div>' + escape(item.label) + '</div>';
-            }
-        },
-
-        load: function(query, callback) {
-            if (!query.length) return callback();
-            callback(vm.catlgs['device']);
-        },
-      }
-      return settings;
-    },
 
   },
   
@@ -157,5 +127,6 @@ tbody tr:hover {
 background-color: #f2f2f2;
 color: #000000
 }
+
 </style>
 

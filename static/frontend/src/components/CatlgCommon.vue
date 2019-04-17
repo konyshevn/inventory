@@ -35,8 +35,10 @@ export default {
               item.label = vm.getCatlgLabel(catlgType, item)
               return item
             })
+            catlgReady = _.orderBy(catlgReady, ['label'], ['asc'])
           } else {
             var catlgReady = response.data
+            catlgReady = _.orderBy(catlgReady, ['label'], ['asc'])
           }
           Vue.set(vm.catlgs, catlgType, catlgReady);
         }) 

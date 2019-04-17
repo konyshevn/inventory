@@ -15,14 +15,17 @@
     "jquery": "^3.4.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "v-autocomplete": "^1.8.2",
     "vue": "^2.6.6",
+    "vue-bootstrap-typeahead": "^0.2.6",
+    "vue-cool-select": "^2.10.2",
     "vue2-selectize": "^1.1.7",
     "vuetify": "^1.5.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
     "@vue/cli-plugin-eslint": "^3.5.0",
-    "@vue/cli-service": "^3.5.0",
+    "@vue/cli-service": "^3.6.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
