@@ -65,7 +65,8 @@ export default {
         case 'device':
           var devicetype = vm.getCatlgItem('devicetype', catlgItem['device_type'])['label'];
           var nomenclature = vm.getCatlgItem('nomenclature', catlgItem['name'])['label'];
-          label = devicetype + ' ' + nomenclature;
+          var serial_num = catlgItem['serial_num'] 
+          label = devicetype + ' ' + nomenclature + ' (' + serial_num + ')';
           break;
 
         case 'person':

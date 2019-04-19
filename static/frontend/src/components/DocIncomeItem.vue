@@ -1,59 +1,34 @@
 <template>
   <div class="doc-income-item container">
+
+
     <br>
     <br>
 
     <table class="table table-bordered table_unit">
       <thead>
         <tr>
-          <th>Устройство</th>
-          <th>Сотрудник</th>
-          <th>Количество</th>
-          <th>Комментарий</th>
+          <th width="40%">Устройство</th>
+          <th width="30%">Сотрудник</th>
+          <th width="10%">Количество</th>
+          <th width="20%">Комментарий</th>
         </tr>
       </thead>
       <tbody>
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
-          <div style="position:relative;display:block">
-          <cool-select 
-          v-model="rec['device']" 
-          :items="catlgs['device']"
-          item-value="id"
-          item-text="label"
-          arrowsDisableInstantSelection="true"
-          scrollItemsLimit="10"
-          >
-            <template slot="no-data">
-              <span>Не найдено</span>
-            </template>
-            <template slot="item" slot-scope="{ item }">
-              <div class="item">
-                <span class="item-name"> {{ item.label }} </span>
-              </div>
-            </template>
-          </cool-select>
-          </div>
+          <catlg-widget type="device" :model="rec['device']" :items="catlgs['device']"></catlg-widget>
         </td>
         <td>
-          <div style="position:relative;display:block">
-          <cool-select 
-          v-model="rec['person']" 
-          :items="catlgs['person']"
-          item-value="id"
-          item-text="label"
-          arrowsDisableInstantSelection="true"
-          scrollItemsLimit="10">
-          </cool-select>
-            
-          </div>
+          <catlg-widget type="person" :model="rec['person']" :items="catlgs['person']"></catlg-widget>
+
         </td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
       </tr>
       </tbody>
     </table>
-
+    <catlg-widget-modal :catlgs="catlgs"></catlg-widget-modal>
   </div>
 </template>
 
@@ -67,6 +42,8 @@ var _ = require('lodash');
 import CatlgCommon from './CatlgCommon.vue';
 import DocCommon from './DocCommon.vue';
 import { CoolSelect } from 'vue-cool-select'
+import CatlgWidget from './CatlgWidget.vue';
+import CatlgWidgetModal from './CatlgWidgetModal.vue';
 
 
 Vue.filter('formatDate', function(value) {
@@ -79,7 +56,10 @@ Vue.filter('formatDate', function(value) {
 export default {
   name: 'DocIncomeItem',
   components: {
-    CoolSelect
+    CoolSelect,
+    CatlgWidget,
+    CatlgWidgetModal,
+
   },
   props: {
     //msg: String
@@ -89,6 +69,7 @@ export default {
   
   data () {
     return {
+      active: false
     }
   },
 
