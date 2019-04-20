@@ -108,11 +108,11 @@ DOCUMENT = {
 
 CATALOG = {
     'device': {'model': Device, 'form': DeviceForm, 'order_by': 'name'},
-    'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'name'},
-    'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'name'},
+    'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'label'},
+    'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'label'},
     'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
-    'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'name'},
-    'stock': {'model': Stock, 'form': StockForm, 'order_by': 'name'},
+    'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'label'},
+    'stock': {'model': Stock, 'form': StockForm, 'order_by': 'label'},
 }
 
 REGISTRY = {

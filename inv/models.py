@@ -7,7 +7,6 @@ import sys
 from functools import reduce
 import datetime, time
 from dateutil import tz
-from gm2m import GM2MField
 
 
 # Create your models here.
@@ -17,8 +16,7 @@ def check_operation(operation, status):
         status['data'].extend(operation['data'])
 
 
-
-#---------------Device---------------
+# ---------------Device---------------
 # Мета-класс справочник
 class Catalog(models.Model):
     # Метод "Запись данных в справочник".
@@ -48,7 +46,7 @@ class Catalog(models.Model):
         except ProtectedError as err:
             status['success'] = False
             status['data'] = ['Ошибка. Данный элемент используется в: %s' % [str(item) for item in err.protected_objects]]
-            #print('Ошибка. Данный элемент используется в: %s' % [str(item) for item in err.protected_objects])
+            # print('Ошибка. Данный элемент используется в: %s' % [str(item) for item in err.protected_objects])
         return status
 
     class Meta:
