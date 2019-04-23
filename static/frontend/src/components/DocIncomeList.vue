@@ -19,8 +19,8 @@
           <span v-if="doc.active">Да</span>
           <span v-else></span>
         </td>
-        <td>{{getCatlgItem('department', doc.department).label}}</td>
-        <td>{{getCatlgItem('stock', doc.stock).label}}</td>
+        <td>{{displayCatlgItem('department', doc.department)}}</td>
+        <td></td>
         <td>{{doc.comment}}</td>
       </tr>
     </tbody>
@@ -60,12 +60,23 @@ export default {
 
     clickRow: function (id) {
       console.log(id);
-    }
+    },
      
+    displayCatlgItem(catlgType, id){
+      var vm = this
+      vm.fetchCatlgItem(catlgType, id)
+      if (id in vm.catlgs[catlgType]){
+        console.log(vm.catlgs[catlgType][id]['label'])
+        return vm.catlgs[catlgType][id]['label']
+      }
+    }
   },
   mounted: function () {
     this.fetchDocs('docincome');
     //this.fetchCatlg('device');
+
+  },
+    computed: {
 
   },
 }

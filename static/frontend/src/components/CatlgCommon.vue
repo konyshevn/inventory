@@ -16,12 +16,12 @@ export default {
   data () {
     return {
       catlgs: {
-        'department': [],
-        'stock': [],
-        'person': [],
-        'device': [],
-        'devicetype': [],
-        'nomenclature': [],
+        'department': {},
+        'stock': {},
+        'person': {},
+        'device': {},
+        'devicetype': {},
+        'nomenclature': {},
       } 
     }
   },
@@ -43,7 +43,7 @@ export default {
           }
           Vue.set(vm.catlgs, catlgType, catlgReady);
         })
-      return myarr 
+
     },
 
     async fetchCatlgItem (catlgType, id) {
@@ -51,14 +51,13 @@ export default {
       try {
         var response = await HTTP.get(catlgType + '/'+ id + '/')
         var catlgItemFetch = response.data
+               
+        vm.catlgs[catlgType][catlgItemFetch.id] = catlgItemFetch
         
-        /*       
         if ( !('label' in catlgItemFetch)) {
-          catlgItemFetch.label = vm.getCatlgLabel(catlgType, catlgItemFetch)
+          await vm.setCatlgLabel(catlgType, id)
         }    
-       */
-        var catlg_new = _.unionBy([catlgItemFetch], vm.catlgs[catlgType], 'id')
-        vm.catlgs[catlgType] = catlg_new
+        console.log('fetching ' + catlgType + ' ' + id)
       } catch(error) {
         console.log(error)
       }
@@ -75,18 +74,20 @@ export default {
       return catlgItem
     },
 
-    getCatlgLabel: function(catlgName, id){
+    async setCatlgLabel (catlgName, id) {
       var vm = this;
       var label = "unknown";
       if (isNaN(id)){
         var catlgItem = id; //не число, значит передан объект
       } else {
-        var catlgItem = vm.getCatlgItem(catlgName, id); //число, значит передано id 
+        var catlgItem = vm.catlgs[catlgName][id]; //число, значит передано id 
       }
       switch(catlgName){
         case 'device':
-          var devicetype = vm.getCatlgItem('devicetype', catlgItem['device_type'])['label'];
-          var nomenclature = vm.getCatlgItem('nomenclature', catlgItem['name'])['label'];
+          await vm.fetchCatlgItem('devicetype', catlgItem['device_type'])
+          await vm.fetchCatlgItem('nomenclature', catlgItem['nomenclature'])
+          var devicetype = vm.catlgs['devicetype'][id]['label'];
+          var nomenclature = vm.catlgs['nomenclature'][id]['label'];
           var serial_num = catlgItem['serial_num'] 
           label = devicetype + ' ' + nomenclature + ' (' + serial_num + ')';
           break;
@@ -95,7 +96,8 @@ export default {
           label = catlgItem['surname'] + ' ' + catlgItem['name'];
           break;
       }
-      return label;
+      catlgs[catlgName][id]['label'] = label
+
     },
 
   },
@@ -112,7 +114,7 @@ export default {
     */
     //this.fetchCatlg('department');
     //this.fetchCatlg('stock');
-    console.log(this.fetchCatlg('person'));
+    //console.log(this.fetchCatlg('person'));
     //this.fetchCatlg('devicetype');
     //this.fetchCatlg('nomenclature');
     //this.fetchCatlg('device');
