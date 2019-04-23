@@ -28,6 +28,7 @@ export default {
   methods: {
     fetchCatlg: function(catlgType){
       var vm = this;
+      
       HTTP.get(catlgType + '/')
         .then(function (response) {
           if ( !('label' in response.data[0])) {
@@ -41,11 +42,32 @@ export default {
             catlgReady = _.orderBy(catlgReady, ['label'], ['asc'])
           }
           Vue.set(vm.catlgs, catlgType, catlgReady);
-        }) 
+        })
+      return myarr 
+    },
+
+    async fetchCatlgItem (catlgType, id) {
+      var vm = this
+      try {
+        var response = await HTTP.get(catlgType + '/'+ id + '/')
+        var catlgItemFetch = response.data
+        
+        /*       
+        if ( !('label' in catlgItemFetch)) {
+          catlgItemFetch.label = vm.getCatlgLabel(catlgType, catlgItemFetch)
+        }    
+       */
+        var catlg_new = _.unionBy([catlgItemFetch], vm.catlgs[catlgType], 'id')
+        vm.catlgs[catlgType] = catlg_new
+      } catch(error) {
+        console.log(error)
+      }
+
     },
 
     getCatlgItem: function (catlgType, id) {
       var vm = this;
+      //vm.fetchCatlgItem(catlgType, id)
       if (id === null) {
         return "";
       }
@@ -78,12 +100,26 @@ export default {
 
   },
   mounted: function () {
-    this.fetchCatlg('department');
-    this.fetchCatlg('stock');
-    this.fetchCatlg('person');
-    this.fetchCatlg('devicetype');
-    this.fetchCatlg('nomenclature');
-    this.fetchCatlg('device');
+    /*
+    this.catlgs['device'].push({
+      'comment':"",
+      'device_type': 128,
+      'id': 1190,
+      'inv_num': "",
+      'name': 7777,
+      'serial_num': "CNU1170534"
+    })
+    */
+    //this.fetchCatlg('department');
+    //this.fetchCatlg('stock');
+    console.log(this.fetchCatlg('person'));
+    //this.fetchCatlg('devicetype');
+    //this.fetchCatlg('nomenclature');
+    //this.fetchCatlg('device');
+
+    //this.fetchCatlgItem('device', 1190);
+    //var myitem = this.fetchCatlgItem('device')
+    //console.log(myitem);
     //this.addCatlgLabel();
   }
   
