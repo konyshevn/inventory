@@ -46,9 +46,11 @@ export default {
   components: {
   },
 
+/*
   props: {
     catlgs: Object,
   },
+*/
 
   mixins: [CatlgCommon],
   
@@ -60,8 +62,9 @@ export default {
 
   },
   mounted: function () {
+    this.fetchCatlg('device')
+  },
 
-  }
   
 }
 </script>

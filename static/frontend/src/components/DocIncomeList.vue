@@ -1,5 +1,8 @@
 <template>
   <div class="doc-income-list container">
+    <br>
+
+
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -19,8 +22,8 @@
           <span v-if="doc.active">Да</span>
           <span v-else></span>
         </td>
-        <td>{{displayCatlgItem('department', doc.department)}}</td>
-        <td></td>
+        <td><span>{{displayCatlgItem('department', doc.department)}}</span></td>
+        <td><span>{{displayCatlgItem('stock', doc.stock)}}</span></td>
         <td>{{doc.comment}}</td>
       </tr>
     </tbody>
@@ -54,6 +57,9 @@ export default {
   mixins: [CatlgCommon, DocCommon],
   data () {
     return {
+      catlgs: {
+        'department': {}
+      }
     }
   },
   methods: {
@@ -64,19 +70,22 @@ export default {
      
     displayCatlgItem(catlgType, id){
       var vm = this
-      vm.fetchCatlgItem(catlgType, id)
       if (id in vm.catlgs[catlgType]){
-        console.log(vm.catlgs[catlgType][id]['label'])
         return vm.catlgs[catlgType][id]['label']
       }
     }
   },
   mounted: function () {
-    this.fetchDocs('docincome');
     //this.fetchCatlg('device');
 
   },
-    computed: {
+  
+  created() {
+    this.fetchDocs('docincome');
+
+  },
+
+  computed: {
 
   },
 }

@@ -31,6 +31,18 @@ export default {
       
       HTTP.get(catlgType + '/')
         .then(function (response) {
+  
+        var catlgItemFetch = response.data   
+
+          catlgItemFetch.forEach(function(item, i, arr){
+            Vue.set(vm.catlgs[catlgType], item.id, item)       
+            if ( !('label' in item)) {
+              vm.setCatlgLabel(catlgType, item.id)
+            }    
+          })
+
+
+/*
           if ( !('label' in response.data[0])) {
             var catlgReady = response.data.map(function(item){
               item.label = vm.getCatlgLabel(catlgType, item)
@@ -42,6 +54,10 @@ export default {
             catlgReady = _.orderBy(catlgReady, ['label'], ['asc'])
           }
           Vue.set(vm.catlgs, catlgType, catlgReady);
+*/        
+
+
+
         })
 
     },
@@ -49,14 +65,30 @@ export default {
     async fetchCatlgItem (catlgType, id) {
       var vm = this
       try {
-        var response = await HTTP.get(catlgType + '/'+ id + '/')
-        var catlgItemFetch = response.data
-               
-        vm.catlgs[catlgType][catlgItemFetch.id] = catlgItemFetch
+        if (!Array.isArray(id)){
+          var response = await HTTP.get(catlgType + '/'+ id + '/')
+          var catlgItemFetch = response.data
+          Vue.set(vm.catlgs[catlgType], catlgItemFetch.id, catlgItemFetch)
+          if ( !('label' in catlgItemFetch)) {
+              vm.setCatlgLabel(catlgType, catlgItemFetch.id)
+          }
+
+        } else {
+          var response = await HTTP.get(catlgType + '/?ids='+ id.join(','))
+          var catlgItemFetch = response.data   
+
+          catlgItemFetch.forEach(function(item, i, arr){
+            Vue.set(vm.catlgs[catlgType], item.id, item)       
+            if ( !('label' in item)) {
+              vm.setCatlgLabel(catlgType, item.id)
+            }    
+          })
         
-        if ( !('label' in catlgItemFetch)) {
-          await vm.setCatlgLabel(catlgType, id)
-        }    
+
+
+        }
+
+      
         console.log('fetching ' + catlgType + ' ' + id)
       } catch(error) {
         console.log(error)

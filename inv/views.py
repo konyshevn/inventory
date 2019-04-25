@@ -39,6 +39,24 @@ class CatalogViewSet(viewsets.ViewSet):
         else:
             return Response(cd['data'], status=status.HTTP_400_BAD_REQUEST)
 
+    def get_queryset(self):
+
+        # Get URL parameter as a string, if exists 
+        ids = self.request.query_params.get('ids', None)
+
+        # Get snippets for ids if they exist
+        if ids is not None:
+            # Convert parameter string to list of integers
+            ids = [ int(x) for x in ids.split(',') ]
+            # Get objects for all parameter ids 
+            queryset = self.serializer_class.Meta.model.objects.filter(pk__in=ids)
+
+        else:
+            # Else no parameters, return all objects
+            queryset = self.queryset
+
+        return queryset
+
 
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):
     serializer_class = serializers.DocIncomeSerializer

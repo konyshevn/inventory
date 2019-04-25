@@ -6,10 +6,12 @@
 /* eslint-disable no-console */
 import Vue from 'vue'
 import {HTTP} from '../http-common'
+import CatlgCommon from './CatlgCommon.vue';
 var _ = require('lodash');
 
 export default {
   name: 'DocCommon',
+  mixins: [CatlgCommon],
   props: {
     //msg: String
   },
@@ -26,7 +28,7 @@ export default {
         'docwriteoff': [],
         'docmove': [],
         'docinventory': [],
-      }
+      },
     }
   },
 
@@ -35,12 +37,19 @@ export default {
       var vm = this;
       HTTP.get(docType + '/')
         .then(function (response) {
-          // установить данные в vm
-          var DocsReady = response.data.map(function (doc) {
-            return doc
-          })
+          var DocsReady = response.data
           Vue.set(vm.docs, docType, DocsReady);
-        });
+          for (var key in DocsReady[0]){
+            if (key in vm.catlgs) {
+              var catlgToLoad = _.uniq(_.map(DocsReady, _.property(key)))
+              catlgToLoad = catlgToLoad.filter(function (el) {
+                return el != null;
+              });
+
+              vm.fetchCatlgItem(key, catlgToLoad)
+            }
+          }
+        })
     },
 
     getDocItem: function (docType, id) {

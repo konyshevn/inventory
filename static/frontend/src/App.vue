@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <DocIncomeList></DocIncomeList>
+    <DocIncomeItem></DocIncomeItem>
 
   </div>
 </template>
