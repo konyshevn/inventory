@@ -26,6 +26,13 @@ export default {
     }
   },
   methods: {
+    displayCatlgItem(catlgType, id){
+      var vm = this
+      if (id in vm.catlgs[catlgType]){
+        return vm.catlgs[catlgType][id]['label']
+      }
+    },
+
     fetchCatlg: function(catlgType){
       var vm = this;
       

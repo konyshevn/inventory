@@ -13,7 +13,7 @@
       <tbody>
         <tr v-for="device in catlgs['device']" :key="device.id">
           <td>
-            {{getCatlgItem('devicetype', device['device_type']).label}}
+            {{displayCatlgItem('devicetype', device.id)}}
           </td>
           <td>
             
@@ -63,6 +63,8 @@ export default {
   },
   mounted: function () {
     this.fetchCatlg('device')
+    //this.fetchCatlg('devicetype')
+    //this.fetchCatlg('nomenclature')
   },
 
   

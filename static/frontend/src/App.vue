@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <DocIncomeItem></DocIncomeItem>
+    <CatlgDeviceList></CatlgDeviceList>
+    <DocIncomeList></DocIncomeList>
 
   </div>
 </template>
@@ -8,12 +9,14 @@
 <script>
 import DocIncomeList from './components/DocIncomeList.vue'
 import DocIncomeItem from './components/DocIncomeItem.vue'
+import CatlgDeviceList from './components/CatlgDeviceList.vue'
 
 export default {
   name: 'app',
   components: {
     DocIncomeList,
-    DocIncomeItem
+    DocIncomeItem,
+    CatlgDeviceList
   }
 }
 </script>
