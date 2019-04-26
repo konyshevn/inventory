@@ -28,7 +28,7 @@
       </tr>
       </tbody>
     </table>
-    <catlg-widget-modal :catlgs="catlgs"></catlg-widget-modal>
+    <catlg-widget-modal></catlg-widget-modal>
   </div>
 </template>
 

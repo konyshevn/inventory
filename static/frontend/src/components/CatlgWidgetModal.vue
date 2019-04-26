@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <b-modal id="device-modal" size="lg" title="Устройства">
+  <div class="container">
+    <b-modal id="device-modal" size="xl" scrollable title="Устройства">
       <catlg-device-list></catlg-device-list>
     </b-modal>
     

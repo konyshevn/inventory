@@ -11,21 +11,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in catlgs['device']" :key="device.id">
+        <tr v-for="device in catlgs['device']" :key="device['id']">
           <td>
-            {{displayCatlgItem('devicetype', device.id)}}
+            {{displayCatlgItem('devicetype', device['device_type'])}}
           </td>
           <td>
-            
+            {{displayCatlgItem('device', device['id'])}}
           </td>
           <td>
-            
+            {{device['serial_num']}}
           </td>
           <td>
-            
+            {{device['inv_num']}}
           </td>
           <td>
-            
+            {{device['comment']}}
           </td>
         </tr>
       </tbody>
@@ -56,15 +56,22 @@ export default {
   
   data () {
     return {
+      type: 'CatlgList'
     }
   },
   methods: {
 
   },
   mounted: function () {
-    this.fetchCatlg('device')
-    //this.fetchCatlg('devicetype')
-    //this.fetchCatlg('nomenclature')
+    var vm = this
+    vm.fetchCatlg('nomenclature')
+    .then(function(){
+      vm.fetchCatlg('devicetype')
+    })
+    .then(function(){
+      vm.fetchCatlg('device')
+    })
+
   },
 
   
