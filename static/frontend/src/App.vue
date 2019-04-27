@@ -2,7 +2,8 @@
   <div id="app">
     <DocIncomeItem></DocIncomeItem>
     <CatlgDeviceList></CatlgDeviceList>
-    <DocIncomeList></DocIncomeList>
+
+
 
   </div>
 </template>

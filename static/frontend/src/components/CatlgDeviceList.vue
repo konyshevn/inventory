@@ -37,6 +37,7 @@
 /* eslint-disable no-console */
 import Vue from 'vue'
 import {HTTP} from '../http-common'
+import {EventBus} from './event-bus.js'
 var _ = require('lodash');
 import CatlgCommon from './CatlgCommon.vue';
 
@@ -60,18 +61,36 @@ export default {
     }
   },
   methods: {
+    async loadCatlgList () {
+      var vm = this
+      await vm.fetchCatlg('nomenclature')
+      await vm.fetchCatlg('devicetype')
+      await vm.fetchCatlg('device')
+    },
+
+    clearCatlgList: function () {
+      var vm = this
+      vm.catlgs['device'] = {}
+      vm.catlgs['devicetype'] = {}
+      vm.catlgs['nomenclature'] = {}
+    }
 
   },
   mounted: function () {
-    var vm = this
-    vm.fetchCatlg('nomenclature')
-    .then(function(){
-      vm.fetchCatlg('devicetype')
-    })
-    .then(function(){
-      vm.fetchCatlg('device')
-    })
+    this.loadCatlgList()
+  },
 
+  created: function () {
+    var vm = this;
+    EventBus.$on('reloadCatlgList', catlgType => {
+      console.log('EventBus: showCatlg ' + catlgType)
+      if (catlgType == 'device') {
+        console.log('Refresh catalog')
+        vm.clearCatlgList()
+        vm.loadCatlgList()
+      }
+      
+    });
   },
 
   

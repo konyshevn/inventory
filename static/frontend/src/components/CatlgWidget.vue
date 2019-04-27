@@ -10,7 +10,9 @@
       scrollItemsLimit="10"
       @focus="active=true"
       @blur="active=false"
-      >
+      :loading="loading"
+      disable-filtering-by-search
+      @search="onSearch">
         <template slot="no-data">
           <span>Не найдено</span>
         </template>
@@ -34,28 +36,58 @@ import Vue from 'vue'
 import {HTTP} from '../http-common'
 var _ = require('lodash');
 import { CoolSelect } from 'vue-cool-select'
+import CatlgCommon from './CatlgCommon.vue';
 
 export default {
   name: 'CatlgWidget',
   components: {
     CoolSelect
   },
+  mixins: [CatlgCommon],
   props: {
     model: Number,
-    items: Object,
-    type: String
+    widgetType: String
   },
 
   data () {
     return {
-     'active': false
+     'active': false,
+     'items': {},
+     'loading': false,
     }
   },
   methods: {
     blur: function () {
       var vm=this
       setTimeout(function() { vm.active=false }, 1);
+    },
+
+
+
+    async onSearch(search) {
+      var vm = this
+      const lettersLimit = 2;
+
+      if (search.length < lettersLimit) {
+        vm.items = {};
+        vm.loading = false;
+        return;
+      }
+      vm.loading = true;
+      console.log(vm.widgetType)
+      await vm.fetchCatlg(vm.widgetType)
+      console.log(vm.catlgs)
+      vm.items = vm.catlgs[vm.widgetType]
+
+      //clearTimeout(this.timeoutId);
+      //this.timeoutId = setTimeout(async () => {
+      //var response = await HTTP.get(`"${type}"?query="${search}"`)
+      //var catlgItemFetch = response.data
+
+      //}, 500);
     }
+
+
 
   },
   mounted: function () {

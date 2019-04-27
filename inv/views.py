@@ -53,7 +53,8 @@ class CatalogViewSet(viewsets.ViewSet):
 
         else:
             # Else no parameters, return all objects
-            queryset = self.queryset
+            queryset = self.serializer_class.Meta.model.objects.all()
+
 
         return queryset
 
