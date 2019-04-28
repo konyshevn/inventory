@@ -52,7 +52,7 @@ export default {
   data () {
     return {
      'active': false,
-     'items': {},
+     'items': [],
      'loading': false,
     }
   },
@@ -67,9 +67,10 @@ export default {
     async onSearch(search) {
       var vm = this
       const lettersLimit = 2;
-
+      vm.items = [];
+      
       if (search.length < lettersLimit) {
-        vm.items = {};
+        vm.items = [];
         vm.loading = false;
         return;
       }
@@ -77,8 +78,10 @@ export default {
       console.log(vm.widgetType)
       await vm.fetchCatlg(vm.widgetType)
       console.log(vm.catlgs)
-      vm.items = vm.catlgs[vm.widgetType]
-
+      for (var key in vm.catlgs[vm.widgetType]) {
+        vm.items.push(vm.catlgs[vm.widgetType][key])
+      }
+      vm.loading = false
       //clearTimeout(this.timeoutId);
       //this.timeoutId = setTimeout(async () => {
       //var response = await HTTP.get(`"${type}"?query="${search}"`)

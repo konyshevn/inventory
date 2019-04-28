@@ -93,7 +93,7 @@ export default {
 					if (!(vm.type == "CatlgList")){
 						console.log('loading devicetype & nomenclature')
 						await vm.fetchCatlgItem('devicetype', catlgItem['device_type'])
-						await vm.fetchCatlgItem('nomenclature', catlgItem['nomenclature'])
+						await vm.fetchCatlgItem('nomenclature', catlgItem['name'])
 					}
 					var devicetype = vm.catlgs['devicetype'][catlgItem.device_type]['label'];
 					var nomenclature = vm.catlgs['nomenclature'][catlgItem.name]['label'];
