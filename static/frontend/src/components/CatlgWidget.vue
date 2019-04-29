@@ -1,5 +1,6 @@
 <template>
   <div style="position:relative;display:block">
+    {{model}}
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
@@ -12,7 +13,8 @@
       @blur="active=false"
       :loading="loading"
       disable-filtering-by-search
-      @search="onSearch">
+      @search="onSearch"
+      >
         <template slot="no-data">
           <span>Не найдено</span>
         </template>
@@ -22,8 +24,8 @@
           </div>
         </template>
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="type + '-modal'">O</b-button>
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="type + '-modal'">...</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">O</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">...</b-button>
         </template>
       </cool-select>
     </div>
@@ -56,6 +58,7 @@ export default {
      'loading': false,
     }
   },
+
   methods: {
     blur: function () {
       var vm=this

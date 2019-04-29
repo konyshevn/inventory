@@ -17,9 +17,12 @@
       <tbody>
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
+          {{rec['device']}}
           <catlg-widget widget-type="device" :model="rec['device']"></catlg-widget>
+          
         </td>
         <td>
+          {{rec['person']}}
           <catlg-widget widget-type="person" :model="rec['person']"></catlg-widget>
 
         </td>
@@ -90,7 +93,7 @@ export default {
   },
   
   mounted: function () {
-    this.getDocItem('docincome', 1);
+    this.getDocItem('docincome', 246);
   },
 
   created: function() {
