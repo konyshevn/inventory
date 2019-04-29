@@ -10,7 +10,7 @@
       arrowsDisableInstantSelection="true"
       scrollItemsLimit="10"
       @focus="active=true"
-      @blur="active=false; items=[]"
+      @blur="active=false"
       :loading="loading"
       disable-filtering-by-search
       @search="onSearch"
@@ -76,17 +76,18 @@ export default {
       var vm = this
       const lettersLimit = 2;
       Vue.set(vm, 'items', [])
+      Vue.set(vm.catlgs, vm.widgetType, [])
       //vm.items = [];
       console.log(search)
       if (search.length < lettersLimit) {
         Vue.set(vm, 'items', [])
+        Vue.set(vm.catlgs, vm.widgetType, [])
         //vm.items = [];
         vm.loading = false;
         return;
       }
       vm.loading = true;
       await vm.fetchCatlg(vm.widgetType, search, vm.searchFields[vm.widgetType])
-      Vue.set(vm, 'items', [])
       for (var key in vm.catlgs[vm.widgetType]) {
         vm.items.push(vm.catlgs[vm.widgetType][key])
       }
