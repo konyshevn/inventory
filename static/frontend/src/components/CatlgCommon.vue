@@ -33,10 +33,16 @@ export default {
 			}
 		},
 
-		async fetchCatlg (catlgType){
+		async fetchCatlg (catlgType, query, fields){
 			var vm = this;
 			try {
-				var response = await HTTP.get(catlgType + '/')
+				if ((query == undefined) | (fields == undefined)) {
+					var response = await HTTP.get(catlgType + '/')
+				} else {
+					console.log(typeof(fields))
+					
+					var response = await HTTP.get(`${catlgType}/?query=${query}&fields=${fields.join(',')}`)
+				}
 				var catlgItemFetch = response.data   
 				catlgItemFetch.forEach(function(item, i, arr){
 					Vue.set(vm.catlgs[catlgType], item.id, item)       

@@ -12,7 +12,8 @@ from inv.forms import *
 import json
 from django.core.cache import caches
 from django.core import signing
-
+import operator
+from django.db.models import Q
 
 # DRF
 from rest_framework import viewsets, status
@@ -41,20 +42,32 @@ class CatalogViewSet(viewsets.ViewSet):
 
     def get_queryset(self):
 
-        # Get URL parameter as a string, if exists 
+        # Get URL parameter as a string, if exists
         ids = self.request.query_params.get('ids', None)
+        query = self.request.query_params.get('query', None)
+        fields = self.request.query_params.get('fields', None)
 
         # Get snippets for ids if they exist
         if ids is not None:
             # Convert parameter string to list of integers
-            ids = [ int(x) for x in ids.split(',') ]
-            # Get objects for all parameter ids 
+            ids = [int(x) for x in ids.split(',')]
+            # Get objects for all parameter ids
             queryset = self.serializer_class.Meta.model.objects.filter(pk__in=ids)
+
+        elif (query is not None) and (fields is not None):
+            fields = [str(x) for x in fields.split(',')]
+            filter_vals = {}
+            for field in fields:
+                field_label = '%s__icontains' % field
+                filter_vals.update([(field_label, query)])
+
+            list_of_Q = [Q(**{key: val}) for key, val in filter_vals.items()]
+            query_filter = reduce(operator.or_, list_of_Q)
+            queryset = self.serializer_class.Meta.model.objects.filter(query_filter)
 
         else:
             # Else no parameters, return all objects
             queryset = self.serializer_class.Meta.model.objects.all()
-
 
         return queryset
 

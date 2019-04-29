@@ -10,7 +10,7 @@
       arrowsDisableInstantSelection="true"
       scrollItemsLimit="10"
       @focus="active=true"
-      @blur="active=false"
+      @blur="active=false; items=[]"
       :loading="loading"
       disable-filtering-by-search
       @search="onSearch"
@@ -49,7 +49,7 @@ export default {
   mixins: [CatlgCommon],
   props: {
     model: Number,
-    widgetType: String
+    widgetType: String,
   },
 
   data () {
@@ -57,6 +57,10 @@ export default {
      'active': false,
      'items': [],
      'loading': false,
+      searchFields: {
+        'device': ['name__label', 'device_type__label', 'serial_num', 'inv_num'],
+        'person': ['name', 'surname']
+      }
     }
   },
 
@@ -71,17 +75,18 @@ export default {
     async onSearch(search) {
       var vm = this
       const lettersLimit = 2;
-      vm.items = [];
-      
+      Vue.set(vm, 'items', [])
+      //vm.items = [];
+      console.log(search)
       if (search.length < lettersLimit) {
-        vm.items = [];
+        Vue.set(vm, 'items', [])
+        //vm.items = [];
         vm.loading = false;
         return;
       }
       vm.loading = true;
-      console.log(vm.widgetType)
-      await vm.fetchCatlg(vm.widgetType)
-      console.log(vm.catlgs)
+      await vm.fetchCatlg(vm.widgetType, search, vm.searchFields[vm.widgetType])
+      Vue.set(vm, 'items', [])
       for (var key in vm.catlgs[vm.widgetType]) {
         vm.items.push(vm.catlgs[vm.widgetType][key])
       }
