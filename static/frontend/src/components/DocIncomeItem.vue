@@ -18,12 +18,12 @@
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
           {{rec['device']}}
-          <catlg-widget widget-type="device" :model="rec['device']"></catlg-widget>
+          <catlg-widget widget-type="device" :model.sync="rec['device']"></catlg-widget>
           
         </td>
         <td>
           {{rec['person']}}
-          <catlg-widget widget-type="person" :model="rec['person']"></catlg-widget>
+          <catlg-widget widget-type="person" :model.sync="rec['person']"></catlg-widget>
 
         </td>
         <td>{{rec.qty}}</td>

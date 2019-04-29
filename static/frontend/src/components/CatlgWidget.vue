@@ -14,6 +14,7 @@
       :loading="loading"
       disable-filtering-by-search
       @search="onSearch"
+      @input="$emit('update:model', model)"
       >
         <template slot="no-data">
           <span>Не найдено</span>
