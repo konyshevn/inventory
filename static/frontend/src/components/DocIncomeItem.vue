@@ -17,14 +17,10 @@
       <tbody>
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
-          {{rec['device']}}
           <catlg-widget widget-type="device" :model.sync="rec['device']"></catlg-widget>
-          
         </td>
         <td>
-          {{rec['person']}}
           <catlg-widget widget-type="person" :model.sync="rec['person']"></catlg-widget>
-
         </td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
@@ -93,7 +89,7 @@ export default {
   },
   
   mounted: function () {
-    this.getDocItem('docincome', 246);
+    this.getDocItem('docincome', 234);
   },
 
   created: function() {

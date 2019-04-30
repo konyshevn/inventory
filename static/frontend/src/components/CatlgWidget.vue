@@ -1,6 +1,5 @@
 <template>
   <div style="position:relative;display:block">
-    {{model}}
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
@@ -77,12 +76,9 @@ export default {
       const lettersLimit = 2;
       Vue.set(vm, 'items', [])
       Vue.set(vm.catlgs, vm.widgetType, [])
-      //vm.items = [];
-      console.log(search)
       if (search.length < lettersLimit) {
         Vue.set(vm, 'items', [])
         Vue.set(vm.catlgs, vm.widgetType, [])
-        //vm.items = [];
         vm.loading = false;
         return;
       }
@@ -92,19 +88,20 @@ export default {
         vm.items.push(vm.catlgs[vm.widgetType][key])
       }
       vm.loading = false
-      //clearTimeout(this.timeoutId);
-      //this.timeoutId = setTimeout(async () => {
-      //var response = await HTTP.get(`"${type}"?query="${search}"`)
-      //var catlgItemFetch = response.data
+    },
 
-      //}, 500);
+    async fetchModel () {
+      var vm = this
+      await vm.fetchCatlgItem(vm.widgetType, vm.model)
+      for (var key in vm.catlgs[vm.widgetType]) {
+        vm.items.push(vm.catlgs[vm.widgetType][key])
+      }
+
     }
 
-
-
   },
-  mounted: function () {
-
+  created: function () {
+    this.fetchModel()
   }
   
 }

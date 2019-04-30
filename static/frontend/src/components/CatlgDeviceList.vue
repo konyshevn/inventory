@@ -63,8 +63,8 @@ export default {
   methods: {
     async loadCatlgList () {
       var vm = this
-      await vm.fetchCatlg('nomenclature')
-      await vm.fetchCatlg('deviceType')
+      //await vm.fetchCatlg('nomenclature')
+      //await vm.fetchCatlg('deviceType')
       await vm.fetchCatlg('device')
     },
 
