@@ -38,7 +38,7 @@ class NomenclatureAdmin(admin.ModelAdmin):
 
 
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('device_type', 'name', 'serial_num', 'inv_num', 'comment')
+    list_display = ('deviceType', 'nomenclature', 'serial_num', 'inv_num', 'comment')
 
 
 class DocIncomeAdmin(admin.ModelAdmin):

@@ -20,7 +20,7 @@ export default {
 				'stock': {},
 				'person': {},
 				'device': {},
-				'devicetype': {},
+				'deviceType': {},
 				'nomenclature': {},
 			} 
 		}
@@ -28,6 +28,7 @@ export default {
 	methods: {
 		displayCatlgItem(catlgType, id){
 			var vm = this
+			console.log(catlgType)
 			if (id in vm.catlgs[catlgType]){
 				return vm.catlgs[catlgType][id]['label']
 			}
@@ -43,7 +44,18 @@ export default {
 					
 					var response = await HTTP.get(`${catlgType}/?query=${query}&fields=${fields.join(',')}`)
 				}
-				var catlgItemFetch = response.data   
+				var catlgItemFetch = response.data
+				for (var key in catlgItemFetch[0]){
+            if (key in vm.catlgs) {
+              var catlgToLoad = _.uniq(_.map(catlgItemFetch, _.property(key)))
+              catlgToLoad = catlgToLoad.filter(function (el) {
+                return el != null;
+              });
+              console.log(catlgToLoad)
+              await vm.fetchCatlgItem(key, catlgToLoad)
+            }
+          }
+
 				catlgItemFetch.forEach(function(item, i, arr){
 					Vue.set(vm.catlgs[catlgType], item.id, item)       
 					if ( !('label' in item)) {
@@ -96,15 +108,17 @@ export default {
 			switch(catlgName){
 				case 'device':
 					console.log(vm.type)
+					/*
 					if (!(vm.type == "CatlgList")){
 						console.log('loading devicetype & nomenclature')
 						await vm.fetchCatlgItem('devicetype', catlgItem['device_type'])
 						await vm.fetchCatlgItem('nomenclature', catlgItem['name'])
 					}
-					var devicetype = vm.catlgs['devicetype'][catlgItem.device_type]['label'];
-					var nomenclature = vm.catlgs['nomenclature'][catlgItem.name]['label'];
+					*/
+					var deviceType = vm.catlgs['deviceType'][catlgItem.deviceType]['label'];
+					var nomenclature = vm.catlgs['nomenclature'][catlgItem.nomenclature]['label'];
 					var serial_num = catlgItem['serial_num'] 
-					label = devicetype + ' ' + nomenclature + ' (' + serial_num + ')';
+					label = deviceType + ' ' + nomenclature + ' (' + serial_num + ')';
 					break;
 
 				case 'person':

@@ -32,7 +32,7 @@ class PersonSelectizeWidget(ModelSelectizeWidget):
 
 class DeviceSelectizeWidget(ModelSelectizeWidget):
     model = Device
-    search_fields = ['name__label__icontains', 'inv_num__icontains', 'serial_num__icontains']
+    search_fields = ['nomenclature__label__icontains', 'inv_num__icontains', 'serial_num__icontains']
 
 
 class UploadFileForm(forms.Form):
@@ -223,16 +223,16 @@ DocInventoryTableUnitFormSet = modelformset_factory(
 class DeviceForm(ModelForm):
     class Meta:
         model = Device
-        fields = ['device_type', 'name', 'serial_num', 'inv_num', 'comment']
+        fields = ['deviceType', 'nomenclature', 'serial_num', 'inv_num', 'comment']
         labels = {
-            'device_type': 'Тип',
-            'name': 'Наименование',
+            'deviceType': 'Тип',
+            'nomenclature': 'Наименование',
             'serial_num': 'Серийный номер',
             'inv_num': 'Инвентарный номер',
             'comment': 'Комментарий'}
         widgets = {
-        'device_type': DeviceTypeSelectizeWidget,
-        'name': NomenclatureSelectizeWidget,
+        'deviceType': DeviceTypeSelectizeWidget,
+        'nomenclature': NomenclatureSelectizeWidget,
         }
 
 

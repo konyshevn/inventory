@@ -78,8 +78,8 @@ class DeviceType(Catalog):
 class Device(Catalog):
     inv_num = models.CharField(max_length=30, blank=True, verbose_name='Инвентарный номер')
     serial_num = models.CharField(max_length=30, blank=True)
-    name = models.ForeignKey(Nomenclature, on_delete=models.PROTECT, null=True)
-    device_type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, null=True)
+    nomenclature = models.ForeignKey(Nomenclature, on_delete=models.PROTECT, null=True)
+    deviceType = models.ForeignKey(DeviceType, on_delete=models.PROTECT, null=True)
     comment = models.CharField(max_length=100, blank=True)
 
     class Meta:
@@ -87,7 +87,7 @@ class Device(Catalog):
         verbose_name = 'Устройство'
 
     def __str__(self):
-        return str(self.device_type) + ' ' + str(self.name) + ' (sn: ' + str(self.serial_num) + ')'
+        return str(self.deviceType) + ' ' + str(self.nomenclature) + ' (sn: ' + str(self.serial_num) + ')'
 
 
 class Department(Catalog):

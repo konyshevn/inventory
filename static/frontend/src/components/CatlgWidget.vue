@@ -58,7 +58,7 @@ export default {
      'items': [],
      'loading': false,
       searchFields: {
-        'device': ['name__label', 'device_type__label', 'serial_num', 'inv_num'],
+        'device': ['nomenclature__label', 'deviceType__label', 'serial_num', 'inv_num'],
         'person': ['name', 'surname']
       }
     }

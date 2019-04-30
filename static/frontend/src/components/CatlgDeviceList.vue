@@ -13,7 +13,7 @@
       <tbody>
         <tr v-for="device in catlgs['device']" :key="device['id']">
           <td>
-            {{displayCatlgItem('devicetype', device['device_type'])}}
+            {{displayCatlgItem('deviceType', device['deviceType'])}}
           </td>
           <td>
             {{displayCatlgItem('device', device['id'])}}
@@ -64,14 +64,14 @@ export default {
     async loadCatlgList () {
       var vm = this
       await vm.fetchCatlg('nomenclature')
-      await vm.fetchCatlg('devicetype')
+      await vm.fetchCatlg('deviceType')
       await vm.fetchCatlg('device')
     },
 
     clearCatlgList: function () {
       var vm = this
       vm.catlgs['device'] = {}
-      vm.catlgs['devicetype'] = {}
+      vm.catlgs['deviceType'] = {}
       vm.catlgs['nomenclature'] = {}
     }
 

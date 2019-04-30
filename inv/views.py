@@ -139,7 +139,7 @@ DOCUMENT = {
 }
 
 CATALOG = {
-    'device': {'model': Device, 'form': DeviceForm, 'order_by': 'name'},
+    'device': {'model': Device, 'form': DeviceForm, 'order_by': 'nomenclature'},
     'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'label'},
     'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'label'},
     'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
@@ -684,12 +684,12 @@ def upload_file(request):
                         else:
                             return HttpResponseRedirect('/upload_file/fail')
 
-                        device_type = DeviceType.objects.filter(name=line['Device_device_type'])
-                        if device_type:
-                            device_type = device_type[0]
-                        elif (line['Device_device_type'] != ''):
-                            device_type = DeviceType(name=line['Device_device_type'])
-                            device_type.save()
+                        deviceType = DeviceType.objects.filter(name=line['Device_deviceType'])
+                        if deviceType:
+                            deviceType = deviceType[0]
+                        elif (line['Device_deviceType'] != ''):
+                            deviceType = DeviceType(name=line['Device_deviceType'])
+                            deviceType.save()
                         else:
                             return HttpResponseRedirect('/upload_file/fail')
 
@@ -706,7 +706,7 @@ def upload_file(request):
                         if device:
                             device = device[0]
                         else:
-                            device = Device(serial_num=line['Device_serial_num'], inv_num=line['Device_inv_num'], name=nomenclature, device_type=device_type, comment=line['Device_comment'])
+                            device = Device(serial_num=line['Device_serial_num'], inv_num=line['Device_inv_num'], name=nomenclature, deviceType=deviceType, comment=line['Device_comment'])
                             device.save()
                         
                         table_unit_rec = {}
