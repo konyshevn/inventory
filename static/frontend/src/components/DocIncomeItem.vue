@@ -17,10 +17,12 @@
       <tbody>
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
-          <catlg-widget widget-type="device" :model.sync="rec['device']"></catlg-widget>
+          
+          <catlg-widget widget-type="device"  :init-item="widgetInitItem('device', rec['device'])" :model.sync="rec['device']"></catlg-widget>
+          
         </td>
         <td>
-          <catlg-widget widget-type="person" :model.sync="rec['person']"></catlg-widget>
+          <catlg-widget widget-type="person" :init-item="widgetInitItem('person', rec['person'])" :model.sync="rec['person']"></catlg-widget>
         </td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
@@ -81,6 +83,15 @@ export default {
     getLabel (item) {
       return item.label
     },
+
+    widgetInitItem (widgetType, itemId) {
+      var vm = this
+      var initItem = []
+      if (!(vm.catlgs[widgetType][itemId] == undefined)) {
+        initItem.push(vm.catlgs[widgetType][itemId])
+      }
+      return initItem
+    }
      
   },
 
@@ -89,7 +100,16 @@ export default {
   },
   
   mounted: function () {
-    this.getDocItem('docincome', 234);
+    var vm = this
+    //this.$nextTick(function () {
+      vm.getDocItem('docincome', 215);
+    //})
+/*
+    var tu = vm.doc['docincome']['table_unit']
+    console.log(vm.doc['docincome'])
+
+    this.fetchWidgetInitCatlg(this['doc']['docincome']['table_unit'], {'device': 'device', 'person': 'person'})
+*/
   },
 
   created: function() {

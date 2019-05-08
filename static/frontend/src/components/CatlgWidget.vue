@@ -1,13 +1,14 @@
 <template>
   <div style="position:relative;display:block">
+
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
       :items="items"
       item-value="id"
       item-text="label"
-      arrowsDisableInstantSelection="true"
-      scrollItemsLimit="10"
+      :arrowsDisableInstantSelection="true"
+      :scrollItemsLimit="10"
       @focus="active=true"
       @blur="active=false"
       :loading="loading"
@@ -39,6 +40,7 @@ import {HTTP} from '../http-common'
 var _ = require('lodash');
 import { CoolSelect } from 'vue-cool-select'
 import CatlgCommon from './CatlgCommon.vue';
+import {EventBus} from './event-bus.js'
 
 export default {
   name: 'CatlgWidget',
@@ -49,10 +51,13 @@ export default {
   props: {
     model: Number,
     widgetType: String,
+    initItem: Array,
   },
 
   data () {
     return {
+     //'catlgs': this.initCatlgs,
+     //'initItem': this.model,
      'active': false,
      'items': [],
      'loading': false,
@@ -90,18 +95,69 @@ export default {
       vm.loading = false
     },
 
-    async fetchModel () {
+/*
+    fetchModel: function () {
       var vm = this
-      await vm.fetchCatlgItem(vm.widgetType, vm.model)
-      for (var key in vm.catlgs[vm.widgetType]) {
-        vm.items.push(vm.catlgs[vm.widgetType][key])
-      }
+ //     vm.catlgs = vm.initCatlgs
 
+//      for (var key in vm.catlgs[vm.widgetType]) {
+//        vm.items.push(vm.catlgs[vm.widgetType][key])
+//      }
+
+      var itemId = vm.initModel
+      console.log('itemId: ' + itemId)
+      console.log('widgetType: ' + vm.widgetType)
+      //console.log(vm.catlgs[vm.widgetType][itemId])
+      for (var key in vm.catlgs[vm.widgetType]) {
+        console.log(vm.catlgs[vm.widgetType][key])
+        vm.items.push(vm.catlgs[vm.widgetType][key])
+
+      }
+      //vm.items.push(vm.catlgs[vm.widgetType][itemId])
+      //console.log('fetchModel')
+      //console.log(vm.catlgs[vm.widgetType][itemId])
+
+    }
+*/
+
+  },
+
+  mounted: function () {
+   /*
+   var vm = this
+   vm.$nextTick(function () {
+    vm.items = vm.initItem
+   })
+   */
+   //var ini = this.initItem
+   //this.items = []
+   //console.log('initItem')
+   //console.log(ini)
+  },
+
+  computed: {
+  },
+
+  watch: {
+    initItem: function(){
+      var vm = this
+      if (vm.initItem) {
+        vm.items = vm.initItem
+      }
     }
 
   },
-  created: function () {
-    this.fetchModel()
+
+  created: function() {
+    /*
+    var vm = this
+    EventBus.$on('widgetInitCatlg', initCatlg => {
+      console.log('initCatlg:')
+      console.log(initCatlg)
+      vm.catlgs = initCatlg
+      vm.fetchModel()
+    })
+    */
   }
   
 }

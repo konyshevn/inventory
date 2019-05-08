@@ -42,11 +42,23 @@ export default {
           catlgToLoad = catlgToLoad.filter(function (el) {
         	  return el != null;
       	  });
-          console.log(catlgToLoad)
+          //console.log(catlgToLoad)
           await vm.fetchCatlgItem(key, catlgToLoad)
         }
       }
 
+		},
+
+		async fetchWidgetInitCatlg(tableUnit, fieldsMap){
+			var vm = this
+			for (var fieldTableUnit in fieldsMap) {
+				var catlgType  = fieldsMap[fieldTableUnit]
+				var catlgToLoad = _.uniq(_.map(tableUnit, _.property(fieldTableUnit)))
+				catlgToLoad = catlgToLoad.filter(function (el) {
+        	  return el != null;
+      	  });
+				 vm.fetchCatlgItem(catlgType, catlgToLoad)
+			}
 		},
 
 		async fetchCatlg (catlgType, query, fields){
@@ -106,7 +118,6 @@ export default {
 			}
 			switch(catlgName){
 				case 'device':
-					console.log(vm.type)
 					var deviceType = vm.catlgs['deviceType'][catlgItem.deviceType]['label'];
 					var nomenclature = vm.catlgs['nomenclature'][catlgItem.nomenclature]['label'];
 					var serial_num = catlgItem['serial_num'] 

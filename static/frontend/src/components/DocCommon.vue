@@ -8,6 +8,7 @@ import Vue from 'vue'
 import {HTTP} from '../http-common'
 import CatlgCommon from './CatlgCommon.vue';
 var _ = require('lodash');
+import {EventBus} from './event-bus.js'
 
 export default {
   name: 'DocCommon',
@@ -52,12 +53,13 @@ export default {
         })
     },
 
-    getDocItem: function (docType, id) {
+    async getDocItem (docType, id) {
       var vm = this;
-      HTTP.get(docType + '/' + id + '/')
-        .then(function (response) {
-          Vue.set(vm.doc, docType, response.data);
-        })
+      var response = await HTTP.get(docType + '/' + id + '/')
+      Vue.set(vm.doc, docType, response.data);
+      vm.fetchWidgetInitCatlg(vm['doc']['docincome']['table_unit'], {'device': 'device', 'person': 'person'})
+          //EventBus.$emit('widgetInitCatlg', vm.catlgs)
+        
     },
      
 
