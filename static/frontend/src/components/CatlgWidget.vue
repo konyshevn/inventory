@@ -51,7 +51,7 @@ export default {
   props: {
     model: Number,
     widgetType: String,
-    initItem: Array,
+    initItem: Object,
   },
 
   data () {
@@ -63,7 +63,9 @@ export default {
      'loading': false,
       searchFields: {
         'device': ['nomenclature__label', 'deviceType__label', 'serial_num', 'inv_num'],
-        'person': ['name', 'surname']
+        'person': ['name', 'surname'],
+        'department': ['label'],
+        'stock': ['label']
       }
     }
   },
@@ -139,12 +141,16 @@ export default {
   },
 
   watch: {
-    initItem: function(){
-      var vm = this
-      if (vm.initItem) {
-        vm.items = vm.initItem
-      }
-    }
+    initItem: { 
+      handler(){
+        var vm = this
+        if (vm.initItem[vm.widgetType][vm.model]) {
+          vm.items = []
+          vm.items.push(vm.initItem[vm.widgetType][vm.model])
+        }
+      },
+    deep: true
+  }
 
   },
 

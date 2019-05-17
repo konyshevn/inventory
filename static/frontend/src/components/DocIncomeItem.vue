@@ -1,9 +1,46 @@
 <template>
   <div class="doc-income-item container">
-
-
     <br>
     <br>
+
+      <b-container class="bv-example-row">
+        <b-row align-v="end" class="mb-2">
+          <b-col sm="0"> 
+            <label :for="doc_num">Номер:</label> 
+          </b-col>
+          <b-col sm="2">
+            <b-form-input :id="doc_num" v-model="doc['docincome'].doc_num" type="number"></b-form-input>
+          </b-col>
+          <b-col sm="0">
+            <label :for="doc_date">Дата:</label> 
+          </b-col>
+          <b-col sm="3">
+            <datetime-widget :model.sync="doc['docincome'].doc_date"></datetime-widget>
+            <date-picker v-model="doc['docincome'].doc_date" :config="dtpOptions"></date-picker>
+          </b-col>
+        </b-row>
+
+        <b-row align-v="end" class="mb-2">
+          <b-col sm="0" align-h="start">
+            <label>Подразделение:</label>
+          </b-col> 
+          <b-col sm="5">
+            <catlg-widget widget-type="department" :init-item="catlgs" :model.sync="doc['docincome'].department"></catlg-widget>
+          </b-col> 
+        </b-row>
+
+        <b-row align-v="end" class="mb-2">
+          <b-col sm="0" align-h="start">
+            <label>Склад:</label>
+          </b-col> 
+          <b-col sm="5">
+            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="doc['docincome'].stock"></catlg-widget>
+          </b-col> 
+        </b-row>
+
+      </b-container>
+      <br>
+
 
     <table class="table table-bordered table_unit">
       <thead>
@@ -18,11 +55,11 @@
       <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
         <td>
           
-          <catlg-widget widget-type="device"  :init-item="widgetInitItem('device', rec['device'])" :model.sync="rec['device']"></catlg-widget>
+          <catlg-widget widget-type="device"  :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
           
         </td>
         <td>
-          <catlg-widget widget-type="person" :init-item="widgetInitItem('person', rec['person'])" :model.sync="rec['person']"></catlg-widget>
+          <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
         </td>
         <td>{{rec.qty}}</td>
         <td>{{rec.comment}}</td>
@@ -44,7 +81,10 @@ import CatlgCommon from './CatlgCommon.vue';
 import DocCommon from './DocCommon.vue';
 import { CoolSelect } from 'vue-cool-select'
 import CatlgWidget from './CatlgWidget.vue';
+import DatetimeWidget from './DatetimeWidget.vue';
 import CatlgWidgetModal from './CatlgWidgetModal.vue';
+import datePicker from 'vue-bootstrap-datetimepicker';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 
 
 Vue.filter('formatDate', function(value) {
@@ -60,6 +100,8 @@ export default {
     CoolSelect,
     CatlgWidget,
     CatlgWidgetModal,
+    datePicker,
+    DatetimeWidget,
 
   },
   props: {
@@ -70,7 +112,17 @@ export default {
   
   data () {
     return {
-      active: false
+      active: false,
+      dtpDate:"2019-05-14T15:58:30+03:00",
+      dtpOptions: {
+        //format: 'DD.MM.YYYY HH:mm:ss',
+        useCurrent: false,
+        locale: 'ru-my',
+        //showClear: true,
+        //showClose: true,
+        extraFormats: ["YYYY-MM-DD hh:mm:ss ZZZZ"],
+        //language: 'ru-RU',
+      }       
     }
   },
 
@@ -113,6 +165,7 @@ export default {
   },
 
   created: function() {
+      //moment.updateLocale('en', {})
   }, 
 
 }

@@ -9,6 +9,7 @@ import {HTTP} from '../http-common'
 import CatlgCommon from './CatlgCommon.vue';
 var _ = require('lodash');
 import {EventBus} from './event-bus.js'
+import moment from 'moment';
 
 export default {
   name: 'DocCommon',
@@ -56,8 +57,9 @@ export default {
     async getDocItem (docType, id) {
       var vm = this;
       var response = await HTTP.get(docType + '/' + id + '/')
+//      response.data.doc_date = moment(String(response.data.doc_date)).format('MM.DD.YYYY hh:mm:ss')
+      vm.fetchWidgetInitCatlg(response.data['table_unit'], {'device': 'device', 'person': 'person'})
       Vue.set(vm.doc, docType, response.data);
-      vm.fetchWidgetInitCatlg(vm['doc']['docincome']['table_unit'], {'device': 'device', 'person': 'person'})
           //EventBus.$emit('widgetInitCatlg', vm.catlgs)
         
     },

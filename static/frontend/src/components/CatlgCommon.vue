@@ -95,12 +95,15 @@ export default {
 				}
 					
 				await vm.fetchDependentCatlg(catlgItemFetch)
+				var time = performance.now();
 				catlgItemFetch.forEach(function(item, i, arr){
 					Vue.set(vm.catlgs[catlgType], item.id, item)       
 					if ( !('label' in item)) {
 						vm.setCatlgLabel(catlgType, item.id)
-					}    
+					}
 				})
+				time = performance.now() - time;
+				console.log('Время выполнения = ', time);    
 			} catch(error) {
 				console.log(error)
 			}
