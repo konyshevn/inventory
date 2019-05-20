@@ -97,44 +97,9 @@ export default {
       vm.loading = false
     },
 
-/*
-    fetchModel: function () {
-      var vm = this
- //     vm.catlgs = vm.initCatlgs
-
-//      for (var key in vm.catlgs[vm.widgetType]) {
-//        vm.items.push(vm.catlgs[vm.widgetType][key])
-//      }
-
-      var itemId = vm.initModel
-      console.log('itemId: ' + itemId)
-      console.log('widgetType: ' + vm.widgetType)
-      //console.log(vm.catlgs[vm.widgetType][itemId])
-      for (var key in vm.catlgs[vm.widgetType]) {
-        console.log(vm.catlgs[vm.widgetType][key])
-        vm.items.push(vm.catlgs[vm.widgetType][key])
-
-      }
-      //vm.items.push(vm.catlgs[vm.widgetType][itemId])
-      //console.log('fetchModel')
-      //console.log(vm.catlgs[vm.widgetType][itemId])
-
-    }
-*/
-
   },
 
   mounted: function () {
-   /*
-   var vm = this
-   vm.$nextTick(function () {
-    vm.items = vm.initItem
-   })
-   */
-   //var ini = this.initItem
-   //this.items = []
-   //console.log('initItem')
-   //console.log(ini)
   },
 
   computed: {
@@ -155,15 +120,6 @@ export default {
   },
 
   created: function() {
-    /*
-    var vm = this
-    EventBus.$on('widgetInitCatlg', initCatlg => {
-      console.log('initCatlg:')
-      console.log(initCatlg)
-      vm.catlgs = initCatlg
-      vm.fetchModel()
-    })
-    */
   }
   
 }

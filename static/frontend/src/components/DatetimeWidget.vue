@@ -8,14 +8,7 @@
     data-inputmask-inputformat="dd.mm.yyyy HH:MM:ss" 
     data-inputmask-placeholder="__.__.____ __:__:__"
     im-insert="false"
-    @input="onInput" @change="onChange" @update="onUpdate"/>
-    <br>
-    <br>  
-    
-    <pre>
-      datetime: {{datetime}}
-      model: {{model}}
-    </pre>
+    @change="onChange"/>
   </div>
 
 </template>
@@ -26,16 +19,10 @@ import Vue from 'vue'
 var _ = require('lodash');
 var Inputmask = require('inputmask');
 import moment from 'moment';
-//const VueInputMask = require('vue-inputmask').default
-//Vue.use(VueInputMask)
-import TextMask from 'vue-text-mask'
-import MaskedInput from 'vue-masked-input'
 
 export default {
   name: 'DatetimeWidget',
   components: {
-    MaskedInput,
-    TextMask
   },
   
   mixins: [],
@@ -45,11 +32,17 @@ export default {
 
   data () {
     return {
-      datetime: this.model
+      datetime: ""
       }
     },
 
+  created: function() {
+    var vm = this
+    vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY HH:mm:ss')
+  },
+
   methods: {
+/*
     onInput: function(value) {
       var vm = this
       console.log('input ' + value)
@@ -58,29 +51,18 @@ export default {
     onUpdate: function(value) {
       var vm = this
       console.log('update' + value)
-    },
 
+    },
+*/
     onChange: function(value) {
       var vm = this
       console.log('change' + value)
+      var newmodel = moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ')
+      vm.$emit('update:model', newmodel)
 
     },
   },
 
-  watch: {
-    model: {
-      immediate: true, 
-      handler(newDate, oldDate){
-        var vm = this
-        console.log('newDate: ', newDate)
-        console.log('oldDate: ', oldDate)
-        //if (oldDate == "") {
-        //  vm.datetime = vm.model
-        //}
-      }
-    }
-  },
-  
   mounted: function () {
     var vm = this
     var now = moment();
@@ -88,7 +70,6 @@ export default {
     var im = new Inputmask({
       "onincomplete": function(){
         var now = moment();
-        console.log('inputmask incomplete ');
         var dd = vm.datetime.slice(0, 2)
         var mm = vm.datetime.slice(3, 5)
         var yyyy = vm.datetime.slice(6, 10)
@@ -165,26 +146,17 @@ export default {
         }
 
         var dtNew = `${ddNew}.${mmNew}.${yyyyNew} ${hhNew}:${MMNew}:${ssNew}`
-        console.log(dtNew)
         vm.datetime = dtNew
       },
 
     });
     im.mask(selector);
-
-    //do something
-  
-
    },
 
   computed: {
   },
 
-  watch: {
-  },
 
-  created: function() {
-  }
   
 }
 </script>

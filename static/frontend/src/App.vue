@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <DocIncomeItem></DocIncomeItem>
-    <doc-income-list1></doc-income-list1>
+    <doc-income-list></doc-income-list>
 
 
   </div>
