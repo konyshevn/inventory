@@ -1,8 +1,16 @@
 <template>
   <div class="doc-income-item container">
-
+    <div class="sticky">
     <h1 align="left">Оприходование</h1>
       <b-container class="text-left" >
+        
+        <b-button-group align="left">
+          <b-button variant="light">Провести</b-button>
+          <b-button variant="light">Отмена проведения</b-button>
+          <b-button variant="light">Сохранить</b-button>
+          <b-button variant="light">Удалить</b-button>
+        </b-button-group>
+        <br><br>
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
             <label :for="doc_num">Номер:</label> 
@@ -15,6 +23,10 @@
           </b-col>
           <b-col sm="3">
             <datetime-widget v-if="doc['docincome'].doc_date" :model.sync="doc['docincome'].doc_date"></datetime-widget>
+          </b-col>
+          <b-col sm="1" align="center">
+            <b-button v-if="doc['docincome'].active" disabled variant="success">Проведен</b-button>
+            <b-button v-if="!doc['docincome'].active" disabled variant="light">Не проведен</b-button>
           </b-col>
         </b-row>
 
@@ -47,31 +59,38 @@
       </b-container>
       <br>
 
+    </div>
 
-    <table class="table table-bordered table_unit">
-      <thead>
-        <tr>
-          <th width="40%">Устройство</th>
-          <th width="30%">Сотрудник</th>
-          <th width="10%">Количество</th>
-          <th width="20%">Комментарий</th>
+    <div>
+      <b-container class="text-left" >
+        <b-button-group align="left">
+          <b-button variant="light">Добавить строку</b-button>
+          <b-button variant="light">Удалить строку</b-button>
+        </b-button-group>
+      </b-container>
+      <table class=" fixed_header table table-bordered table_unit ">
+        <thead>
+          <tr>
+            <th width="40%">Устройство</th>
+            <th width="30%">Сотрудник</th>
+            <th width="10%">Количество</th>
+            <th width="20%">Комментарий</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
+          <td>
+            <catlg-widget widget-type="device"  :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
+          </td>
+          <td>
+            <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
+          </td>
+          <td>{{rec.qty}}</td>
+          <td>{{rec.comment}}</td>
         </tr>
-      </thead>
-      <tbody>
-      <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
-        <td>
-          
-          <catlg-widget widget-type="device"  :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
-          
-        </td>
-        <td>
-          <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
-        </td>
-        <td>{{rec.qty}}</td>
-        <td>{{rec.comment}}</td>
-      </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+  </div>
     <catlg-widget-modal></catlg-widget-modal>
   </div>
 </template>
@@ -138,11 +157,15 @@ export default {
     color: #000000
   }
 
-  .static {
+  .sticky {
     position: sticky;
     top: 0;
-
+    min-height: 3em;
+    top: 3em;
+    background: white;
+    z-index: 1;
   }
+
 
 </style>
 
