@@ -25,6 +25,7 @@
     "vue-cool-select": "^2.10.2",
     "vue-inputmask": "^0.2.1",
     "vue-masked-input": "^0.5.2",
+    "vue-router": "^3.0.6",
     "vue-text-mask": "^6.1.2",
     "vue2-selectize": "^1.1.7",
     "vuetify": "^1.5.9"

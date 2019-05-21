@@ -1,8 +1,6 @@
 <template>
   <div class="doc-income-list container">
-    <br>
-
-
+    <h1 align="left">Оприходования</h1>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -15,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-      <tr v-for="doc in docs['docincome']" :key="doc.id" v-on:dblclick="clickRow(doc.id)">
+      <tr v-for="doc in docs['docincome']" :key="doc.id" v-on:dblclick="clickRow(doc.id, $event)" >
         <td>{{doc.doc_date | formatDate}}</td>
         <td>{{doc.doc_num}}</td>
         <td>
@@ -64,15 +62,23 @@ export default {
   },
   methods: {
 
-    clickRow: function (id) {
+    clickRow: function (id, event) {
       console.log(id);
+      this.$router.push({ name: 'docincome.item', params: {id: id} })
     },
      
 
   },
   mounted: function () {
     //this.fetchCatlg('device');
-
+    document.addEventListener('mousedown', function (event) {
+      if (event.detail > 1) {
+        event.preventDefault();
+        // of course, you still do not know what you prevent here...
+        // You could also check event.ctrlKey/event.shiftKey/event.altKey
+        // to not prevent something useful.
+      }
+    }, false);
   },
   
   created() {

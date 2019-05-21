@@ -1,5 +1,6 @@
 <template>
-  <div calss = "catlg-device-list container">
+  <div class = "catlg-device-list container">
+    <h1 align="left">Устройства</h1>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -16,7 +17,7 @@
             {{displayCatlgItem('deviceType', device['deviceType'])}}
           </td>
           <td>
-            {{displayCatlgItem('device', device['id'])}}
+            {{displayCatlgItem('nomenclature', device['nomenclature'])}}
           </td>
           <td>
             {{device['serial_num']}}

@@ -1,7 +1,8 @@
 <template>
   <div class="doc-income-item container">
-    <h1 align = "left">Оприходование</h1>
-      <b-container class="text-left">
+
+    <h1 align="left">Оприходование</h1>
+      <b-container class="text-left" >
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
             <label :for="doc_num">Номер:</label> 
@@ -35,6 +36,14 @@
           </b-col> 
         </b-row>
 
+        <b-row align-v="end" class="mb-2">
+          <b-col sm="2" align-h="start">
+            <label>Комментарий:</label>
+          </b-col>
+          <b-col sm="8" align-h="start"> 
+            <b-form-input v-model="doc['docincome'].comment" type="string" maxlength="70"></b-form-input>
+          </b-col>
+        </b-row>
       </b-container>
       <br>
 
@@ -90,7 +99,7 @@ export default {
 
   },
   props: {
-    //msg: String
+    id: Number
   },
   
   mixins: [CatlgCommon, DocCommon],
@@ -109,7 +118,7 @@ export default {
   mounted: function () {
     var vm = this
     //this.$nextTick(function () {
-      vm.getDocItem('docincome', 215);
+      vm.getDocItem('docincome', vm.id);
     //})
   },
 
@@ -127,6 +136,12 @@ export default {
   tbody tr:hover {
     background-color: #f2f2f2;
     color: #000000
+  }
+
+  .static {
+    position: sticky;
+    top: 0;
+
   }
 
 </style>

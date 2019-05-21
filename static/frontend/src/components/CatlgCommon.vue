@@ -28,7 +28,6 @@ export default {
 	methods: {
 		displayCatlgItem(catlgType, id){
 			var vm = this
-			console.log(catlgType)
 			if (id in vm.catlgs[catlgType]){
 				return vm.catlgs[catlgType][id]['label']
 			}
