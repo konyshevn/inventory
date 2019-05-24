@@ -5,9 +5,9 @@
       <b-container class="text-left" >
         
         <b-button-group align="left">
-          <b-button variant="light">Провести</b-button>
-          <b-button variant="light">Отмена проведения</b-button>
-          <b-button variant="light">Сохранить</b-button>
+          <b-button variant="light" @click="regWriteDocItem('docincome', doc)">Провести</b-button>
+          <b-button variant="light" @click="regDelDocItem('docincome', doc)">Отмена проведения</b-button>
+          <b-button variant="light" @click="saveDocItem('docincome', doc)">Сохранить</b-button>
           <b-button variant="light">Удалить</b-button>
         </b-button-group>
         <br><br>
@@ -16,17 +16,17 @@
             <label :for="doc_num">Номер:</label> 
           </b-col>
           <b-col sm="2">
-            <b-form-input :id="doc_num" v-model="doc['docincome'].doc_num" type="number"></b-form-input>
+            <b-form-input :id="doc_num" v-model="doc.doc_num" type="number"></b-form-input>
           </b-col>
           <b-col sm="1">
             <label :for="doc_date">Дата:</label> 
           </b-col>
           <b-col sm="3">
-            <datetime-widget v-if="doc['docincome'].doc_date" :model.sync="doc['docincome'].doc_date"></datetime-widget>
+            <datetime-widget v-if="doc.doc_date" :model.sync="doc.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="1" align="center">
-            <b-button v-if="doc['docincome'].active" disabled variant="success">Проведен</b-button>
-            <b-button v-if="!doc['docincome'].active" disabled variant="light">Не проведен</b-button>
+            <b-button v-if="doc.active" disabled variant="success">Проведен</b-button>
+            <b-button v-if="!doc.active" disabled variant="light">Не проведен</b-button>
           </b-col>
         </b-row>
 
@@ -35,7 +35,7 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" :init-item="catlgs" :model.sync="doc['docincome'].department"></catlg-widget>
+            <catlg-widget widget-type="department" :init-item="catlgs" :model.sync="doc.department"></catlg-widget>
           </b-col> 
         </b-row>
 
@@ -44,7 +44,7 @@
             <label>Склад:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="doc['docincome'].stock"></catlg-widget>
+            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="doc.stock"></catlg-widget>
           </b-col> 
         </b-row>
 
@@ -53,7 +53,7 @@
             <label>Комментарий:</label>
           </b-col>
           <b-col sm="8" align-h="start"> 
-            <b-form-input v-model="doc['docincome'].comment" type="string" maxlength="70"></b-form-input>
+            <b-form-input v-model="doc.comment" type="string" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
       </b-container>
@@ -78,7 +78,7 @@
           </tr>
         </thead>
         <tbody>
-        <tr v-for="rec in doc['docincome'].table_unit" :key="rec.id">
+        <tr v-for="rec in doc.table_unit" :key="rec.id">
           <td>
             <catlg-widget widget-type="device"  :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
           </td>

@@ -10,6 +10,8 @@ import App from './App.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import DocIncomeList from './components/DocIncomeList.vue'
 import DocIncomeItem from './components/DocIncomeItem.vue'
+import DocItem from './components/DocItem.vue'
+import DocList from './components/DocList.vue'
 import CatlgDeviceList from './components/CatlgDeviceList.vue'
 
 Vue.use(VueRouter)
@@ -26,15 +28,21 @@ const routes = [
     component: HelloWorld 
   },
   { 
-    path: '/docincome',
-    name: 'docincome.list', 
-    component: DocIncomeList 
+    path: '/doc/:docType',
+    name: 'doc.list',
+    props: (route) => ({
+      docType: String(route.params.docType),
+    }),
+    component: DocList 
   },
   { 
-    path: '/docincome/:id',
-    name: 'docincome.item',
-    props: (route) => ({ id: Number(route.params.id) }),
-    component: DocIncomeItem
+    path: '/doc/:docType/:id',
+    name: 'doc.item',
+    props: (route) => ({
+      id: Number(route.params.id),
+      docType: String(route.params.docType),
+    }),
+    component: DocItem
   },
   { 
     path: '/catlg/device',

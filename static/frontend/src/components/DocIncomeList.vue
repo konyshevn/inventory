@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-      <tr v-for="doc in docs['docincome']" :key="doc.id" v-on:dblclick="clickRow(doc.id, $event)" >
+      <tr v-for="doc in docs" :key="doc.id" v-on:dblclick="clickRow(doc.id, $event)" >
         <td>{{doc.doc_date | formatDate}}</td>
         <td>{{doc.doc_num}}</td>
         <td>
@@ -64,7 +64,7 @@ export default {
 
     clickRow: function (id, event) {
       console.log(id);
-      this.$router.push({ name: 'docincome.item', params: {id: id} })
+      this.$router.push({ name: 'doc.item', params: {id: id, docType: 'docincome'} })
     },
      
 

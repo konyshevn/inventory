@@ -5,7 +5,7 @@
         <b-nav-item :to="{name: 'home'}">Главная</b-nav-item>
 
         <b-nav-item-dropdown text="Документы" right>
-          <b-dropdown-item :to="{name: 'docincome.list'}">Оприходование</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docincome'}}">Оприходование</b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown text="Справочники" right>
@@ -16,21 +16,15 @@
     </b-navbar>
     <br>
     <router-view></router-view>
-
   </div>
 </template>
 
 <script>
-import DocIncomeList from './components/DocIncomeList.vue'
-import DocIncomeItem from './components/DocIncomeItem.vue'
-import CatlgDeviceList from './components/CatlgDeviceList.vue'
 
 export default {
   name: 'app',
   components: {
-    DocIncomeList,
-    DocIncomeItem,
-    CatlgDeviceList
+
   }
 }
 </script>
