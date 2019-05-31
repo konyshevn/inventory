@@ -7,13 +7,15 @@
 import Vue from 'vue'
 import {HTTP} from '../http-common'
 import CatlgCommon from './CatlgCommon.vue';
+import Common from './Common.vue';
 var _ = require('lodash');
 import {EventBus} from './event-bus.js'
 import moment from 'moment';
+import * as DocConstructor from './doc-constructor.js'
 
 export default {
   name: 'DocCommon',
-  mixins: [CatlgCommon],
+  mixins: [Common, CatlgCommon],
   props: {
     //msg: String
   },
@@ -21,6 +23,7 @@ export default {
     return {
       doc: {},
       docs: [],
+      valid: true,
     }
   },
 
@@ -49,6 +52,12 @@ export default {
       var response = await HTTP.get(docType + '/' + id + '/')
       vm.fetchWidgetInitCatlg(response.data['table_unit'], {'device': 'device', 'person': 'person'})
       vm.doc = response.data;
+      for (var key in vm.doc){
+        if ((key in vm.catlgs) && (vm.doc[key])) {
+          vm.fetchCatlgItem(key, vm.doc[key])
+        }
+      }
+
     },
 
     async regWriteDocItem (docType, item) {
@@ -56,9 +65,12 @@ export default {
       item.active = true
       try {
         var response = await HTTP.put(docType + '/' + item.id + '/', item)
+        
+        //vm.$bvModal.show('status-msg')
       } catch(error) {
         item.active = false
         console.log(error)
+        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${error.response.data}`])
       }
     },
 
@@ -71,6 +83,7 @@ export default {
       } catch(error) {
         item.active = itemStatus
         console.log(error)
+        EventBus.$emit('openStatusMsg', [`Ошибка отмены проведения: ${error.response.data}`])
       }
     },
 
@@ -80,23 +93,44 @@ export default {
         var response = await HTTP.put(docType + '/' + item.id + '/', item)
       } catch(error) {
         console.log(error)
+        console.log(error.response.data)
+        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${error.response.data}`])
       }
     },
 
     async delDocItem (docType, item) {
       var vm = this;
+      var status = true
       try {
-        var response = await HTTP.delete(docType + '/' + item.id + '/')
+        var confirm = await vm.confirmMsg('Вы действительно хотите удалить документ?')
+        if (confirm) {
+          var response = await HTTP.delete(docType + '/' + item.id + '/')
+        } else {
+          status = false
+        }
       } catch(error) {
+        status = false
         console.log(error)
+        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${error.response.data}`])
+      } finally {
+        if (status) {
+          vm.$router.push({ name: 'doc.list', params: {docType: docType} })
+        }
       }
     },
-     
+
+    addRowTableUnit: function(docType, doc) {
+      var vm = this
+      var newDoc = new DocConstructor[docType]
+      doc.table_unit.push(newDoc.table_unit[0])
+
+    }
      
 
   },
 
   mounted: function () {
   }
+  
 }
 </script>

@@ -2,13 +2,14 @@
   <div class="doc-income-item container">
     <div class="sticky">
     <h1 align="left">Оприходование</h1>
+    <b-form @submit.prevent>
       <b-container class="text-left" >
         
         <b-button-group align="left">
-          <b-button variant="light" @click="regWriteDocItem('docincome', doc)">Провести</b-button>
-          <b-button variant="light" @click="regDelDocItem('docincome', doc)">Отмена проведения</b-button>
-          <b-button variant="light" @click="saveDocItem('docincome', doc)">Сохранить</b-button>
-          <b-button variant="light">Удалить</b-button>
+          <b-button type="submit" variant="light" @click="regWriteDocItem('docincome', doc)">Провести</b-button>
+          <b-button type="submit" variant="light" @click="regDelDocItem('docincome', doc)">Отмена проведения</b-button>
+          <b-button type="submit" variant="light" @click="saveDocItem('docincome', doc)">Сохранить</b-button>
+          <b-button type="submit" variant="light" @click="delDocItem('docincome', doc)">Удалить</b-button>
         </b-button-group>
         <br><br>
         <b-row align-v="end" class="mb-2">
@@ -57,6 +58,7 @@
           </b-col>
         </b-row>
       </b-container>
+    </b-form>
       <br>
 
     </div>
@@ -64,7 +66,7 @@
     <div>
       <b-container class="text-left" >
         <b-button-group align="left">
-          <b-button variant="light">Добавить строку</b-button>
+          <b-button variant="light" @click="addRowTableUnit('docincome', doc)">Добавить строку</b-button>
           <b-button variant="light">Удалить строку</b-button>
         </b-button-group>
       </b-container>
@@ -91,7 +93,7 @@
         </tbody>
       </table>
   </div>
-    <catlg-widget-modal></catlg-widget-modal>
+
   </div>
 </template>
 
@@ -118,7 +120,7 @@ export default {
 
   },
   props: {
-    id: Number
+    id: Number,
   },
   
   mixins: [CatlgCommon, DocCommon],

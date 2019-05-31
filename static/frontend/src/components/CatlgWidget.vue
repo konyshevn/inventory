@@ -52,6 +52,10 @@ export default {
     model: Number,
     widgetType: String,
     initItem: Object,
+    required : {
+      type: Boolean,
+      default: false,
+    }
   },
 
   data () {

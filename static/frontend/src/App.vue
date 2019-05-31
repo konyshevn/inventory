@@ -16,15 +16,16 @@
     </b-navbar>
     <br>
     <router-view></router-view>
+    <status-msg></status-msg>
   </div>
 </template>
 
 <script>
-
+import StatusMsg from './components/StatusMsg.vue';
 export default {
   name: 'app',
   components: {
-
+    StatusMsg
   }
 }
 </script>
