@@ -1,5 +1,6 @@
 <template>
   <div class="doc-income-item container">
+
     <div class="sticky">
     <h1 align="left">Оприходование</h1>
     <b-form @submit.prevent>
@@ -36,7 +37,7 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" :init-item="catlgs" :model.sync="doc.department"></catlg-widget>
+            <catlg-widget widget-type="department" required :init-item="catlgs" :model.sync="doc.department"></catlg-widget>
           </b-col> 
         </b-row>
 
@@ -82,10 +83,10 @@
         <tbody>
         <tr v-for="rec in doc.table_unit" :key="rec.id">
           <td>
-            <catlg-widget widget-type="device"  :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
+            <catlg-widget widget-type="device" required :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
           </td>
           <td>
-            <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
+            <catlg-widget widget-type="person" required :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
           </td>
           <td>{{rec.qty}}</td>
           <td>{{rec.comment}}</td>

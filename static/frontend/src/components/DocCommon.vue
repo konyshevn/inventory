@@ -23,7 +23,7 @@ export default {
     return {
       doc: {},
       docs: [],
-      valid: true,
+      widgetIsValid: {},
     }
   },
 
@@ -64,13 +64,23 @@ export default {
       var vm = this;
       item.active = true
       try {
+
+        if (!vm.isValid()) { 
+          throw new Error('Заполните все необходимые реквизиты документа.')
+        }
         var response = await HTTP.put(docType + '/' + item.id + '/', item)
         
         //vm.$bvModal.show('status-msg')
       } catch(error) {
         item.active = false
         console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${error.response.data}`])
+        var errorMsg = ''
+        if (error.response) {
+          errorMsg = (error.response.data) ? error.response.data : errorMsg
+        } else if (error.message) {
+          errorMsg = errorMsg + error.message
+        }
+        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${errorMsg}`])
       }
     },
 
@@ -124,13 +134,32 @@ export default {
       var newDoc = new DocConstructor[docType]
       doc.table_unit.push(newDoc.table_unit[0])
 
-    }
+    },
      
+    isValid: function () {
+      var vm = this
+      var result = true
+      for (var uid in vm.widgetIsValid) {
+        result = result && vm.widgetIsValid[uid]
+      }
+      return result
+    },
 
   },
 
   mounted: function () {
-  }
+
+  },
+
+  computed: {
+  },
+
+  created: function() {
+    var vm = this;
+    EventBus.$on('widgetState', state => {
+      Vue.set(vm.widgetIsValid, state[0], state[1])
+    });
+  },
   
 }
 </script>

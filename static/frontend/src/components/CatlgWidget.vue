@@ -52,7 +52,7 @@ export default {
     model: Number,
     widgetType: String,
     initItem: Object,
-    required : {
+    required: {
       type: Boolean,
       default: false,
     }
@@ -62,15 +62,17 @@ export default {
     return {
      //'catlgs': this.initCatlgs,
      //'initItem': this.model,
-     'active': false,
-     'items': [],
-     'loading': false,
+      active: false,
+      items: [],
+      loading: false,
       searchFields: {
         'device': ['nomenclature__label', 'deviceType__label', 'serial_num', 'inv_num'],
         'person': ['name', 'surname'],
         'department': ['label'],
         'stock': ['label']
-      }
+      },
+      isValid: false,
+
     }
   },
 
@@ -107,6 +109,7 @@ export default {
   },
 
   computed: {
+   
   },
 
   watch: {
@@ -118,8 +121,22 @@ export default {
           vm.items.push(vm.initItem[vm.widgetType][vm.model])
         }
       },
-    deep: true
-  }
+      deep: true
+    },
+    model: {
+      handler(){
+        var vm = this
+        if (vm.model){
+          vm.isValid = true
+        } else {
+          vm.isValid = false
+        }
+        if (vm.required) {
+          EventBus.$emit('widgetState', [vm._uid, vm.isValid])
+        }
+      },
+      immediate: true,
+    }
 
   },
 
