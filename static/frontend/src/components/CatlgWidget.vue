@@ -15,6 +15,7 @@
       disable-filtering-by-search
       @search="onSearch"
       @input="$emit('update:model', model)"
+      class = "widget-invalid"
       >
         <template slot="no-data">
           <span>Не найдено</span>
@@ -145,3 +146,12 @@ export default {
   
 }
 </script>
+
+<style>
+.widget-invalid {
+  border: 1px solid red !important;
+  border-radius: .25rem !important;
+
+}
+
+</style>

@@ -60,11 +60,22 @@ export default {
 
     },
 
+    getErrorMsg: function(error) {
+      var errorMsg = ''
+      if (error.response) {
+        if (error.response.data) {
+          errorMsg = errorMsg + error.response.data
+        }
+      } else if (error.message) {
+        errorMsg = errorMsg + error.message
+      }
+      return errorMsg
+    },
+
     async regWriteDocItem (docType, item) {
       var vm = this;
       item.active = true
       try {
-
         if (!vm.isValid()) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
@@ -74,13 +85,7 @@ export default {
       } catch(error) {
         item.active = false
         console.log(error)
-        var errorMsg = ''
-        if (error.response) {
-          errorMsg = (error.response.data) ? error.response.data : errorMsg
-        } else if (error.message) {
-          errorMsg = errorMsg + error.message
-        }
-        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${errorMsg}`])
+        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${vm.getErrorMsg(error)}`])
       }
     },
 
@@ -89,22 +94,27 @@ export default {
       var itemStatus = item.active
       item.active = false
       try {
+        if (!vm.isValid()) { 
+          throw new Error('Заполните все необходимые реквизиты документа.')
+        }
         var response = await HTTP.put(docType + '/' + item.id + '/', item)
       } catch(error) {
         item.active = itemStatus
         console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка отмены проведения: ${error.response.data}`])
+        EventBus.$emit('openStatusMsg', [`Ошибка отмены проведения: ${vm.getErrorMsg(error)}`])
       }
     },
 
     async saveDocItem (docType, item) {
       var vm = this;
       try {
+        if (!vm.isValid()) { 
+          throw new Error('Заполните все необходимые реквизиты документа.')
+        }
         var response = await HTTP.put(docType + '/' + item.id + '/', item)
       } catch(error) {
         console.log(error)
-        console.log(error.response.data)
-        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${error.response.data}`])
+        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
       }
     },
 
@@ -121,7 +131,7 @@ export default {
       } catch(error) {
         status = false
         console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${error.response.data}`])
+        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
       } finally {
         if (status) {
           vm.$router.push({ name: 'doc.list', params: {docType: docType} })
