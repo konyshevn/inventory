@@ -74,6 +74,7 @@ export default {
 
     async regWriteDocItem (docType, item) {
       var vm = this;
+      var itemStatus = item.active
       item.active = true
       try {
         if (!vm.isValid()) { 
@@ -83,7 +84,7 @@ export default {
         
         //vm.$bvModal.show('status-msg')
       } catch(error) {
-        item.active = false
+        item.active = itemStatus
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${vm.getErrorMsg(error)}`])
       }

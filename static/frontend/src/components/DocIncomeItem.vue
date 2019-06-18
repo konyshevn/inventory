@@ -1,18 +1,12 @@
 <template>
   <div class="doc-income-item container">
-
     <div class="sticky">
-    <h1 align="left">Оприходование</h1>
+    <h2 align="left">Оприходование</h2>
     <b-form @submit.prevent>
       <b-container class="text-left" >
-        
-        <b-button-group align="left">
-          <b-button type="submit" variant="light" @click="regWriteDocItem('docincome', doc)">Провести</b-button>
-          <b-button type="submit" variant="light" @click="regDelDocItem('docincome', doc)">Отмена проведения</b-button>
-          <b-button type="submit" variant="light" @click="saveDocItem('docincome', doc)">Сохранить</b-button>
-          <b-button type="submit" variant="light" @click="delDocItem('docincome', doc)">Удалить</b-button>
-        </b-button-group>
-        <br><br>
+        <doc-item-control-panel :doc="doc"></doc-item-control-panel>
+        <p></p>
+
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
             <label :for="doc_num">Номер:</label> 
@@ -60,16 +54,11 @@
         </b-row>
       </b-container>
     </b-form>
-      <br>
-
     </div>
 
     <div>
       <b-container class="text-left" >
-        <b-button-group align="left">
-          <b-button variant="light" @click="addRowTableUnit('docincome', doc)">Добавить строку</b-button>
-          <b-button variant="light">Удалить строку</b-button>
-        </b-button-group>
+        <table-unit-control-panel :doc="doc"></table-unit-control-panel>
       </b-container>
       <table class=" fixed_header table table-bordered table_unit ">
         <thead>
@@ -88,8 +77,8 @@
           <td>
             <catlg-widget widget-type="person" required :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
           </td>
-          <td>{{rec.qty}}</td>
-          <td>{{rec.comment}}</td>
+          <td><b-form-input :id="qty" v-model="rec.qty" type="number"></b-form-input></td>
+          <td><b-form-input :id="comment" v-model="rec.comment" type="string"></b-form-input></td>
         </tr>
         </tbody>
       </table>
@@ -110,6 +99,8 @@ import DocCommon from './DocCommon.vue';
 import CatlgWidget from './CatlgWidget.vue';
 import DatetimeWidget from './DatetimeWidget.vue';
 import CatlgWidgetModal from './CatlgWidgetModal.vue';
+import DocItemControlPanel from './DocItemControlPanel.vue';
+import TableUnitControlPanel from './TableUnitControlPanel.vue';
 
 
 export default {
@@ -118,6 +109,8 @@ export default {
     CatlgWidget,
     CatlgWidgetModal,
     DatetimeWidget,
+    DocItemControlPanel,
+    TableUnitControlPanel,
 
   },
   props: {
@@ -155,7 +148,7 @@ export default {
 </script>
 
 <style scoped>
-  tbody tr:hover {
+.table_unit tbody tr:hover {
     background-color: #f2f2f2;
     color: #000000
   }
@@ -169,6 +162,8 @@ export default {
     z-index: 1;
   }
 
-
+.table_unit td, .table_unit th {
+  padding: 0.30rem !important;
+}
 </style>
 
