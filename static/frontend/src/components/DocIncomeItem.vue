@@ -1,8 +1,7 @@
 <template>
   <div class="doc-income-item container">
-    <div class="sticky">
+    <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
     <h2 align="left">Оприходование</h2>
-    <b-form @submit.prevent>
       <b-container class="text-left" >
         <doc-item-control-panel :doc="doc"></doc-item-control-panel>
         <p></p>
@@ -53,20 +52,19 @@
           </b-col>
         </b-row>
       </b-container>
-    </b-form>
-    </div>
-
-    <div>
       <b-container class="text-left" >
         <table-unit-control-panel :doc="doc"></table-unit-control-panel>
       </b-container>
-      <table class=" fixed_header table table-bordered table_unit ">
-        <thead>
-          <tr>
-            <th width="40%">Устройство</th>
-            <th width="30%">Сотрудник</th>
-            <th width="10%">Количество</th>
-            <th width="20%">Комментарий</th>
+    </div>
+
+    <div >
+      <table class="table table-bordered table_unit">
+        <thead >
+          <tr >
+            <th>Устройство</th>
+            <th>Сотрудник</th>
+            <th>Количество</th>
+            <th>Комментарий</th>
           </tr>
         </thead>
         <tbody>
@@ -75,7 +73,7 @@
             <catlg-widget widget-type="device" required :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
           </td>
           <td>
-            <catlg-widget widget-type="person" required :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
+            <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
           </td>
           <td><b-form-input :id="qty" v-model="rec.qty" type="number"></b-form-input></td>
           <td><b-form-input :id="comment" v-model="rec.comment" type="string"></b-form-input></td>
@@ -83,7 +81,6 @@
         </tbody>
       </table>
   </div>
-
   </div>
 </template>
 
@@ -135,6 +132,7 @@ export default {
     //this.$nextTick(function () {
       vm.getDocItem('docincome', vm.id);
     //})
+    
   },
 
   created: function() {
@@ -147,23 +145,58 @@ export default {
 
 </script>
 
-<style scoped>
+<style scoped >
 .table_unit tbody tr:hover {
     background-color: #f2f2f2;
     color: #000000
   }
 
-  .sticky {
-    position: sticky;
-    top: 0;
-    min-height: 3em;
-    top: 3em;
-    background: white;
-    z-index: 1;
-  }
-
 .table_unit td, .table_unit th {
   padding: 0.30rem !important;
 }
+
+
+.table_unit td:nth-child(1), th:nth-child(1) {
+  width: 40%;
+}
+.table_unit td:nth-child(2), th:nth-child(2) {
+  width: 30%;
+}
+.table_unit td:nth-child(3), th:nth-child(3) {
+  width: 10%;
+}
+.table_unit td:nth-child(4), th:nth-child(4) {
+  width: 20%;
+}
+
+.table_unit {
+  display: inline-grid;
+  grid-template-areas: 
+  "head-fixed" 
+  "body-scrollable";
+}
+
+.table_unit thead {
+  grid-area: head-fixed;
+  /* fallback */
+  width: 100%;
+  /* minus scroll bar width */
+  width: calc( 100% - 1em ) !important/* scrollbar is average 1em/16px width, remove it from thead width */
+}
+
+.table_unit tbody {
+  grid-area: body-scrollable;
+  overflow: auto;
+  height: calc(90vh  - 350px);
+}
+
+
+.table_unit thead, tbody tr {
+    display:table;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+
+
+
 </style>
 
