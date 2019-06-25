@@ -54,15 +54,23 @@
       </b-container>
       <b-container class="text-left" >
         <table-unit-control-panel :doc="doc"></table-unit-control-panel>
-      </b-container>
+        </b-container>
     </div>
 
     <div >
       <table class="table table-bordered table_unit">
         <thead >
           <tr >
-            <th>Устройство</th>
-            <th>Сотрудник</th>
+            <th v-on:click="sortTU(doc.table_unit, 'device')">
+              Устройство
+              <span class="arrow" v-if="tableUnit.sort.field == 'device'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
+            <th v-on:click="sortTU(doc.table_unit, 'person')">
+              Сотрудник
+              <span class="arrow" v-if="tableUnit.sort.field == 'person'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
             <th>Количество</th>
             <th>Комментарий</th>
           </tr>
@@ -181,7 +189,8 @@ export default {
   /* fallback */
   width: 100%;
   /* minus scroll bar width */
-  width: calc( 100% - 1em ) !important/* scrollbar is average 1em/16px width, remove it from thead width */
+  width: calc( 100% - 1em ) !important;/* scrollbar is average 1em/16px width, remove it from thead width */
+  cursor: pointer;
 }
 
 .table_unit tbody {
@@ -196,7 +205,26 @@ export default {
     table-layout:fixed;/* even columns width , fix width of table too*/
 }
 
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
 
+.arrow.asc {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid black;
+}
+
+.arrow.dsc {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid black;
+}
 
 </style>
 

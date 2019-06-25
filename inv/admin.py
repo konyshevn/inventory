@@ -47,7 +47,7 @@ class DocIncomeAdmin(admin.ModelAdmin):
 
 
 class DocIncomeTableUnitAdmin(admin.ModelAdmin):
-    list_display = ('doc', 'device', 'person', 'qty', 'comment')
+    list_display = ('doc', 'device', 'person', 'qty', 'comment', 'rowOrder')
 #    inlines = (IncomeTableUnitInline,)
 
 

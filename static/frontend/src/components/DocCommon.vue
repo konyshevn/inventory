@@ -24,6 +24,12 @@ export default {
       doc: {},
       docs: [],
       widgetIsValid: {},
+      tableUnit:{
+        sort:{
+          field: "",
+          order: -1,
+        }
+      }
     }
   },
 
@@ -70,6 +76,34 @@ export default {
         errorMsg = errorMsg + error.message
       }
       return errorMsg
+    },
+
+    sortTU: function(TU, field, order){
+      var vm = this
+      if (vm.tableUnit.sort.field != field) {
+        vm.tableUnit.sort.order = -1
+      }
+      vm.tableUnit.sort.order *= -1
+      vm.tableUnit.sort.field = field
+      var order = vm.tableUnit.sort.order
+      function compareTUrow(a, b) {
+        if (vm.catlgs[field][a[field]]['label'] > vm.catlgs[field][b[field]]['label']) {
+          return 1 * order
+        }
+        if (vm.catlgs[field][a[field]]['label'] < vm.catlgs[field][b[field]]['label']) {
+          return -1 * order
+        }
+      }
+      TU.sort(compareTUrow);
+      TU.map(function(value, index){
+        value.rowOrder = index + 1
+      })
+
+    },
+
+    sortTU2: function(TU, field){
+      var vm = this
+
     },
 
     async regWriteDocItem (docType, item) {

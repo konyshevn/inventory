@@ -469,6 +469,17 @@ class Document(models.Model):
         return doc_desc
 
 
+class DocumentTableUnit(models.Model):
+    rowOrder = models.PositiveIntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['rowOrder']
+        abstract = True
+
+    def __str__(self):
+        return str(self.doc)
+
+
 class DocWriteoff(Document):
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
@@ -502,7 +513,7 @@ class DocWriteoff(Document):
         verbose_name = 'Списание'
 
 
-class DocWriteoffTableUnit(models.Model):
+class DocWriteoffTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
@@ -554,7 +565,7 @@ class DocMove(Document):
         verbose_name = 'Перемещение'
 
 
-class DocMoveTableUnit(models.Model):
+class DocMoveTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocMove, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person_from = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_from')
@@ -596,15 +607,12 @@ class DocIncome(Document):
         verbose_name = 'Оприходование'
 
 
-class DocIncomeTableUnit(models.Model):
+class DocIncomeTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
-
-    def __str__(self):
-        return str(self.doc)
 
 
 class DocInventory(Document):
@@ -712,7 +720,7 @@ class DocInventory(Document):
         verbose_name = 'Инвентаризация'
 
 
-class DocInventoryTableUnit(models.Model):
+class DocInventoryTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE, related_name='table_unit')
     device = models.ForeignKey(Device, on_delete=models.PROTECT)
 

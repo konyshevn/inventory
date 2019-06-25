@@ -3,6 +3,7 @@
     <b-button-group align="left">
       <b-button variant="light" size="sm" @click="addRowTableUnit('docincome', doc)">Добавить строку</b-button>
       <b-button variant="light" size="sm">Удалить строку</b-button>
+      
     </b-button-group>
   </div>
 </template>
