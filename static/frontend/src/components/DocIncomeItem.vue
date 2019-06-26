@@ -61,18 +61,26 @@
       <table class="table table-bordered table_unit">
         <thead >
           <tr >
-            <th v-on:click="sortTU(doc.table_unit, 'device')">
+            <th v-on:click="sortTU(doc.table_unit, 'device', 'widget')">
               Устройство
               <span class="arrow" v-if="tableUnit.sort.field == 'device'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
               </span>
             </th>
-            <th v-on:click="sortTU(doc.table_unit, 'person')">
+            <th v-on:click="sortTU(doc.table_unit, 'person', 'widget')">
               Сотрудник
               <span class="arrow" v-if="tableUnit.sort.field == 'person'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
               </span>
             </th>
-            <th>Количество</th>
-            <th>Комментарий</th>
+            <th v-on:click="sortTU(doc.table_unit, 'qty', 'number')">
+              Количество
+              <span class="arrow" v-if="tableUnit.sort.field == 'qty'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
+            <th v-on:click="sortTU(doc.table_unit, 'comment', 'text')">
+              Комментарий
+              <span class="arrow" v-if="tableUnit.sort.field == 'comment'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>

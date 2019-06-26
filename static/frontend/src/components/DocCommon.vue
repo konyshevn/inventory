@@ -78,7 +78,7 @@ export default {
       return errorMsg
     },
 
-    sortTU: function(TU, field, order){
+    sortTU: function(TU, field, fieldType){
       var vm = this
       if (vm.tableUnit.sort.field != field) {
         vm.tableUnit.sort.order = -1
@@ -86,23 +86,35 @@ export default {
       vm.tableUnit.sort.order *= -1
       vm.tableUnit.sort.field = field
       var order = vm.tableUnit.sort.order
-      function compareTUrow(a, b) {
-        if (vm.catlgs[field][a[field]]['label'] > vm.catlgs[field][b[field]]['label']) {
-          return 1 * order
-        }
-        if (vm.catlgs[field][a[field]]['label'] < vm.catlgs[field][b[field]]['label']) {
-          return -1 * order
-        }
+
+      function compareTUrowWidget(a, b) {
+        var aLabel = vm.catlgs[field][a[field]]['label']
+        var bLabel = vm.catlgs[field][b[field]]['label']
+        return aLabel < bLabel ? -1 * order : 1 * order;
       }
-      TU.sort(compareTUrow);
+
+      function compareTUrowNumber(a, b) {
+        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
+      }
+
+      function compareTUrowText(a, b) {
+        if(a[field] === "" || a[field] === null) return 1;
+        if(b[field] === "" || b[field] === null) return -1;
+        if(a[field] === b[field]) return 0;
+        return a[field] < b[field] ? -1 * order : 1 * order;
+      }
+
+      if (fieldType == 'widget') {
+        TU.sort(compareTUrowWidget);
+      } else if (fieldType == 'number') {
+        TU.sort(compareTUrowNumber);
+      } else if (fieldType == 'text') {
+        TU.sort(compareTUrowText);
+      }
+
       TU.map(function(value, index){
         value.rowOrder = index + 1
       })
-
-    },
-
-    sortTU2: function(TU, field){
-      var vm = this
 
     },
 
