@@ -7,7 +7,7 @@ export function docincome() {
   this.stock = ''
   this.table_unit = [
     {
-      id: null,
+      id: null /*`f${(+new Date).toString(16)}`*/,
       device: '',
       person: '',
       qty: '1',

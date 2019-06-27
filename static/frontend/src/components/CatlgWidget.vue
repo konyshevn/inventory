@@ -141,7 +141,14 @@ export default {
   },
 
   created: function() {
-  }
+  },
+
+  beforeDestroy: function(){
+    var vm = this
+    // Костыль. Исправить на удаление uid из списка uid'ов widgetIsValid
+    EventBus.$emit('widgetState', [vm._uid, true])
+  },
+
   
 }
 </script>

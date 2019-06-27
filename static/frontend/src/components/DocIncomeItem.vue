@@ -53,7 +53,7 @@
         </b-row>
       </b-container>
       <b-container class="text-left" >
-        <table-unit-control-panel :doc="doc"></table-unit-control-panel>
+        <table-unit-control-panel :doc="doc" :selected="tableUnit.selected"></table-unit-control-panel>
         </b-container>
     </div>
 
@@ -61,6 +61,9 @@
       <table class="table table-bordered table_unit">
         <thead >
           <tr >
+            <th>
+              У
+            </th>
             <th v-on:click="sortTU(doc.table_unit, 'device', 'widget')">
               Устройство
               <span class="arrow" v-if="tableUnit.sort.field == 'device'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
@@ -84,7 +87,15 @@
           </tr>
         </thead>
         <tbody>
-        <tr v-for="rec in doc.table_unit" :key="rec.id">
+        <tr v-for="(rec, index) in doc.table_unit" :key="rec.id">
+          <td class="select-row">
+            <b-form-checkbox
+            :id="rec.id"
+            v-model="tableUnit.selected"
+            :value="rec.id"
+            >
+            </b-form-checkbox>
+          </td>
           <td>
             <catlg-widget widget-type="device" required :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
           </td>
@@ -173,15 +184,18 @@ export default {
 
 
 .table_unit td:nth-child(1), th:nth-child(1) {
-  width: 40%;
+  width: 5%;
 }
 .table_unit td:nth-child(2), th:nth-child(2) {
-  width: 30%;
+  width: 35%;
 }
 .table_unit td:nth-child(3), th:nth-child(3) {
-  width: 10%;
+  width: 25%;
 }
 .table_unit td:nth-child(4), th:nth-child(4) {
+  width: 15%;
+}
+.table_unit td:nth-child(5), th:nth-child(5) {
   width: 20%;
 }
 
@@ -234,5 +248,9 @@ export default {
   border-top: 6px solid black;
 }
 
+.select-row {
+  vertical-align: middle; 
+  text-align: center;
+}
 </style>
 

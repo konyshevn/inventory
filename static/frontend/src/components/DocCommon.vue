@@ -28,7 +28,8 @@ export default {
         sort:{
           field: "",
           order: -1,
-        }
+        },
+        selected: []
       }
     }
   },
@@ -68,12 +69,17 @@ export default {
 
     getErrorMsg: function(error) {
       var errorMsg = ''
+      errorMsg = errorMsg + JSON.stringify(error)
       if (error.response) {
         if (error.response.data) {
           errorMsg = errorMsg + error.response.data
         }
       } else if (error.message) {
         errorMsg = errorMsg + error.message
+      } else if (error.data) {
+        errorMsg = errorMsg + error.data
+      } else {
+        errorMsg = errorMsg + JSON.stringify(error)
       }
       return errorMsg
     },
@@ -88,6 +94,9 @@ export default {
       var order = vm.tableUnit.sort.order
 
       function compareTUrowWidget(a, b) {
+        if (!a[field]) return 1;
+        if (!b[field]) return -1;
+
         var aLabel = vm.catlgs[field][a[field]]['label']
         var bLabel = vm.catlgs[field][b[field]]['label']
         return aLabel < bLabel ? -1 * order : 1 * order;
@@ -192,6 +201,16 @@ export default {
       doc.table_unit.push(newDoc.table_unit[0])
 
     },
+
+    deleteRowTableUnit: function(doc, rowToDelete) {
+      var vm = this
+      var newRows  = doc.table_unit.filter(function(value){
+        return (rowToDelete.indexOf(value.id) >= 0) ? false : true 
+      })
+      doc.table_unit = newRows
+
+    },
+
      
     isValid: function () {
       var vm = this

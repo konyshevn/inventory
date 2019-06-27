@@ -351,6 +351,9 @@ class Document(models.Model):
                     if rec['id'] is not None:
                         if isinstance(rec['id'], int):
                              table_unit_item = table_unit_model.objects.get(id=rec['id'])
+                        # если в качестве id передана строка, значит это временный id из JS для новой записи
+                        elif isinstance(rec['id'], str):
+                            table_unit_item = table_unit_model(doc=self)
                         else:
                             table_unit_item = rec['id']
                     else:
