@@ -35,7 +35,7 @@ export default {
   },
 
   methods: {
-    fetchDocs: function (docType) {
+    fetchDocs (docType) {
       var vm = this;
       HTTP.get(docType + '/')
         .then(function (response) {

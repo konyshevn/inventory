@@ -13,6 +13,7 @@ import DocIncomeItem from './components/DocIncomeItem.vue'
 import DocItem from './components/DocItem.vue'
 import DocList from './components/DocList.vue'
 import CatlgDeviceList from './components/CatlgDeviceList.vue'
+import {store} from './components/store';
 
 Vue.use(VueRouter)
 Vue.config.productionTip = false
@@ -60,5 +61,6 @@ const router = new VueRouter({
 
 new Vue({
   router,
+  store,
   render: h => h(App),
 }).$mount('#app')
