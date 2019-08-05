@@ -16,12 +16,12 @@ import CatlgDeviceList from './components/CatlgDeviceList.vue'
 import {store} from './components/store';
 
 Vue.use(VueRouter)
+Vue.config.devtools = true
 Vue.config.productionTip = false
 Vue.use(VueSelect, {
   theme: 'bootstrap' // or 'material-design'
 })
 Vue.use(BootstrapVue)
-
 const routes = [
   { 
     path: '/',
