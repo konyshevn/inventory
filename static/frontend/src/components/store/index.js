@@ -35,7 +35,9 @@ export const store = new Vuex.Store({
       return state.currentDoc.status
     },
 
-    catlgExist: (state, catlgType) => {
+    catlgExist: state => catlgType => {
+      console.log('catlgExist catlgType')
+      console.log(catlgType)
       if (catlgType in state.catlgs) {
         return true
       } else {
@@ -43,12 +45,14 @@ export const store = new Vuex.Store({
       }
     },
 
-    GETcatlgItem: (state, catlgType, id) => {
-      if (state.catlgs.catlgType.id) {
-        return state.catlgs.catlgType.id
-      } else {
-        return null
-      }
+    GETcatlgItem: state => (catlgType, id) => {
+      console.log('catlgType ')
+      console.log(catlgType)
+      console.log('id ')
+      console.log(id)
+      console.log('catlgs')
+      console.log(state.catlgs)
+        return state.catlgs[catlgType][id]
     },
 
 
@@ -59,30 +63,13 @@ export const store = new Vuex.Store({
     },
 
     SETcatlgItem: (state, catlgType, item) => {
-      state.catlgs[catlgType][item.id] = item
+      Vue.set(state.catlgs[catlgType], item.id, item)
     },
 
-    SETcatlgLabel: (state, catlgType, id) => {
-      var label = "unknown";
-      if (isNaN(id)){
-        var catlgItem = id; //не число, значит передан объект
-      } else {
-        var catlgItem = vm.catlgs[catlgName][id]; //число, значит передано id
-      }
-      switch(catlgName){
-        case 'device':
-          var deviceType = vm.catlgs['deviceType'][catlgItem.deviceType]['label'];
-          var nomenclature = vm.catlgs['nomenclature'][catlgItem.nomenclature]['label'];
-          var serial_num = catlgItem['serial_num'] 
-          label = deviceType + ' ' + nomenclature + ' (' + serial_num + ')';
-          break;
-
-        case 'person':
-          label = catlgItem['surname'] + ' ' + catlgItem['name'];
-          break;
-      }
-      Vue.set(vm.catlgs[catlgName][id], 'label', label)
+    SETcatlgItemLabel: (state, catlgType, id, label) => {
+      Vue.set(state.catlgs[catlgType][id], 'label', label)
     },
+
 
   },
   actions: {
@@ -113,7 +100,9 @@ export const store = new Vuex.Store({
         catlgItemFetch.forEach(function(item, i, arr){
           context.commit('SETcatlgItem', catlgType, item)
           if ( !('label' in item)) {
-            vm.setCatlgLabel(catlgType, item.id)
+            console.log('catlgType3 ' + catlgType)
+            console.log('id3 ' + id)
+            context.dispatch('SETcatlgLabel', catlgType, item.id)
           }
         })
       } catch(error) {
@@ -135,6 +124,29 @@ export const store = new Vuex.Store({
       }
     },
 
+    SETcatlgLabel: (context, catlgType, id) => {
+      var label = "unknown";
+      if (isNaN(id)){
+        var catlgItem = id; //не число, значит передан объект
+      } else {
+        console.log('catlgType2 ' + catlgType)
+        console.log('id2 ' + id)
+        var catlgItem = context.getters.GETcatlgItem(catlgType, id); //число, значит передано id
+      }
+      switch(catlgType){
+        case 'device':
+          var deviceType = context.getters.GETcatlgItem('deviceType', catlgItem.deviceType).label
+          var nomenclature = context.getters.GETcatlgItem('nomenclature', catlgItem.nomenclature).label
+          var serial_num = catlgItem['serial_num'] 
+          label = deviceType + ' ' + nomenclature + ' (' + serial_num + ')';
+          break;
+
+        case 'person':
+          label = catlgItem['surname'] + ' ' + catlgItem['name'];
+          break;
+      }
+      context.commit('SETcatlgItemLabel', catlgType, id, label)
+    },
 
   },
 });

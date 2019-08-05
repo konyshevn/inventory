@@ -35,7 +35,13 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
-  }
+  },
+
+  mounted: () => {
+    //this.$store.dispatch('FETCHcurrentDoc', 'docincome', 216)
+    let myt = this.$store.getters.catlgExist('device')
+    console.log(myt)
+  },
 }
 </script>
 

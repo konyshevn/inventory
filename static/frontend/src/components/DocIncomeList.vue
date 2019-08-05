@@ -71,6 +71,7 @@ export default {
   },
   mounted: function () {
     //this.fetchCatlg('device');
+    
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {
         event.preventDefault();
