@@ -39,8 +39,10 @@ export default {
 
   mounted: function () {
     this.$store.dispatch('FETCHcurrentDoc', ['docincome', 216])
-    let myt = this.$store.getters.catlgExist('device')
-    console.log(myt)
+    this.$store.dispatch('FETCHcatlg', ['stock'])
+    this.$store.dispatch('FETCHdocs', 'docincome')
+    //let myt = this.$store.getters.catlgExist('device')
+    //console.log(myt)
   },
 }
 </script>

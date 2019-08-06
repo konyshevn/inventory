@@ -36,8 +36,6 @@ export const store = new Vuex.Store({
     },
 
     catlgExist: state => catlgType => {
-      console.log('catlgExist catlgType')
-      console.log(catlgType)
       if (catlgType in state.catlgs) {
         return true
       } else {
@@ -46,12 +44,6 @@ export const store = new Vuex.Store({
     },
 
     GETcatlgItem: state => (catlgType, id) => {
-      console.log('catlgType ')
-      console.log(catlgType)
-      console.log('id ')
-      console.log(id)
-      console.log('catlgs')
-      console.log(state.catlgs)
         return state.catlgs[catlgType][id]
     },
 
@@ -60,6 +52,10 @@ export const store = new Vuex.Store({
   mutations: {
     SETcurrentDoc: (state, data) => {
       state.currentDoc.data = data
+    },
+
+    SETdocs: (state, data) => {
+      state.docs = data
     },
 
     SETcatlgItem: (state, [catlgType, item]) => {
@@ -83,6 +79,13 @@ export const store = new Vuex.Store({
           dispatch('FETCHcatlgItem', [key, response.data[key]])
         }
       }
+    },
+
+    FETCHdocs: async ({commit, dispatch, getters}, docType) => {
+      let response = await HTTP.get(docType + '/')
+      let DocsReady = response.data
+      commit('SETdocs', DocsReady)
+      dispatch('FETCHdependentCatlg', DocsReady)
     },
 
     FETCHwidgetInitCatlg: async ({commit, dispatch, getters}, [tableUnit, fieldsMap]) => {
@@ -111,8 +114,6 @@ export const store = new Vuex.Store({
         catlgItemFetch.forEach(function(item, i, arr){
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
-            console.log('catlgType3 ' + catlgType)
-            console.log('id3 ' + id)
             dispatch('SETcatlgLabel', [catlgType, item.id])
           }
         })
@@ -120,6 +121,27 @@ export const store = new Vuex.Store({
         console.log(error)
       }
 
+    },
+
+    FETCHcatlg: async ({commit, dispatch, getters}, [catlgType, query, fields]) => {
+      try {
+        if ((query == undefined) | (fields == undefined)) {
+          var response = await HTTP.get(catlgType + '/')
+        } else {
+          var response = await HTTP.get(`${catlgType}/?query=${query}&fields=${fields.join(',')}`)
+        }
+        var catlgItemFetch = response.data
+
+        await dispatch('FETCHdependentCatlg', catlgItemFetch)      
+        catlgItemFetch.forEach(function(item, i, arr){
+          commit('SETcatlgItem', [catlgType, item])
+          if ( !('label' in item)) {
+            dispatch('SETcatlgLabel', [catlgType, item.id])
+          }    
+        })
+      } catch(error) {
+        console.log(error)
+      }
     },
 
     FETCHdependentCatlg: async ({commit, dispatch, getters}, items) => {
@@ -140,8 +162,6 @@ export const store = new Vuex.Store({
       if (isNaN(id)){
         var catlgItem = id; //не число, значит передан объект
       } else {
-        console.log('catlgType2 ' + catlgType)
-        console.log('id2 ' + id)
         var catlgItem = getters.GETcatlgItem(catlgType, id); //число, значит передано id
       }
       switch(catlgType){
@@ -159,5 +179,7 @@ export const store = new Vuex.Store({
       commit('SETcatlgItemLabel', [catlgType, id, label])
     },
 
+  
   },
+
 });
