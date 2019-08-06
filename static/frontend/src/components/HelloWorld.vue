@@ -37,8 +37,8 @@ export default {
     msg: String
   },
 
-  mounted: () => {
-    //this.$store.dispatch('FETCHcurrentDoc', 'docincome', 216)
+  mounted: function () {
+    this.$store.dispatch('FETCHcurrentDoc', ['docincome', 216])
     let myt = this.$store.getters.catlgExist('device')
     console.log(myt)
   },

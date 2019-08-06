@@ -62,30 +62,41 @@ export const store = new Vuex.Store({
       state.currentDoc.data = data
     },
 
-    SETcatlgItem: (state, catlgType, item) => {
+    SETcatlgItem: (state, [catlgType, item]) => {
       Vue.set(state.catlgs[catlgType], item.id, item)
     },
 
-    SETcatlgItemLabel: (state, catlgType, id, label) => {
+    SETcatlgItemLabel: (state, [catlgType, id, label]) => {
       Vue.set(state.catlgs[catlgType][id], 'label', label)
     },
 
 
   },
   actions: {
-    FETCHcurrentDoc: async (context, docType, id) => {
+    FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
-      //vm.fetchWidgetInitCatlg(response.data['table_unit'], {'device': 'device', 'person': 'person'})
-      context.commit('SETcurrentDoc', response.data)
+      dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
+      commit('SETcurrentDoc', response.data)
 
       for (let key in response.data){
-        if ((context.getters.catlgExist(key)) && (response.data[key])) {
-          context.dispatch('FETCHcatlgItem', key, response.data[key])
+        if ((getters.catlgExist(key)) && (response.data[key])) {
+          dispatch('FETCHcatlgItem', [key, response.data[key]])
         }
       }
     },
 
-    FETCHcatlgItem: async (context, catlgType, id) => {
+    FETCHwidgetInitCatlg: async ({commit, dispatch, getters}, [tableUnit, fieldsMap]) => {
+      for (var fieldTableUnit in fieldsMap) {
+        var catlgType  = fieldsMap[fieldTableUnit]
+        var catlgToLoad = _.uniq(_.map(tableUnit, _.property(fieldTableUnit)))
+        catlgToLoad = catlgToLoad.filter(function (el) {
+            return el != null;
+          });
+         dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
+      }
+    },
+
+    FETCHcatlgItem: async ({commit, dispatch, getters}, [catlgType, id]) => {
       try {
         if (!Array.isArray(id)){
           var response = await HTTP.get(catlgType + '/'+ id + '/')
@@ -95,14 +106,14 @@ export const store = new Vuex.Store({
           var catlgItemFetch = response.data   
         }
           
-        await context.dispatch('FETCHdependentCatlg', catlgItemFetch)
+        await dispatch('FETCHdependentCatlg', catlgItemFetch)
 
         catlgItemFetch.forEach(function(item, i, arr){
-          context.commit('SETcatlgItem', catlgType, item)
+          commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
             console.log('catlgType3 ' + catlgType)
             console.log('id3 ' + id)
-            context.dispatch('SETcatlgLabel', catlgType, item.id)
+            dispatch('SETcatlgLabel', [catlgType, item.id])
           }
         })
       } catch(error) {
@@ -111,32 +122,32 @@ export const store = new Vuex.Store({
 
     },
 
-    FETCHdependentCatlg: async (context, items) => {
+    FETCHdependentCatlg: async ({commit, dispatch, getters}, items) => {
       for (var key in items[0]){
-        if (context.getters.catlgExist(key)) {
+        if (getters.catlgExist(key)) {
           var catlgToLoad = _.uniq(_.map(items, _.property(key)))
           catlgToLoad = catlgToLoad.filter(function (el) {
             return el != null;
           });
           //console.log(catlgToLoad)
-          await context.dispatch('FETCHcatlgItem', key, catlgToLoad)
+          await dispatch('FETCHcatlgItem', [key, catlgToLoad])
         }
       }
     },
 
-    SETcatlgLabel: (context, catlgType, id) => {
+    SETcatlgLabel: ({commit, dispatch, getters}, [catlgType, id]) => {
       var label = "unknown";
       if (isNaN(id)){
         var catlgItem = id; //не число, значит передан объект
       } else {
         console.log('catlgType2 ' + catlgType)
         console.log('id2 ' + id)
-        var catlgItem = context.getters.GETcatlgItem(catlgType, id); //число, значит передано id
+        var catlgItem = getters.GETcatlgItem(catlgType, id); //число, значит передано id
       }
       switch(catlgType){
         case 'device':
-          var deviceType = context.getters.GETcatlgItem('deviceType', catlgItem.deviceType).label
-          var nomenclature = context.getters.GETcatlgItem('nomenclature', catlgItem.nomenclature).label
+          var deviceType = getters.GETcatlgItem('deviceType', catlgItem.deviceType).label
+          var nomenclature = getters.GETcatlgItem('nomenclature', catlgItem.nomenclature).label
           var serial_num = catlgItem['serial_num'] 
           label = deviceType + ' ' + nomenclature + ' (' + serial_num + ')';
           break;
@@ -145,7 +156,7 @@ export const store = new Vuex.Store({
           label = catlgItem['surname'] + ' ' + catlgItem['name'];
           break;
       }
-      context.commit('SETcatlgItemLabel', catlgType, id, label)
+      commit('SETcatlgItemLabel', [catlgType, id, label])
     },
 
   },
