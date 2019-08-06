@@ -47,6 +47,16 @@ export const store = new Vuex.Store({
         return state.catlgs[catlgType][id]
     },
 
+    GETcatlgItemLabel: state => (catlgType, id) => {
+      if (id in state.catlgs[catlgType]){
+        return state.catlgs[catlgType][id]['label']
+      }
+    },
+
+    GETdocs: state => {
+      return state.docs
+    },
+
 
   },
   mutations: {
@@ -65,6 +75,7 @@ export const store = new Vuex.Store({
     SETcatlgItemLabel: (state, [catlgType, id, label]) => {
       Vue.set(state.catlgs[catlgType][id], 'label', label)
     },
+
 
 
   },

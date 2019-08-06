@@ -13,15 +13,15 @@
         </tr>
       </thead>
       <tbody>
-      <tr v-for="doc in docs" :key="doc.id" v-on:dblclick="clickRow(doc.id, $event)" >
+      <tr v-for="doc in GETdocs" :key="doc.id" @dblclick="clickRow(doc.id, $event)" >
         <td>{{doc.doc_date | formatDate}}</td>
         <td>{{doc.doc_num}}</td>
         <td>
           <span v-if="doc.active">Да</span>
           <span v-else></span>
         </td>
-        <td><span>{{displayCatlgItem('department', doc.department)}}</span></td>
-        <td><span>{{displayCatlgItem('stock', doc.stock)}}</span></td>
+        <td><span>{{GETcatlgItemLabel('department', doc.department)}}</span></td>
+        <td><span>{{GETcatlgItemLabel('stock', doc.stock)}}</span></td>
         <td>{{doc.comment}}</td>
       </tr>
     </tbody>
@@ -39,6 +39,8 @@ import moment from 'moment';
 var _ = require('lodash');
 import CatlgCommon from './CatlgCommon.vue';
 import DocCommon from './DocCommon.vue';
+import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 
 Vue.filter('formatDate', function(value) {
   if (value) {
@@ -52,12 +54,9 @@ export default {
   props: {
     //msg: String
   },
-  mixins: [CatlgCommon, DocCommon],
+ // mixins: [CatlgCommon, DocCommon],
   data () {
     return {
-      catlgs: {
-        'department': {}
-      }
     }
   },
   methods: {
@@ -67,28 +66,30 @@ export default {
       this.$router.push({ name: 'doc.item', params: {id: id, docType: 'docincome'} })
     },
      
-
+    ...mapActions([
+      'FETCHdocs',
+    ])
   },
   mounted: function () {
-    //this.fetchCatlg('device');
+    this.FETCHdocs('docincome');
     
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {
         event.preventDefault();
-        // of course, you still do not know what you prevent here...
-        // You could also check event.ctrlKey/event.shiftKey/event.altKey
-        // to not prevent something useful.
       }
     }, false);
   },
   
   created() {
-    this.fetchDocs('docincome');
+    //this.fetchDocs('docincome');
 
   },
 
   computed: {
-
+    ...mapGetters([
+      'GETdocs',
+      'GETcatlgItemLabel',
+    ])
   },
 }
 
