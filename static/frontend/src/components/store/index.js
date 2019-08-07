@@ -64,6 +64,14 @@ export const store = new Vuex.Store({
       state.currentDoc.data = data
     },
 
+    UPDcurrentDoc: (state, [key, value]) => {
+      if (value instanceof Event) {
+        state.currentDoc.data[key] = value.data
+      } else {
+        state.currentDoc.data[key] = value
+      }
+    },
+
     SETdocs: (state, data) => {
       state.docs = data
     },

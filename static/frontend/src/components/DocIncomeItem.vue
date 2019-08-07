@@ -3,7 +3,7 @@
     <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
     <h2 align="left">Оприходование</h2>
       <b-container class="text-left" >
-        <doc-item-control-panel :doc="doc"></doc-item-control-panel>
+        <doc-item-control-panel :doc="currentDoc"></doc-item-control-panel>
         <p></p>
 
         <b-row align-v="end" class="mb-2">
@@ -11,13 +11,13 @@
             <label :for="doc_num">Номер:</label> 
           </b-col>
           <b-col sm="2">
-            <b-form-input :id="doc_num" v-model="doc.doc_num" type="number"></b-form-input>
+            <b-form-input :id="doc_num" v-model="doc_num" type="number"></b-form-input>
           </b-col>
           <b-col sm="1">
             <label :for="doc_date">Дата:</label> 
           </b-col>
           <b-col sm="3">
-            <datetime-widget v-if="doc.doc_date" :model.sync="doc.doc_date"></datetime-widget>
+            <datetime-widget v-if="doc_date" :model.sync="doc_date"></datetime-widget>
           </b-col>
           <b-col sm="1" align="center">
             <b-button v-if="doc.active" disabled variant="success">Проведен</b-button>
@@ -125,6 +125,20 @@ import DatetimeWidget from './DatetimeWidget.vue';
 import CatlgWidgetModal from './CatlgWidgetModal.vue';
 import DocItemControlPanel from './DocItemControlPanel.vue';
 import TableUnitControlPanel from './TableUnitControlPanel.vue';
+import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
+
+function mapTwoWay (key, getter, mutation) {
+  return {
+    get () {
+      return this.$store.getters[getter][key]
+    },
+    set (value) {
+      this.$store.commit(mutation, [key, value])
+    }
+  }
+}
 
 
 export default {
@@ -149,15 +163,28 @@ export default {
   },
 
   methods: {
+    ...mapMutations([
+      'UPDcurrentDoc',
+    ]),
+
+    ...mapActions([
+      'FETCHcurrentDoc'
+    ])
   },
 
   computed: {
+    doc_num: mapTwoWay('doc_num', 'currentDoc', 'UPDcurrentDoc'),
+    doc_date: mapTwoWay('doc_date', 'currentDoc', 'UPDcurrentDoc'),
+    ...mapGetters([
+      'currentDoc',
+    ])
   },
   
   mounted: function () {
-    var vm = this
+    this.FETCHcurrentDoc(['docincome', this.id])
+    //var vm = this
     //this.$nextTick(function () {
-      vm.getDocItem('docincome', vm.id);
+    //  vm.getDocItem('docincome', vm.id);
     //})
     
   },
