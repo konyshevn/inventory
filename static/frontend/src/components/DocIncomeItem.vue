@@ -30,7 +30,8 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" required :init-item="catlgs" :model.sync="doc.department"></catlg-widget>
+            <catlg-widget widget-type="department" required :init-item="catlgs" :model.sync="department"></catlg-widget>
+            
           </b-col> 
         </b-row>
 
@@ -39,7 +40,7 @@
             <label>Склад:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="doc.stock"></catlg-widget>
+            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="stock"></catlg-widget>
           </b-col> 
         </b-row>
 
@@ -48,7 +49,7 @@
             <label>Комментарий:</label>
           </b-col>
           <b-col sm="8" align-h="start"> 
-            <b-form-input v-model="doc.comment" type="string" maxlength="70"></b-form-input>
+            <b-form-input v-model="comment" type="string" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
       </b-container>
@@ -175,18 +176,20 @@ export default {
   computed: {
     doc_num: mapTwoWay('doc_num', 'currentDoc', 'UPDcurrentDoc'),
     doc_date: mapTwoWay('doc_date', 'currentDoc', 'UPDcurrentDoc'),
+    department: mapTwoWay('department', 'currentDoc', 'UPDcurrentDoc'),
+    stock: mapTwoWay('stock', 'currentDoc', 'UPDcurrentDoc'),
+    comment: mapTwoWay('comment', 'currentDoc', 'UPDcurrentDoc'),
     ...mapGetters([
       'currentDoc',
     ])
   },
   
   mounted: function () {
-    this.FETCHcurrentDoc(['docincome', this.id])
     //var vm = this
     //this.$nextTick(function () {
     //  vm.getDocItem('docincome', vm.id);
     //})
-    
+    this.FETCHcurrentDoc(['docincome', this.id])
   },
 
   created: function() {

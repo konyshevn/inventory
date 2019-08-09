@@ -53,6 +53,20 @@ export const store = new Vuex.Store({
       }
     },
 
+    GETcatlg: state => catlgType => {
+      return state.catlgs[catlgType]
+    },
+
+    GETcatlgByLabel: state => (catlgType, label) => {
+      var catlg = []
+      for (let key in state.catlgs[catlgType]) {
+        if (state.catlgs[catlgType][key]['label'].toLowerCase().indexOf(label.toLowerCase()) != -1) {
+          catlg.push(state.catlgs[catlgType][key])
+        }
+      }
+      return catlg
+    },
+
     GETdocs: state => {
       return state.docs
     },
@@ -91,13 +105,13 @@ export const store = new Vuex.Store({
     FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
       dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
-      commit('SETcurrentDoc', response.data)
 
       for (let key in response.data){
         if ((getters.catlgExist(key)) && (response.data[key])) {
-          dispatch('FETCHcatlgItem', [key, response.data[key]])
+          await dispatch('FETCHcatlgItem', [key, response.data[key]])
         }
       }
+      commit('SETcurrentDoc', response.data)
     },
 
     FETCHdocs: async ({commit, dispatch, getters}, docType) => {

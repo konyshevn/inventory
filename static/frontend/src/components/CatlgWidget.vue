@@ -1,6 +1,5 @@
 <template>
   <div style="position:relative;display:block">
-
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
@@ -14,7 +13,7 @@
       :loading="loading"
       disable-filtering-by-search
       @search="onSearch"
-      @input="$emit('update:model', model)"
+      @input="$emit('update:model', vm.model)"
       :class="{'widget-invalid': required ? !isValid : false }">
         <template slot="no-data">
           <span>Не найдено</span>
@@ -72,6 +71,7 @@ export default {
         'stock': ['label']
       },
       isValid: false,
+      isInited: false,
 
     }
   },
@@ -81,25 +81,30 @@ export default {
       var vm=this
       setTimeout(function() { vm.active=false }, 1);
     },
-
+/*
+    onInput: function () {
+      let vm = this
+      if (vm.model != null){
+        vm.$emit('update:model', vm.model)
+      }
+    },
+*/
 
 
     async onSearch(search) {
       var vm = this
       const lettersLimit = 2;
       Vue.set(vm, 'items', [])
-      Vue.set(vm.catlgs, vm.widgetType, [])
+      //Vue.set(vm.catlgs, vm.widgetType, [])
       if (search.length < lettersLimit) {
         Vue.set(vm, 'items', [])
-        Vue.set(vm.catlgs, vm.widgetType, [])
+        //Vue.set(vm.catlgs, vm.widgetType, [])
         vm.loading = false;
         return;
       }
       vm.loading = true;
-      await vm.fetchCatlg(vm.widgetType, search, vm.searchFields[vm.widgetType])
-      for (var key in vm.catlgs[vm.widgetType]) {
-        vm.items.push(vm.catlgs[vm.widgetType][key])
-      }
+      await vm.$store.dispatch('FETCHcatlg',[vm.widgetType, search, vm.searchFields[vm.widgetType]])
+      vm.items = vm.$store.getters.GETcatlgByLabel(vm.widgetType, search)
       vm.loading = false
     },
 
@@ -113,6 +118,7 @@ export default {
   },
 
   watch: {
+    /*
     initItem: { 
       handler(){
         var vm = this
@@ -123,11 +129,17 @@ export default {
       },
       deep: true
     },
+    */
     model: {
       handler(){
         var vm = this
         if (vm.model){
           vm.isValid = true
+          if (!vm.isInited){
+            vm.items = []
+            vm.items.push(vm.$store.getters.GETcatlgItem(vm.widgetType, vm.model))
+            vm.isInited = false
+          }
         } else {
           vm.isValid = false
         }
@@ -141,6 +153,18 @@ export default {
   },
 
   created: function() {
+  },
+
+  mounted: function() {
+    //this.initItems
+    //let vm = this
+    //vm.items = vm.$store.getters.GETcatlgItem(vm.widgetType, vm.model)
+    //console.log(vm.widgetType, vm.model)
+    //console.log( vm.$store.getters.GETcatlgItem(vm.widgetType, vm.model))
+  },
+
+  computed: {
+    
   },
 
   beforeDestroy: function(){
