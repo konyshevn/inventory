@@ -50,7 +50,6 @@ export default {
   props: {
     model: Number,
     widgetType: String,
-    initItem: Object,
     required: {
       type: Boolean,
       default: false,
@@ -59,8 +58,6 @@ export default {
 
   data () {
     return {
-     //'catlgs': this.initCatlgs,
-     //'initItem': this.model,
       active: false,
       items: [],
       loading: false,
@@ -81,24 +78,14 @@ export default {
       var vm=this
       setTimeout(function() { vm.active=false }, 1);
     },
-/*
-    onInput: function () {
-      let vm = this
-      if (vm.model != null){
-        vm.$emit('update:model', vm.model)
-      }
-    },
-*/
 
 
     async onSearch(search) {
       var vm = this
       const lettersLimit = 2;
       Vue.set(vm, 'items', [])
-      //Vue.set(vm.catlgs, vm.widgetType, [])
       if (search.length < lettersLimit) {
         Vue.set(vm, 'items', [])
-        //Vue.set(vm.catlgs, vm.widgetType, [])
         vm.loading = false;
         return;
       }
@@ -118,18 +105,6 @@ export default {
   },
 
   watch: {
-    /*
-    initItem: { 
-      handler(){
-        var vm = this
-        if (vm.initItem[vm.widgetType][vm.model]) {
-          vm.items = []
-          vm.items.push(vm.initItem[vm.widgetType][vm.model])
-        }
-      },
-      deep: true
-    },
-    */
     model: {
       handler(){
         var vm = this
@@ -156,11 +131,6 @@ export default {
   },
 
   mounted: function() {
-    //this.initItems
-    //let vm = this
-    //vm.items = vm.$store.getters.GETcatlgItem(vm.widgetType, vm.model)
-    //console.log(vm.widgetType, vm.model)
-    //console.log( vm.$store.getters.GETcatlgItem(vm.widgetType, vm.model))
   },
 
   computed: {

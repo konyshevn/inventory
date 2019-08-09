@@ -30,7 +30,7 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" required :init-item="catlgs" :model.sync="department"></catlg-widget>
+            <catlg-widget widget-type="department" required :model.sync="department"></catlg-widget>
             
           </b-col> 
         </b-row>
@@ -40,7 +40,7 @@
             <label>Склад:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="stock" :init-item="catlgs" :model.sync="stock"></catlg-widget>
+            <catlg-widget widget-type="stock" :model.sync="stock"></catlg-widget>
           </b-col> 
         </b-row>
 
