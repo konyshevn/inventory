@@ -88,7 +88,7 @@
           </tr>
         </thead>
         <tbody>
-        <tr v-for="(rec, index) in doc.table_unit" :key="rec.id">
+        <tr v-for="(rec, index) in currentDoc.table_unit" :key="rec.id">
           <td class="select-row">
             <b-form-checkbox
             :id="rec.id"
@@ -98,10 +98,10 @@
             </b-form-checkbox>
           </td>
           <td>
-            <catlg-widget widget-type="device" required :init-item="catlgs" :model.sync="rec['device']"></catlg-widget>
+            <catlg-widget widget-type="device" required  :model.sync="TU[index]['device']"></catlg-widget>
           </td>
           <td>
-            <catlg-widget widget-type="person" :init-item="catlgs" :model.sync="rec['person']"></catlg-widget>
+            <catlg-widget widget-type="person"  :model.sync="rec['person']"></catlg-widget>
           </td>
           <td><b-form-input :id="qty" v-model="rec.qty" type="number"></b-form-input></td>
           <td><b-form-input :id="comment" v-model="rec.comment" type="string"></b-form-input></td>
@@ -179,6 +179,7 @@ export default {
     department: mapTwoWay('department', 'currentDoc', 'UPDcurrentDoc'),
     stock: mapTwoWay('stock', 'currentDoc', 'UPDcurrentDoc'),
     comment: mapTwoWay('comment', 'currentDoc', 'UPDcurrentDoc'),
+    TU: mapTwoWay('table_unit', 'currentDoc', 'UPDcurrentDoc'),
     ...mapGetters([
       'currentDoc',
     ])
