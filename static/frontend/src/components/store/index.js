@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
+var _ = require('lodash');
 
 export const store = new Vuex.Store({
   state: {
@@ -29,6 +30,10 @@ export const store = new Vuex.Store({
   getters: {
     currentDoc: state => {
       return state.currentDoc.data
+    },
+
+    currentDocTU: state => {
+      return state.currentDoc.data.table_unit
     },
 
     currentDocStatus: state => {
@@ -78,6 +83,11 @@ export const store = new Vuex.Store({
       state.currentDoc.data = data
     },
 
+    UPDcurrentDocTU: (state, [index, key, value]) => {
+      console.log('index, key, value = ' + index + ' ' + key + ' ' + value)
+      state.currentDoc.data.table_unit[index][key] = value
+    },
+
     UPDcurrentDoc: (state, [key, value]) => {
       if (value instanceof Event) {
         state.currentDoc.data[key] = value.data
@@ -104,7 +114,7 @@ export const store = new Vuex.Store({
   actions: {
     FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
-      dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
+      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
 
       for (let key in response.data){
         if ((getters.catlgExist(key)) && (response.data[key])) {
@@ -128,7 +138,7 @@ export const store = new Vuex.Store({
         catlgToLoad = catlgToLoad.filter(function (el) {
             return el != null;
           });
-         dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
+         await dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
       }
     },
 

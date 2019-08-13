@@ -1,5 +1,7 @@
 <template>
   <div style="position:relative;display:block">
+    {{model}}
+    {{TUindex}}
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
@@ -13,7 +15,7 @@
       :loading="loading"
       disable-filtering-by-search
       @search="onSearch"
-      @input="$emit('update:model', vm.model)"
+      @input="onInput"
       :class="{'widget-invalid': required ? !isValid : false }">
         <template slot="no-data">
           <span>Не найдено</span>
@@ -53,7 +55,12 @@ export default {
     required: {
       type: Boolean,
       default: false,
-    }
+    },
+    TUindex: {
+      type: Number,
+      default: null,
+    },
+
   },
 
   data () {
@@ -69,11 +76,26 @@ export default {
       },
       isValid: false,
       isInited: false,
+      currentItem: Number,
 
     }
   },
 
   methods: {
+    onInput: function () {
+      var vm = this
+      
+      //if (vm.TUindex == null) {
+        vm.$emit('update:model', vm.model)
+      //} 
+      /*
+      else {
+        console.log([vm.TUindex, vm.widgetType, vm.model])
+        vm.$emit('update:model', [vm.TUindex, vm.widgetType, vm.model])
+      }
+      */
+    },
+
     blur: function () {
       var vm=this
       setTimeout(function() { vm.active=false }, 1);

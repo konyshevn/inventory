@@ -98,14 +98,18 @@
             </b-form-checkbox>
           </td>
           <td>
-            <catlg-widget widget-type="device" required  :model.sync="TU[index]['device']"></catlg-widget>
+            <catlg-widget widget-type="device" required :TUindex="index" :model.sync="rec['device']"></catlg-widget>
+            
           </td>
           <td>
-            <catlg-widget widget-type="person"  :model.sync="rec['person']"></catlg-widget>
+            <catlg-widget widget-type="person" :model.sync="rec['person']"></catlg-widget>
           </td>
           <td><b-form-input :id="qty" v-model="rec.qty" type="number"></b-form-input></td>
           <td><b-form-input :id="comment" v-model="rec.comment" type="string"></b-form-input></td>
         </tr>
+
+        <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index">
+        </table-unit-item>
         </tbody>
       </table>
   </div>
@@ -129,6 +133,7 @@ import TableUnitControlPanel from './TableUnitControlPanel.vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
+import TableUnitItem from './TableUnitItem.vue';
 
 function mapTwoWay (key, getter, mutation) {
   return {
@@ -141,6 +146,17 @@ function mapTwoWay (key, getter, mutation) {
   }
 }
 
+function mapTwoWayTU (key, getter, mutation) {
+  return {
+    get () {
+      return this.$store.getters[getter][key]
+    },
+    set (value) {
+      console.log(value)
+      this.$store.commit(mutation, [key, value])
+    }
+  }
+}
 
 export default {
   name: 'DocIncomeItem',
@@ -150,6 +166,7 @@ export default {
     DatetimeWidget,
     DocItemControlPanel,
     TableUnitControlPanel,
+    TableUnitItem,
 
   },
   props: {
@@ -166,6 +183,7 @@ export default {
   methods: {
     ...mapMutations([
       'UPDcurrentDoc',
+      'UPDcurrentDocTU',
     ]),
 
     ...mapActions([
@@ -179,9 +197,10 @@ export default {
     department: mapTwoWay('department', 'currentDoc', 'UPDcurrentDoc'),
     stock: mapTwoWay('stock', 'currentDoc', 'UPDcurrentDoc'),
     comment: mapTwoWay('comment', 'currentDoc', 'UPDcurrentDoc'),
-    TU: mapTwoWay('table_unit', 'currentDoc', 'UPDcurrentDoc'),
+
     ...mapGetters([
       'currentDoc',
+      'currentDocTU',
     ])
   },
   
