@@ -4,12 +4,14 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
+import * as DocConstructor from '../doc-constructor.js'
 
 export const store = new Vuex.Store({
   state: {
     currentDoc: {
       data: {},
       status: {
+        docType: String,
         widgetIsValid: {},
         tableUnit: {
           sort: {field: "", order: -1},
@@ -87,9 +89,28 @@ export const store = new Vuex.Store({
       state.currentDoc.data = data
     },
 
+    SETcurrentDocType: (state, data) => {
+      state.currentDoc.status.docType = data
+    },
+
     UPDcurrentDocTU: (state, [index, key, value]) => {
       console.log('index, key, value = ' + index + ' ' + key + ' ' + value)
       state.currentDoc.data.table_unit[index][key] = value
+    },
+
+    DELcurrentDocTUrow: (state) => {
+      let rowToDelete = state.currentDoc.status.tableUnit.selected
+      console.log('rowToDelete', rowToDelete)
+      let newRows  = state.currentDoc.data.table_unit.filter(function(value){
+        return (rowToDelete.indexOf(value.id) >= 0) ? false : true 
+      })
+      console.log('newRows', newRows)
+      state.currentDoc.data.table_unit = newRows
+    },
+    
+    ADDcurrentDocTUrow: (state) => {
+      let newDoc = new DocConstructor[state.currentDoc.status.docType]
+      state.currentDoc.data.table_unit.push(newDoc.table_unit[0])
     },
 
     UPDcurrentDoc: (state, [key, value]) => {
@@ -102,10 +123,10 @@ export const store = new Vuex.Store({
 
     UPDcurrentDocTableUnitSelected: (state, event) => {
       if (event.target.checked) {
-        state.currentDoc.status.tableUnit.selected.push(event.target.value)
+        state.currentDoc.status.tableUnit.selected.push(Number(event.target.value))
       } else {
         state.currentDoc.status.tableUnit.selected = state.currentDoc.status.tableUnit.selected.filter(item => {
-          return item != event.target.value
+          return item != Number(event.target.value)
         })
       }
 
@@ -137,6 +158,7 @@ export const store = new Vuex.Store({
         }
       }
       commit('SETcurrentDoc', response.data)
+      commit('SETcurrentDocType', docType)
     },
 
     FETCHdocs: async ({commit, dispatch, getters}, docType) => {
@@ -236,6 +258,7 @@ export const store = new Vuex.Store({
       }
       commit('SETcatlgItemLabel', [catlgType, id, label])
     },
+
 
   
   },

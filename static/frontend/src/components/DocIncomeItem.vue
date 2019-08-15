@@ -88,10 +88,8 @@
           </tr>
         </thead>
         <tbody>
-        
-
-        <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index">
-        </table-unit-item>
+          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index">
+          </table-unit-item>
         </tbody>
       </table>
   </div>
@@ -204,7 +202,7 @@ export default {
 
 </script>
 
-<style scoped >
+<style scoped>
 .table_unit tbody tr:hover {
     background-color: #f2f2f2;
     color: #000000

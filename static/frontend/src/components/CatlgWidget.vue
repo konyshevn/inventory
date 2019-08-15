@@ -1,7 +1,5 @@
 <template>
   <div style="position:relative;display:block">
-    {{model}}
-    {{TUindex}}
     <div style="float:left;width:100%">
       <cool-select 
       v-model="model" 
@@ -56,11 +54,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    TUindex: {
-      type: Number,
-      default: null,
-    },
-
   },
 
   data () {

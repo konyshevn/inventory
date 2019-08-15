@@ -109,19 +109,5 @@ export default {
 </script>
 
 <style scoped>
-.table_unit td:nth-child(1), th:nth-child(1) {
-  width: 5%;
-}
-.table_unit td:nth-child(2), th:nth-child(2) {
-  width: 35%;
-}
-.table_unit td:nth-child(3), th:nth-child(3) {
-  width: 25%;
-}
-.table_unit td:nth-child(4), th:nth-child(4) {
-  width: 15%;
-}
-.table_unit td:nth-child(5), th:nth-child(5) {
-  width: 20%;
-}
+
 </style>
