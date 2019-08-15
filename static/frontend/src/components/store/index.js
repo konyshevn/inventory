@@ -40,6 +40,10 @@ export const store = new Vuex.Store({
       return state.currentDoc.status
     },
 
+    currentDocStatusTableUnit: state => key => {
+      return state.currentDoc.status.tableUnit[key]
+    },
+
     catlgExist: state => catlgType => {
       if (catlgType in state.catlgs) {
         return true
@@ -94,6 +98,17 @@ export const store = new Vuex.Store({
       } else {
         state.currentDoc.data[key] = value
       }
+    },
+
+    UPDcurrentDocTableUnitSelected: (state, event) => {
+      if (event.target.checked) {
+        state.currentDoc.status.tableUnit.selected.push(event.target.value)
+      } else {
+        state.currentDoc.status.tableUnit.selected = state.currentDoc.status.tableUnit.selected.filter(item => {
+          return item != event.target.value
+        })
+      }
+
     },
 
     SETdocs: (state, data) => {

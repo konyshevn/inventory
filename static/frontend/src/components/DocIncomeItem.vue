@@ -88,25 +88,7 @@
           </tr>
         </thead>
         <tbody>
-        <tr v-for="(rec, index) in currentDoc.table_unit" :key="rec.id">
-          <td class="select-row">
-            <b-form-checkbox
-            :id="rec.id"
-            v-model="tableUnit.selected"
-            :value="rec.id"
-            >
-            </b-form-checkbox>
-          </td>
-          <td>
-            <catlg-widget widget-type="device" required :TUindex="index" :model.sync="rec['device']"></catlg-widget>
-            
-          </td>
-          <td>
-            <catlg-widget widget-type="person" :model.sync="rec['person']"></catlg-widget>
-          </td>
-          <td><b-form-input :id="qty" v-model="rec.qty" type="number"></b-form-input></td>
-          <td><b-form-input :id="comment" v-model="rec.comment" type="string"></b-form-input></td>
-        </tr>
+        
 
         <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index">
         </table-unit-item>

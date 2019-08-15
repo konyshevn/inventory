@@ -3,7 +3,8 @@
     <td class="select-row">
       <b-form-checkbox
       :id="id"
-      v-model="tableUnit.selected"
+      :name="id"
+      @change.native="UPDcurrentDocTableUnitSelected"
       :value="id"
       >
       </b-form-checkbox>
@@ -44,6 +45,17 @@ function mapTwoWayTU (key, getter, mutation) {
   }
 }
 
+function mapTwoWay (key, getter, mutation) {
+  return {
+    get () {
+      return this.$store.getters[getter][key]
+    },
+    set (value) {
+      this.$store.commit(mutation, [key, value])
+    }
+  }
+}
+
 export default {
   name: 'TableUnitItem',
   components: {
@@ -71,13 +83,16 @@ export default {
     qty: mapTwoWayTU('qty', 'currentDocTU', 'UPDcurrentDocTU'),
     comment: mapTwoWayTU('comment', 'currentDocTU', 'UPDcurrentDocTU'),
     id: mapTwoWayTU('id', 'currentDocTU', 'UPDcurrentDocTU'),
+    
     ...mapGetters([
       'currentDocTU',
+      
     ])
   },
   methods: {
     ...mapMutations([
       'UPDcurrentDocTU',
+      'UPDcurrentDocTableUnitSelected',
     ]),
 
     ...mapActions([
