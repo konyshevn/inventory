@@ -13,7 +13,6 @@ export function docincome() {
       qty: '1',
       comment: '',
       DELETE: false,
-      hide: false,
     },
   ]
   this.comment = ''

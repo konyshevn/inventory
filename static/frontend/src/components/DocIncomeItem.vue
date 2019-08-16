@@ -11,7 +11,7 @@
             <label :for="doc_num">Номер:</label> 
           </b-col>
           <b-col sm="2">
-            <b-form-input :id="doc_num" v-model="doc_num" type="number"></b-form-input>
+            <b-form-input :id="doc_num" v-model="doc_num" type="number" number></b-form-input>
           </b-col>
           <b-col sm="1">
             <label :for="doc_date">Дата:</label> 
@@ -49,7 +49,7 @@
             <label>Комментарий:</label>
           </b-col>
           <b-col sm="8" align-h="start"> 
-            <b-form-input v-model="comment" type="string" maxlength="70"></b-form-input>
+            <b-form-input v-model="comment" type="text" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
       </b-container>

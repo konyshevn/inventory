@@ -23,8 +23,6 @@ export default {
   },
   mixins: [DocCommon],
   props: {
-    doc: Object,
-    selected: Array,
   },
 
   data () {
