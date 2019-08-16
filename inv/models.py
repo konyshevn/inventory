@@ -337,7 +337,7 @@ class Document(models.Model):
 
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
-            #print(table_unit)
+            print(table_unit)
             for rec in table_unit:
                 if rec:
                     # удалить помеченные в форме записи TableUnit
