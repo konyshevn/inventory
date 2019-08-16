@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr v-if="!deleteRow">
     <td class="select-row">
       <b-form-checkbox
       :id="id"
@@ -83,7 +83,7 @@ export default {
     qty: mapTwoWayTU('qty', 'currentDocTU', 'UPDcurrentDocTU'),
     comment: mapTwoWayTU('comment', 'currentDocTU', 'UPDcurrentDocTU'),
     id: mapTwoWayTU('id', 'currentDocTU', 'UPDcurrentDocTU'),
-    
+    deleteRow: mapTwoWayTU('DELETE', 'currentDocTU', 'UPDcurrentDocTU'),
     ...mapGetters([
       'currentDocTU',
       

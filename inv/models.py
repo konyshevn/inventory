@@ -337,13 +337,13 @@ class Document(models.Model):
 
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
             # проход по всем словарям представляющих TableUnit, т.е. по всем строкам из табличной формы.
-            print(table_unit)
+            #print(table_unit)
             for rec in table_unit:
                 if rec:
                     # удалить помеченные в форме записи TableUnit
                     if (('DELETE' in rec) and (rec['DELETE'])):
                         if (('id' in rec) and (rec['id'] is not None)):
-                            rec['id'].delete()
+                            table_unit_model.objects.get(id=rec['id']).delete()
                         continue
 
                     # если ключ id из словаря переданного из формы TableUnit равен None, то это новая запись в TableUnit
@@ -474,6 +474,7 @@ class Document(models.Model):
 
 class DocumentTableUnit(models.Model):
     rowOrder = models.PositiveIntegerField(blank=True, null=True)
+    DELETE = models.BooleanField(blank=True, null=True)
 
     class Meta:
         ordering = ['rowOrder']

@@ -100,12 +100,20 @@ export const store = new Vuex.Store({
 
     DELcurrentDocTUrow: (state) => {
       let rowToDelete = state.currentDoc.status.tableUnit.selected
-      console.log('rowToDelete', rowToDelete)
+      state.currentDoc.data.table_unit.forEach(function(item, i, arr){
+        if (rowToDelete.indexOf(item.id) >= 0) {
+          item.DELETE = true
+        }
+      })
+      state.currentDoc.status.tableUnit.selected = []
+        /*
+      }
       let newRows  = state.currentDoc.data.table_unit.filter(function(value){
         return (rowToDelete.indexOf(value.id) >= 0) ? false : true 
       })
       console.log('newRows', newRows)
       state.currentDoc.data.table_unit = newRows
+      */
     },
     
     ADDcurrentDocTUrow: (state) => {

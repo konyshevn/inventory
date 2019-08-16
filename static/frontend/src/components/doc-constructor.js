@@ -12,6 +12,8 @@ export function docincome() {
       person: '',
       qty: '1',
       comment: '',
+      DELETE: false,
+      hide: false,
     },
   ]
   this.comment = ''
