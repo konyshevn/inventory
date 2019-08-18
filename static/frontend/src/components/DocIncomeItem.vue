@@ -164,6 +164,7 @@ export default {
     ...mapMutations([
       'UPDcurrentDoc',
       'UPDcurrentDocTU',
+      'DELcurrentDoc',
     ]),
 
     ...mapActions([
@@ -195,6 +196,11 @@ export default {
 
   created: function() {
   }, 
+
+  beforeDestroy: function() {
+    console.log('beforeDestroy')
+    this.DELcurrentDoc()
+  },
 
 }
    

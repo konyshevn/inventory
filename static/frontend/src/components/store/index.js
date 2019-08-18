@@ -89,12 +89,23 @@ export const store = new Vuex.Store({
       state.currentDoc.data = data
     },
 
+    DELcurrentDoc: (state) => {
+      state.currentDoc.data = {}
+      state.currentDoc.status = {
+        docType: String,
+        widgetIsValid: {},
+        tableUnit: {
+          sort: {field: "", order: -1},
+          selected: []
+        }
+      }
+    },
+
     SETcurrentDocType: (state, data) => {
       state.currentDoc.status.docType = data
     },
 
     UPDcurrentDocTU: (state, [index, key, value]) => {
-      console.log('index, key, value = ' + index + ' ' + key + ' ' + value)
       state.currentDoc.data.table_unit[index][key] = value
     },
 
