@@ -2,8 +2,7 @@
   <tr v-if="!deleteRow">
     <td class="select-row">
       <b-form-checkbox
-      :id="id"
-      :name="id"
+
       @change.native="UPDcurrentDocTableUnitSelected"
       :value="id"
       >
@@ -15,8 +14,8 @@
     <td>
       <catlg-widget widget-type="person" :model.sync="person"></catlg-widget>
     </td>
-    <td><b-form-input :id="qty" v-model="qty" type="number"></b-form-input></td>
-    <td><b-form-input :id="comment" v-model="comment" type="string"></b-form-input></td>
+    <td><b-form-input v-model="qty" type="number" number ></b-form-input></td>
+    <td><b-form-input v-model="comment" type="text"></b-form-input></td>
   </tr>
 </template>
 

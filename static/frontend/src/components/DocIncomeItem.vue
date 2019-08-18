@@ -8,13 +8,13 @@
 
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
-            <label :for="doc_num">Номер:</label> 
+            <label>Номер:</label> 
           </b-col>
           <b-col sm="2">
-            <b-form-input :id="doc_num" v-model="doc_num" type="number" number></b-form-input>
+            <b-form-input v-model="doc_num" type="number" number></b-form-input>
           </b-col>
           <b-col sm="1">
-            <label :for="doc_date">Дата:</label> 
+            <label>Дата:</label> 
           </b-col>
           <b-col sm="3">
             <datetime-widget v-if="doc_date" :model.sync="doc_date"></datetime-widget>
