@@ -19,9 +19,9 @@
           <b-col sm="3">
             <datetime-widget v-if="doc_date" :model.sync="doc_date"></datetime-widget>
           </b-col>
-          <b-col sm="1" align="center">
-            <b-button v-if="doc.active" disabled variant="success">Проведен</b-button>
-            <b-button v-if="!doc.active" disabled variant="light">Не проведен</b-button>
+          <b-col sm="2" align="center">
+            <b-button v-if="active" disabled variant="success">Проведен</b-button>
+            <b-button v-if="!active" disabled variant="light">Не проведен</b-button>
           </b-col>
         </b-row>
 
@@ -177,6 +177,7 @@ export default {
     department: mapTwoWay('department', 'currentDoc', 'UPDcurrentDoc'),
     stock: mapTwoWay('stock', 'currentDoc', 'UPDcurrentDoc'),
     comment: mapTwoWay('comment', 'currentDoc', 'UPDcurrentDoc'),
+    active: mapTwoWay('active', 'currentDoc', 'UPDcurrentDoc'),
 
     ...mapGetters([
       'currentDoc',
