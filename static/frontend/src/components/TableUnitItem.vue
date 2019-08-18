@@ -2,18 +2,13 @@
   <tr v-if="!deleteRow">
     <td class="select-row">
       <b-form-checkbox
-
       @change.native="UPDcurrentDocTableUnitSelected"
       :value="id"
       >
       </b-form-checkbox>
     </td>
-    <td>
-      <catlg-widget widget-type="device" required :model.sync="device"></catlg-widget>
-    </td>
-    <td>
-      <catlg-widget widget-type="person" :model.sync="person"></catlg-widget>
-    </td>
+    <td><catlg-widget widget-type="device" required :model.sync="device"></catlg-widget></td>
+    <td><catlg-widget widget-type="person" :model.sync="person"></catlg-widget></td>
     <td><b-form-input v-model="qty" type="number" number ></b-form-input></td>
     <td><b-form-input v-model="comment" type="text"></b-form-input></td>
   </tr>
