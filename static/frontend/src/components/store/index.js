@@ -117,14 +117,6 @@ export const store = new Vuex.Store({
         }
       })
       state.currentDoc.status.tableUnit.selected = []
-        /*
-      }
-      let newRows  = state.currentDoc.data.table_unit.filter(function(value){
-        return (rowToDelete.indexOf(value.id) >= 0) ? false : true 
-      })
-      console.log('newRows', newRows)
-      state.currentDoc.data.table_unit = newRows
-      */
     },
     
     ADDcurrentDocTUrow: (state) => {
@@ -163,7 +155,47 @@ export const store = new Vuex.Store({
       Vue.set(state.catlgs[catlgType][id], 'label', label)
     },
 
+    sortTU: (state, [field, fieldType]) => {
+      if (state.currentDoc.status.tableUnit.sort.field != field) {
+        state.currentDoc.status.tableUnit.sort.order = -1
+      }
+      state.currentDoc.status.tableUnit.sort.order *= -1
+      state.currentDoc.status.tableUnit.sort.field = field
+      var order = state.currentDoc.status.tableUnit.sort.order
 
+      function compareTUrowWidget(a, b) {
+        if (!a[field]) return 1;
+        if (!b[field]) return -1;
+
+        var aLabel = state.catlgs[field][a[field]]['label']
+        var bLabel = state.catlgs[field][b[field]]['label']
+        return aLabel < bLabel ? -1 * order : 1 * order;
+      }
+
+      function compareTUrowNumber(a, b) {
+        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
+      }
+
+      function compareTUrowText(a, b) {
+        if(a[field] === "" || a[field] === null) return 1;
+        if(b[field] === "" || b[field] === null) return -1;
+        if(a[field] === b[field]) return 0;
+        return a[field] < b[field] ? -1 * order : 1 * order;
+      }
+
+      if (fieldType == 'widget') {
+        state.currentDoc.data.table_unit.sort(compareTUrowWidget);
+      } else if (fieldType == 'number') {
+        state.currentDoc.data.table_unit.sort(compareTUrowNumber);
+      } else if (fieldType == 'text') {
+        state.currentDoc.data.table_unit.sort(compareTUrowText);
+      }
+
+      state.currentDoc.data.table_unit.map(function(value, index){
+        value.rowOrder = index + 1
+      })
+
+    },
 
   },
   actions: {

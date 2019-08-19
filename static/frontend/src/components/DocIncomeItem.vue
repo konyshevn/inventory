@@ -54,7 +54,7 @@
         </b-row>
       </b-container>
       <b-container class="text-left" >
-        <table-unit-control-panel :doc="doc" :selected="tableUnit.selected"></table-unit-control-panel>
+        <table-unit-control-panel></table-unit-control-panel>
         </b-container>
     </div>
 
@@ -62,29 +62,11 @@
       <table class="table table-bordered table_unit">
         <thead >
           <tr >
-            <th>
-              У
-            </th>
-            <th v-on:click="sortTU(doc.table_unit, 'device', 'widget')">
-              Устройство
-              <span class="arrow" v-if="tableUnit.sort.field == 'device'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
-              </span>
-            </th>
-            <th v-on:click="sortTU(doc.table_unit, 'person', 'widget')">
-              Сотрудник
-              <span class="arrow" v-if="tableUnit.sort.field == 'person'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
-              </span>
-            </th>
-            <th v-on:click="sortTU(doc.table_unit, 'qty', 'number')">
-              Количество
-              <span class="arrow" v-if="tableUnit.sort.field == 'qty'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
-              </span>
-            </th>
-            <th v-on:click="sortTU(doc.table_unit, 'comment', 'text')">
-              Комментарий
-              <span class="arrow" v-if="tableUnit.sort.field == 'comment'" :class="tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
-              </span>
-            </th>
+            <th>У</th>
+            <table-unit-header sort-type="widget" sort-field="device">Устройство</table-unit-header>
+            <table-unit-header sort-type="widget" sort-field="person">Сотрудник</table-unit-header>
+            <table-unit-header sort-type="number" sort-field="qty">Количество</table-unit-header>
+            <table-unit-header sort-type="text" sort-field="comment">Комментарий</table-unit-header>
           </tr>
         </thead>
         <tbody>
@@ -114,6 +96,7 @@ import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import TableUnitItem from './TableUnitItem.vue';
+import TableUnitHeader from './TableUnitHeader.vue';
 
 function mapTwoWay (key, getter, mutation) {
   return {
@@ -147,6 +130,7 @@ export default {
     DocItemControlPanel,
     TableUnitControlPanel,
     TableUnitItem,
+    TableUnitHeader,
 
   },
   props: {
@@ -165,6 +149,7 @@ export default {
       'UPDcurrentDoc',
       'UPDcurrentDocTU',
       'DELcurrentDoc',
+      'sortTU',
     ]),
 
     ...mapActions([
@@ -262,27 +247,6 @@ export default {
 .table_unit thead, .table_unit tbody tr {
     display:table;
     table-layout:fixed;/* even columns width , fix width of table too*/
-}
-
-.arrow {
-  display: inline-block;
-  vertical-align: middle;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  opacity: 0.66;
-}
-
-.arrow.asc {
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid black;
-}
-
-.arrow.dsc {
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid black;
 }
 
 .select-row {

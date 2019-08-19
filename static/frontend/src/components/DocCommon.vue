@@ -84,7 +84,7 @@ export default {
       return errorMsg
     },
 
-    sortTU: function(TU, field, fieldType){
+    sortTU_old: function(TU, field, fieldType){
       var vm = this
       if (vm.tableUnit.sort.field != field) {
         vm.tableUnit.sort.order = -1
