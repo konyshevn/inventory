@@ -12,6 +12,9 @@ var _ = require('lodash');
 import {EventBus} from './event-bus.js'
 import moment from 'moment';
 import * as DocConstructor from './doc-constructor.js'
+import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'DocCommon',
@@ -34,7 +37,23 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters([
+      'currentDoc',
+      'currentDocStatus',
+      'widgetsIsValid',
+    ])
+  },
+
   methods: {
+    ...mapActions([
+      'PUTcurrentDoc',
+      'DELcurrentDoc',
+    ]),
+    ...mapMutations([
+      'UPDcurrentDoc',
+    ]),
+
     fetchDocs (docType) {
       var vm = this;
       HTTP.get(docType + '/')
@@ -127,19 +146,19 @@ export default {
 
     },
 
-    async regWriteDocItem (docType, item) {
+    async regWriteDocItem () {
       var vm = this;
-      var itemStatus = item.active
-      item.active = true
+      var itemStatus = vm.currentDoc.active
+      vm.UPDcurrentDoc(['active', true])
       try {
-        if (!vm.isValid()) { 
+        if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
-        var response = await HTTP.put(docType + '/' + item.id + '/', item)
+        var response = await vm.PUTcurrentDoc()
         
         //vm.$bvModal.show('status-msg')
       } catch(error) {
-        item.active = itemStatus
+        vm.UPDcurrentDoc(['active', itemStatus])
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${vm.getErrorMsg(error)}`])
       }
@@ -147,15 +166,15 @@ export default {
 
     async regDelDocItem (docType, item) {
       var vm = this;
-      var itemStatus = item.active
-      item.active = false
+      var itemStatus = vm.currentDoc.active
+      vm.UPDcurrentDoc(['active', false])
       try {
-        if (!vm.isValid()) { 
+        if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
-        var response = await HTTP.put(docType + '/' + item.id + '/', item)
+        var response = await vm.PUTcurrentDoc()
       } catch(error) {
-        item.active = itemStatus
+        vm.UPDcurrentDoc(['active', itemStatus])
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка отмены проведения: ${vm.getErrorMsg(error)}`])
       }
@@ -164,10 +183,10 @@ export default {
     async saveDocItem (docType, item) {
       var vm = this;
       try {
-        if (!vm.isValid()) { 
+        if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
-        var response = await HTTP.put(docType + '/' + item.id + '/', item)
+        var response = await vm.PUTcurrentDoc()
       } catch(error) {
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
@@ -180,7 +199,7 @@ export default {
       try {
         var confirm = await vm.confirmMsg('Вы действительно хотите удалить документ?')
         if (confirm) {
-          var response = await HTTP.delete(docType + '/' + item.id + '/')
+          var response = await vm.DELcurrentDoc()
         } else {
           status = false
         }
@@ -190,7 +209,7 @@ export default {
         EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
       } finally {
         if (status) {
-          vm.$router.push({ name: 'doc.list', params: {docType: docType} })
+          vm.$router.push({ name: 'doc.list', params: {docType: vm.currentDocStatus.docType} })
         }
       }
     },
@@ -227,8 +246,7 @@ export default {
 
   },
 
-  computed: {
-  },
+
 
   created: function() {
     var vm = this;

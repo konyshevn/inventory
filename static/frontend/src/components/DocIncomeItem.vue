@@ -55,7 +55,7 @@
       </b-container>
       <b-container class="text-left" >
         <table-unit-control-panel></table-unit-control-panel>
-        </b-container>
+      </b-container>
     </div>
 
     <div >

@@ -40,6 +40,9 @@ var _ = require('lodash');
 import { CoolSelect } from 'vue-cool-select'
 import CatlgCommon from './CatlgCommon.vue';
 import {EventBus} from './event-bus.js'
+import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'CatlgWidget',
@@ -75,24 +78,22 @@ export default {
   },
 
   methods: {
+    ...mapMutations([
+      'SETcurrentDocWidgetState',
+      'DELcurrentDocWidgetState',
+    ]),
+
     onInput: function () {
       var vm = this
-      
-      //if (vm.TUindex == null) {
-        vm.$emit('update:model', vm.model)
-      //} 
-      /*
-      else {
-        console.log([vm.TUindex, vm.widgetType, vm.model])
-        vm.$emit('update:model', [vm.TUindex, vm.widgetType, vm.model])
-      }
-      */
+      vm.$emit('update:model', vm.model)
+
     },
 
     blur: function () {
       var vm=this
       setTimeout(function() { vm.active=false }, 1);
     },
+
 
 
     async onSearch(search) {
@@ -134,7 +135,7 @@ export default {
           vm.isValid = false
         }
         if (vm.required) {
-          EventBus.$emit('widgetState', [vm._uid, vm.isValid])
+          vm.SETcurrentDocWidgetState([vm._uid, vm.isValid])
         }
       },
       immediate: true,
@@ -155,7 +156,7 @@ export default {
   beforeDestroy: function(){
     var vm = this
     // Костыль. Исправить на удаление uid из списка uid'ов widgetIsValid
-    EventBus.$emit('widgetState', [vm._uid, true])
+    vm.DELcurrentDocWidgetState(vm._uid)
   },
 
   

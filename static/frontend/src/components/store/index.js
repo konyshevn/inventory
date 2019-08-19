@@ -54,6 +54,14 @@ export const store = new Vuex.Store({
       }
     },
 
+    widgetsIsValid: state => {
+     var result = true
+     for (let uid in state.currentDoc.status.widgetIsValid) {
+        result = result && state.currentDoc.status.widgetIsValid[uid]
+      }
+      return result
+    },
+
     GETcatlgItem: state => (catlgType, id) => {
         return state.catlgs[catlgType][id]
     },
@@ -103,6 +111,14 @@ export const store = new Vuex.Store({
 
     SETcurrentDocType: (state, data) => {
       state.currentDoc.status.docType = data
+    },
+
+    SETcurrentDocWidgetState: (state, [uid, isValid]) => {
+      state.currentDoc.status.widgetIsValid[uid] = isValid
+    },
+
+    DELcurrentDocWidgetState: (state, uid) => {
+      delete state.currentDoc.status.widgetIsValid[uid]
     },
 
     UPDcurrentDocTU: (state, [index, key, value]) => {
@@ -199,6 +215,16 @@ export const store = new Vuex.Store({
 
   },
   actions: {
+    PUTcurrentDoc: async ({commit, dispatch, getters}) => {
+      let response = HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', getters.currentDoc)
+      return response
+    },
+
+    DELcurrentDoc: async ({commit, dispatch, getters}) => {
+      let response = HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
+      return response
+    },
+
     FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
       await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
