@@ -55,10 +55,12 @@ export const store = new Vuex.Store({
     },
 
     widgetsIsValid: state => {
-     var result = true
-     for (let uid in state.currentDoc.status.widgetIsValid) {
+      var result = true
+      for (let uid in state.currentDoc.status.widgetIsValid) {
+        console.log('widgetIsValid: uid, state', uid, state.currentDoc.status.widgetIsValid[uid])
         result = result && state.currentDoc.status.widgetIsValid[uid]
       }
+      console.log('widgetIsValid: result', result)
       return result
     },
 
@@ -114,11 +116,11 @@ export const store = new Vuex.Store({
     },
 
     SETcurrentDocWidgetState: (state, [uid, isValid]) => {
-      state.currentDoc.status.widgetIsValid[uid] = isValid
+      Vue.set(state.currentDoc.status.widgetIsValid, uid, isValid)
     },
 
     DELcurrentDocWidgetState: (state, uid) => {
-      delete state.currentDoc.status.widgetIsValid[uid]
+      Vue.delete(state.currentDoc.status.widgetIsValid, uid)
     },
 
     UPDcurrentDocTU: (state, [index, key, value]) => {
@@ -128,9 +130,9 @@ export const store = new Vuex.Store({
     DELcurrentDocTUrow: (state) => {
       let rowToDelete = state.currentDoc.status.tableUnit.selected
       state.currentDoc.data.table_unit.forEach(function(item, i, arr){
-        if (rowToDelete.indexOf(item.id) >= 0) {
+        if ((rowToDelete.indexOf(item.id) >= 0) || (rowToDelete.indexOf(String(item.id)) >= 0)) {
           item.DELETE = true
-        }
+        } 
       })
       state.currentDoc.status.tableUnit.selected = []
     },
@@ -150,13 +152,12 @@ export const store = new Vuex.Store({
 
     UPDcurrentDocTableUnitSelected: (state, event) => {
       if (event.target.checked) {
-        state.currentDoc.status.tableUnit.selected.push(Number(event.target.value))
+        state.currentDoc.status.tableUnit.selected.push(event.target.value)
       } else {
         state.currentDoc.status.tableUnit.selected = state.currentDoc.status.tableUnit.selected.filter(item => {
-          return item != Number(event.target.value)
+          return item != event.target.value
         })
       }
-
     },
 
     SETdocs: (state, data) => {
@@ -210,13 +211,26 @@ export const store = new Vuex.Store({
       state.currentDoc.data.table_unit.map(function(value, index){
         value.rowOrder = index + 1
       })
+    },
 
+    currentDocTUclearNullId: (state) => {
+      state.currentDoc.data.table_unit.forEach(function(item, i, arr){
+        if (String(item.id).indexOf("null_") == 0) {
+          item.id = null
+        }
+      })
     },
 
   },
+
   actions: {
     PUTcurrentDoc: async ({commit, dispatch, getters}) => {
-      let response = HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', getters.currentDoc)
+      commit('currentDocTUclearNullId')
+      let response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', getters.currentDoc)
+      console.log('PUTcurrentDoc: response', response.status, response.statusText, response.data, )
+      if (response.status == 200) {
+        dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, getters.currentDoc.id])
+      }
       return response
     },
 

@@ -613,7 +613,7 @@ class DocIncome(Document):
 
 class DocIncomeTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocIncome, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)

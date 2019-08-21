@@ -88,7 +88,7 @@ export default {
 
     getErrorMsg: function(error) {
       var errorMsg = ''
-      errorMsg = errorMsg + JSON.stringify(error)
+      //errorMsg = errorMsg + JSON.stringify(error)
       if (error.response) {
         if (error.response.data) {
           errorMsg = errorMsg + error.response.data
@@ -149,7 +149,7 @@ export default {
     async regWriteDocItem () {
       var vm = this;
       var itemStatus = vm.currentDoc.active
-      vm.UPDcurrentDoc(['active', true])
+      await vm.UPDcurrentDoc(['active', true])
       try {
         if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
@@ -158,7 +158,7 @@ export default {
         
         //vm.$bvModal.show('status-msg')
       } catch(error) {
-        vm.UPDcurrentDoc(['active', itemStatus])
+        await vm.UPDcurrentDoc(['active', itemStatus])
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${vm.getErrorMsg(error)}`])
       }
