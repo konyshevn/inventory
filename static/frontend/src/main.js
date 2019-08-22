@@ -40,7 +40,7 @@ const routes = [
     path: '/doc/:docType/:id',
     name: 'doc.item',
     props: (route) => ({
-      id: Number(route.params.id),
+      id: String(route.params.id),
       docType: String(route.params.docType),
     }),
     component: DocItem

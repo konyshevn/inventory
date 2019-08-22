@@ -88,7 +88,7 @@ export default {
 
     getErrorMsg: function(error) {
       var errorMsg = ''
-      //errorMsg = errorMsg + JSON.stringify(error)
+      errorMsg = errorMsg + JSON.stringify(error)
       if (error.response) {
         if (error.response.data) {
           errorMsg = errorMsg + error.response.data

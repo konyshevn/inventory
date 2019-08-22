@@ -1,7 +1,10 @@
 <template>
   <div class="doc-income-item container">
     <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
-    <h2 align="left">Оприходование</h2>
+    <header>
+      <h2 align="left">Оприходование</h2>
+      <b-badge v-if="true" variant="info">редактируется</b-badge> 
+    </header>
       <b-container class="text-left" >
         <doc-item-control-panel :doc="currentDoc"></doc-item-control-panel>
         <p></p>
@@ -141,6 +144,7 @@ export default {
   
   data () {
     return {
+      docChanged: false,
     }       
   },
 
@@ -150,6 +154,7 @@ export default {
       'UPDcurrentDocTU',
       'DELcurrentDoc',
       'sortTU',
+      'INITcurrentDoc',
     ]),
 
     ...mapActions([
@@ -168,15 +173,22 @@ export default {
     ...mapGetters([
       'currentDoc',
       'currentDocTU',
+
     ])
   },
-  
+
+ 
   mounted: function () {
-    //var vm = this
+    var vm = this
     //this.$nextTick(function () {
     //  vm.getDocItem('docincome', vm.id);
     //})
-    this.FETCHcurrentDoc(['docincome', this.id])
+    if (vm.id == "new") {
+      vm.DELcurrentDoc()
+      vm.INITcurrentDoc('docincome')
+    } else {
+      vm.FETCHcurrentDoc(['docincome', vm.id])
+    }
   },
 
   created: function() {
@@ -253,5 +265,11 @@ export default {
   vertical-align: middle; 
   text-align: center;
 }
+
+header { text-align: left; }
+header > h2 { display: inline-block; }
+header span { margin-left: 10px;}
+
+
 </style>
 

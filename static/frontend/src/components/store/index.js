@@ -16,7 +16,8 @@ export const store = new Vuex.Store({
         tableUnit: {
           sort: {field: "", order: -1},
           selected: []
-        }
+        },
+        loading: true,
       }
     },
     docs: [],
@@ -107,13 +108,21 @@ export const store = new Vuex.Store({
         tableUnit: {
           sort: {field: "", order: -1},
           selected: []
-        }
+        },
+        loading: true,
       }
+    },
+
+    INITcurrentDoc: (state, docType) => {
+      let newDoc = new DocConstructor[docType]
+      Vue.set(state.currentDoc.status, 'docType', docType)
+      Vue.set(state.currentDoc, 'data', newDoc)
     },
 
     SETcurrentDocType: (state, data) => {
       state.currentDoc.status.docType = data
     },
+
 
     SETcurrentDocWidgetState: (state, [uid, isValid]) => {
       Vue.set(state.currentDoc.status.widgetIsValid, uid, isValid)
@@ -225,11 +234,24 @@ export const store = new Vuex.Store({
 
   actions: {
     PUTcurrentDoc: async ({commit, dispatch, getters}) => {
-      commit('currentDocTUclearNullId')
-      let response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', getters.currentDoc)
+      //commit('currentDocTUclearNullId')
+      var currentDoc = getters.currentDoc
+
+      currentDoc.table_unit.forEach(function(item, i, arr){
+        if (String(item.id).indexOf("null_") == 0) {
+          item.id = null
+        }
+      })
+
+      if (currentDoc.id == null) {
+        var response = await HTTP.post(getters.currentDocStatus.docType + '/', currentDoc)
+      } else {
+        var response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', currentDoc)
+      }
+
       console.log('PUTcurrentDoc: response', response.status, response.statusText, response.data, )
       if (response.status == 200) {
-        dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, getters.currentDoc.id])
+        dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
       }
       return response
     },

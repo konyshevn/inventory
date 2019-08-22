@@ -22,7 +22,7 @@ export default {
 
   },
   props: {
-    id: Number,
+    id: null,
     docType: String
   },
   
