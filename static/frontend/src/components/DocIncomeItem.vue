@@ -3,7 +3,7 @@
     <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
     <header>
       <h2 align="left">Оприходование</h2>
-      <b-badge v-if="true" variant="info">редактируется</b-badge> 
+      <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
         <doc-item-control-panel :doc="currentDoc"></doc-item-control-panel>

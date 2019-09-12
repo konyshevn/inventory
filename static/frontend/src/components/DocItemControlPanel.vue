@@ -4,7 +4,7 @@
       <b-button type="submit" variant="light" size="sm" @click="regWriteDocItem()">Провести</b-button>
       <b-button type="submit" variant="light" size="sm" @click="regDelDocItem()">Отмена проведения</b-button>
       <b-button type="submit" variant="light" size="sm" @click="saveDocItem()">Сохранить</b-button>
-      <b-button type="submit" variant="light" size="sm" @click="delDocItem()">Удалить</b-button>
+      <b-button type="submit" variant="light" size="sm" :disabled="!currentDoc.id" @click="delDocItem()">Удалить</b-button>
     </b-button-group>
   </div>
 </template>
@@ -13,6 +13,7 @@
 /* eslint-disable no-console */
 import Vue from 'vue'
 import DocCommon from './DocCommon.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'DocItemControlPanel',
@@ -30,6 +31,12 @@ export default {
   methods: {
   },
   mounted: function () {
+  },
+  computed: {
+    ...mapGetters([
+      'currentDoc',
+    ]),
+
   },
 
   created: function () {

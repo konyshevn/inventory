@@ -149,13 +149,17 @@ export default {
     async regWriteDocItem () {
       var vm = this;
       var itemStatus = vm.currentDoc.active
+      var isNewDoc = vm.currentDoc.id
+
       await vm.UPDcurrentDoc(['active', true])
       try {
         if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
         var response = await vm.PUTcurrentDoc()
-        
+        if (!(isNewDoc) && (response.status == 200 || response.status == 201)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
+        }
         //vm.$bvModal.show('status-msg')
       } catch(error) {
         await vm.UPDcurrentDoc(['active', itemStatus])
@@ -182,11 +186,15 @@ export default {
 
     async saveDocItem (docType, item) {
       var vm = this;
+      var isNewDoc = vm.currentDoc.id
       try {
         if (!vm.widgetsIsValid) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
         var response = await vm.PUTcurrentDoc()
+        if (!(isNewDoc) && (response.status == 200 || response.status == 201)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
+        }
       } catch(error) {
         console.log(error)
         EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
