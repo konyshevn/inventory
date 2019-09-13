@@ -250,7 +250,7 @@ export const store = new Vuex.Store({
       }
 
       console.log('PUTcurrentDoc: response', response.status, response.statusText, response.data, )
-      if (response.status == 200) {
+      if (response.status == 200 || response.status == 201) {
         dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
       }
       return response

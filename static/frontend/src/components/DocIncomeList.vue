@@ -1,6 +1,9 @@
 <template>
   <div class="doc-income-list container">
-    <h1 align="left">Оприходования</h1>
+    <h2 align="left">Оприходование</h2>
+    <b-container class="text-left" >
+      <doc-list-control-panel></doc-list-control-panel>
+    </b-container>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -41,6 +44,7 @@ import CatlgCommon from './CatlgCommon.vue';
 import DocCommon from './DocCommon.vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
+import DocListControlPanel from './DocListControlPanel.vue'
 
 Vue.filter('formatDate', function(value) {
   if (value) {
@@ -51,6 +55,9 @@ Vue.filter('formatDate', function(value) {
 
 export default {
   name: 'DocIncomeList',
+  components: {
+    DocListControlPanel,
+  },
   props: {
     //msg: String
   },

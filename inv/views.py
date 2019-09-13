@@ -30,6 +30,20 @@ class DocumentViewSet(viewsets.ViewSet):
         else:
             return Response(dd['data'], status=status.HTTP_400_BAD_REQUEST)
 
+    def get_queryset(self):
+
+        # Get URL parameter as a string, if exists
+        get_doc_num = self.request.query_params.get('get_doc_num', None)
+        if get_doc_num is not None:
+            doc_num = self.serializer_class.Meta.model.objects.get_doc_num()
+            queryset =  ({'doc_num': doc_num},)
+            print(queryset)
+        else:
+            # Else no parameters, return all objects
+            queryset = self.serializer_class.Meta.model.objects.all()
+
+        return queryset
+
 
 class CatalogViewSet(viewsets.ViewSet):
     def destroy(self, request, pk, format=None):
