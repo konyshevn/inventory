@@ -2,7 +2,7 @@
   <div>
     <b-button-group align="left">
       <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
-      
+      <b-button variant="light" size="sm" @click="delDocs(docType, selected)">Удалить</b-button>
     </b-button-group>
   </div>
 </template>
@@ -22,6 +22,7 @@ export default {
   },
   mixins: [DocCommon],
   props: {
+    selected: Array,
   },
 
   data () {
@@ -29,20 +30,11 @@ export default {
     }
   },
   methods: {
-    addDoc: function() {
-      const vm = this
-      vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: 'new'}})
-
-    },
-    ...mapMutations([
-      'DELcurrentDocTUrow',
-      'ADDcurrentDocTUrow',
-    ]),
   },
   computed: {
-    ...mapGetters([
-      'currentDocStatus',
-    ]),
+    docType: function() {
+      return this.$route.params.docType
+    }
   },
   mounted: function () {
   },

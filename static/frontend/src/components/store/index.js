@@ -20,7 +20,12 @@ export const store = new Vuex.Store({
         loading: true,
       }
     },
-    docs: [],
+    docs: {
+      data: [],
+      status: {
+        selected: [],
+      }
+    },
     catlgs: {
       department: {},
       stock: {},
@@ -90,7 +95,7 @@ export const store = new Vuex.Store({
     },
 
     GETdocs: state => {
-      return state.docs
+      return state.docs.data
     },
 
 
@@ -169,8 +174,18 @@ export const store = new Vuex.Store({
       }
     },
 
+    UPDdocsSelected: (state, event) => {
+      if (event.target.checked) {
+        state.docs.status.selected.push(event.target.value)
+      } else {
+        state.docs.status.selected = state.docs.status.selected.filter(item => {
+          return item != event.target.value
+        })
+      }
+    },
+
     SETdocs: (state, data) => {
-      state.docs = data
+      state.docs.data = data
     },
 
     SETcatlgItem: (state, [catlgType, item]) => {
@@ -258,6 +273,14 @@ export const store = new Vuex.Store({
 
     DELcurrentDoc: async ({commit, dispatch, getters}) => {
       let response = HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
+      return response
+    },
+
+    DELdoc: async ({commit, dispatch, getters}, [docType, id]) => {
+      let response = await HTTP.delete(docType + '/' + id + '/')
+      if (response.status == 204) {
+        dispatch('FETCHdocs', docType)
+      }
       return response
     },
 

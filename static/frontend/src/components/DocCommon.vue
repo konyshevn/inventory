@@ -49,6 +49,7 @@ export default {
     ...mapActions([
       'PUTcurrentDoc',
       'DELcurrentDoc',
+      'DELdoc',
     ]),
     ...mapMutations([
       'UPDcurrentDoc',
@@ -221,6 +222,25 @@ export default {
         }
       }
     },
+
+  async delDocs (docType, ids) {
+      var vm = this;
+      try {
+        var confirm = await vm.confirmMsg('Вы действительно хотите удалить выделенные документы?')
+        if (confirm) {
+          ids.forEach(function(item, i, arr){
+            vm.DELdoc([docType, item])
+          })
+        } else {
+          status = false
+        }
+      } catch(error) {
+        status = false
+        console.log(error)
+        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
+      } 
+    },
+
 
     addRowTableUnit: function(docType, doc) {
       var vm = this
