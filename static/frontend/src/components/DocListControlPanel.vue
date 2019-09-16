@@ -2,7 +2,7 @@
   <div>
     <b-button-group align="left">
       <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
-      <b-button variant="light" size="sm" @click="delDocs(docType, selected)">Удалить</b-button>
+      <b-button variant="light" size="sm" @click="delDocs(docType, status.selected)">Удалить</b-button>
     </b-button-group>
   </div>
 </template>
@@ -23,6 +23,7 @@ export default {
   mixins: [DocCommon],
   props: {
     selected: Array,
+    status: Object,
   },
 
   data () {

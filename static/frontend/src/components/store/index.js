@@ -14,7 +14,7 @@ export const store = new Vuex.Store({
         docType: String,
         widgetIsValid: {},
         tableUnit: {
-          sort: {field: "", order: -1},
+          sort: {field: "", fieldType: "", order: -1},
           selected: []
         },
         loading: true,
@@ -23,6 +23,7 @@ export const store = new Vuex.Store({
     docs: {
       data: [],
       status: {
+        sort: {field: "doc_date", fieldType: "text", order: -1},
         selected: [],
       }
     },
@@ -98,6 +99,16 @@ export const store = new Vuex.Store({
       return state.docs.data
     },
 
+    GETsortStatus: state => objType => {
+      var status
+      if (objType == "TU") {
+        status = state.currentDoc.status.tableUnit.sort
+      } else if (objType == "docs") {
+        status = state.docs.status.sort
+      }
+      return status
+    }
+
 
   },
   mutations: {
@@ -111,7 +122,7 @@ export const store = new Vuex.Store({
         docType: String,
         widgetIsValid: {},
         tableUnit: {
-          sort: {field: "", order: -1},
+          sort: {field: "", fieldType: "", order: -1},
           selected: []
         },
         loading: true,
@@ -224,18 +235,78 @@ export const store = new Vuex.Store({
         return a[field] < b[field] ? -1 * order : 1 * order;
       }
 
+      let data = state.currentDoc.data.table_unit
       if (fieldType == 'widget') {
-        state.currentDoc.data.table_unit.sort(compareTUrowWidget);
+        data.sort(compareTUrowWidget);
       } else if (fieldType == 'number') {
-        state.currentDoc.data.table_unit.sort(compareTUrowNumber);
+        data.sort(compareTUrowNumber);
       } else if (fieldType == 'text') {
-        state.currentDoc.data.table_unit.sort(compareTUrowText);
+        data.sort(compareTUrowText);
       }
 
       state.currentDoc.data.table_unit.map(function(value, index){
         value.rowOrder = index + 1
       })
     },
+
+    sortObjList: (state, [objType, field, fieldType, changeOrder = true]) => {
+      var status, data 
+      if (objType == "TU") {
+        status = state.currentDoc.status.tableUnit.sort
+        data = state.currentDoc.data.table_unit
+      } else if (objType == "docs") {
+        status = state.docs.status.sort
+        data = state.docs.data
+      }
+
+      if (status.field != field) {
+        status.order = -1
+      }
+      if (changeOrder) {
+        status.order *= -1
+      }
+      status.field = field
+      status.fieldType = fieldType
+      var order = status.order
+
+      function compareTUrowWidget(a, b) {
+        if (!a[field]) return 1;
+        if (!b[field]) return -1;
+
+        var aLabel = state.catlgs[field][a[field]]['label']
+        var bLabel = state.catlgs[field][b[field]]['label']
+        return aLabel < bLabel ? -1 * order : 1 * order;
+      }
+
+      function compareTUrowNumber(a, b) {
+        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
+      }
+
+      function compareTUrowText(a, b) {
+        if(a[field] === "" || a[field] === null) return 1;
+        if(b[field] === "" || b[field] === null) return -1;
+        if(a[field] === b[field]) return 0;
+        return a[field] < b[field] ? -1 * order : 1 * order;
+      }
+
+      
+      if (fieldType == 'widget') {
+        data.sort(compareTUrowWidget);
+      } else if (fieldType == 'number') {
+        data.sort(compareTUrowNumber);
+      } else if (fieldType == 'text') {
+        data.sort(compareTUrowText);
+      }
+
+
+
+      if (objType == "TU") {
+        data.map(function(value, index){
+          value.rowOrder = index + 1
+        })
+      }
+    },
+
 
     currentDocTUclearNullId: (state) => {
       state.currentDoc.data.table_unit.forEach(function(item, i, arr){
@@ -301,7 +372,9 @@ export const store = new Vuex.Store({
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
       commit('SETdocs', DocsReady)
-      dispatch('FETCHdependentCatlg', DocsReady)
+      await dispatch('FETCHdependentCatlg', DocsReady)
+      let sortStatus = getters.GETsortStatus('docs')
+      commit('sortObjList', ['docs', sortStatus.field, sortStatus.fieldType, false])
     },
 
     FETCHwidgetInitCatlg: async ({commit, dispatch, getters}, [tableUnit, fieldsMap]) => {

@@ -1,26 +1,26 @@
 <template>
   <div class="doc-income-list container">
     <h2 align="left">Оприходование</h2>
-    <b-container class="text-left" >
-      <doc-list-control-panel :selected="selected"></doc-list-control-panel>
+    <b-container class="text-left">
+      <doc-list-control-panel :status="status"></doc-list-control-panel>
     </b-container>
     <table class="table table-bordered doc-list">
       <thead>
         <tr>
           <th>У</th>
-          <th>Дата</th>
-          <th>Номер</th>
-          <th>Проведен</th>
-          <th>Подразделение</th>
-          <th>Склад</th>
-          <th>Комментарий</th>
+          <sort-header obj-type="docs" field-type="text" sort-field="doc_date">Дата</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="doc_num">Номер</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="active">Проведен</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="department">Подразделение</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="stock">Склад</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="comment">Комментарий</sort-header>
         </tr>
       </thead>
       <tbody>
       <tr v-for="doc in GETdocs" :key="doc.id" @dblclick="clickRow(doc.id, $event)" >
         <td>
           <b-form-checkbox
-          v-model="selected"
+          v-model="status.selected"
           :value="doc.id"
           >
           </b-form-checkbox>
@@ -35,7 +35,7 @@
         <td><span>{{GETcatlgItemLabel('stock', doc.stock)}}</span></td>
         <td>{{doc.comment}}</td>
       </tr>
-    </tbody>
+      </tbody>
     </table>
 
   </div>
@@ -54,10 +54,11 @@ import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import DocListControlPanel from './DocListControlPanel.vue'
+import SortHeader from './SortHeader.vue'
 
 Vue.filter('formatDate', function(value) {
   if (value) {
-    return moment(String(value)).format('MM.DD.YYYY hh:mm:ss')
+    return moment(String(value)).format('DD.MM.YYYY hh:mm:ss')
   }
 })
 
@@ -66,6 +67,7 @@ export default {
   name: 'DocIncomeList',
   components: {
     DocListControlPanel,
+    SortHeader,
   },
   props: {
     //msg: String
@@ -73,7 +75,9 @@ export default {
  // mixins: [CatlgCommon, DocCommon],
   data () {
     return {
-      selected: [],
+      status: {
+        selected: [],
+      },
     }
   },
   methods: {
@@ -90,6 +94,7 @@ export default {
       'UPDdocsSelected',
     ])
   },
+
   mounted: function () {
     this.FETCHdocs('docincome');
     

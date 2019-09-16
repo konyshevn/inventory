@@ -1,7 +1,7 @@
 <template>
-  <th v-on:click="sortObjList(['TU', sortField, sortType])">
+  <th v-on:click="sortObjList([objType, sortField, fieldType])">
     <slot></slot>
-    <span class="arrow" v-if="currentDocStatus.tableUnit.sort.field == sortField" :class="currentDocStatus.tableUnit.sort.order > 0 ? 'asc' : 'dsc'">
+    <span class="arrow" v-if="GETsortStatus(objType).field == sortField" :class="GETsortStatus(objType).order > 0 ? 'asc' : 'dsc'">
     </span>
   </th>
 </template>
@@ -19,16 +19,20 @@ import { mapMutations } from 'vuex';
 
 
 export default {
-  name: 'TableUnitHeader',
+  name: 'SortHeader',
   components: {
   },
 
   props: {
-    sortType: {
+    fieldType: {
       type: String,
       default: null,
     },
     sortField: {
+      type: String,
+      default: null,
+    },
+    objType: {
       type: String,
       default: null,
     },  
@@ -40,12 +44,11 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'currentDocStatus',
-    ])
+      'GETsortStatus',
+    ]),
   },
   methods: {
     ...mapMutations([
-      'sortTU',
       'sortObjList',
     ]),
 
