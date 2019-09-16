@@ -66,10 +66,10 @@
         <thead >
           <tr >
             <th>У</th>
-            <table-unit-header sort-type="widget" sort-field="device">Устройство</table-unit-header>
-            <table-unit-header sort-type="widget" sort-field="person">Сотрудник</table-unit-header>
-            <table-unit-header sort-type="number" sort-field="qty">Количество</table-unit-header>
-            <table-unit-header sort-type="text" sort-field="comment">Комментарий</table-unit-header>
+            <sort-header obj-type="TU" field-type="widget" sort-field="device">Устройство</sort-header>
+            <sort-header obj-type="TU" field-type="widget" sort-field="person">Сотрудник</sort-header>
+            <sort-header obj-type="TU" field-type="number" sort-field="qty">Количество</sort-header>
+            <sort-header obj-type="TU" field-type="text" sort-field="comment">Комментарий</sort-header>
           </tr>
         </thead>
         <tbody>
@@ -100,6 +100,7 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import TableUnitItem from './TableUnitItem.vue';
 import TableUnitHeader from './TableUnitHeader.vue';
+import SortHeader from './SortHeader.vue'
 
 function mapTwoWay (key, getter, mutation) {
   return {
@@ -134,6 +135,7 @@ export default {
     TableUnitControlPanel,
     TableUnitItem,
     TableUnitHeader,
+    SortHeader,
 
   },
   props: {
