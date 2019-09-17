@@ -22,6 +22,7 @@ export const store = new Vuex.Store({
     },
     docs: {
       data: [],
+      filtered: [],
       status: {
         sort: {field: "doc_date", fieldType: "text", order: -1},
         selected: [],
@@ -288,7 +289,6 @@ export const store = new Vuex.Store({
         if(a[field] === b[field]) return 0;
         return a[field] < b[field] ? -1 * order : 1 * order;
       }
-
       
       if (fieldType == 'widget') {
         data.sort(compareTUrowWidget);
@@ -297,8 +297,6 @@ export const store = new Vuex.Store({
       } else if (fieldType == 'text') {
         data.sort(compareTUrowText);
       }
-
-
 
       if (objType == "TU") {
         data.map(function(value, index){
@@ -369,8 +367,18 @@ export const store = new Vuex.Store({
     },
 
     FETCHdocs: async ({commit, dispatch, getters}, docType) => {
+      /*
+      let sortStatus = getters.GETsortStatus('docs')
+      function compareTUrowText(a, b) {
+        if(a[sortStatus.field] === "" || a[sortStatus.field] === null) return 1;
+        if(b[sortStatus.field] === "" || b[sortStatus.field] === null) return -1;
+        if(a[sortStatus.field] === b[sortStatus.field]) return 0;
+        return a[sortStatus.field] < b[sortStatus.field] ? -1 * sortStatus.order : 1 * sortStatus.order;
+      }
+      */
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
+      //DocsReady.sort(compareTUrowText)
       commit('SETdocs', DocsReady)
       await dispatch('FETCHdependentCatlg', DocsReady)
       let sortStatus = getters.GETsortStatus('docs')

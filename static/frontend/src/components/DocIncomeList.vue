@@ -4,15 +4,15 @@
     <b-container class="text-left">
       <doc-list-control-panel :status="status"></doc-list-control-panel>
     </b-container>
-    <table class="table table-bordered doc-list">
+    <table class="table table-bordered doc-list" id="doc-list">
       <thead>
         <tr>
           <th>У</th>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_date">Дата</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_num">Номер</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="active">Проведен</sort-header>
-          <sort-header obj-type="docs" field-type="text" sort-field="department">Подразделение</sort-header>
-          <sort-header obj-type="docs" field-type="text" sort-field="stock">Склад</sort-header>
+          <sort-header obj-type="docs" field-type="widget" sort-field="department">Подразделение</sort-header>
+          <sort-header obj-type="docs" field-type="widget" sort-field="stock">Склад</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="comment">Комментарий</sort-header>
         </tr>
       </thead>
