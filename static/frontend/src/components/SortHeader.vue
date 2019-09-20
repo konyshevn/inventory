@@ -33,7 +33,6 @@ export default {
       default: null,
     },
     objType: {
-      type: String,
       default: null,
     },  
   },

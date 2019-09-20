@@ -20,8 +20,9 @@ export const store = new Vuex.Store({
         loading: true,
       }
     },
+
     docs: {
-      data: [],
+      data: {},
       filtered: [],
       status: {
         sort: {field: "doc_date", fieldType: "text", order: -1},
@@ -29,12 +30,48 @@ export const store = new Vuex.Store({
       }
     },
     catlgs: {
-      department: {},
-      stock: {},
-      person: {},
-      device: {},
-      deviceType: {},
-      nomenclature: {},
+      department: {
+        data: {},
+        status: {
+          sort: {field: "label", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
+      stock: {
+        data: {},
+        status: {
+          sort: {field: "label", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
+      person: {
+        data: {},
+        status: {
+          sort: {field: "label", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
+      device: {
+        data: {},
+        status: {
+          sort: {field: "deviceType", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
+      deviceType: {
+        data: {},
+        status: {
+          sort: {field: "label", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
+      nomenclature: {
+        data: {},
+        status: {
+          sort: {field: "label", fieldType: "text", order: -1},
+          selected: [],
+        },
+      },
     },
   },
   getters: {
@@ -73,24 +110,24 @@ export const store = new Vuex.Store({
     },
 
     GETcatlgItem: state => (catlgType, id) => {
-        return state.catlgs[catlgType][id]
+        return state.catlgs[catlgType]['data'][id]
     },
 
     GETcatlgItemLabel: state => (catlgType, id) => {
-      if (id in state.catlgs[catlgType]){
-        return state.catlgs[catlgType][id]['label']
+      if (id in state.catlgs[catlgType]['data']){
+        return state.catlgs[catlgType]['data'][id]['label']
       }
     },
 
     GETcatlg: state => catlgType => {
-      return state.catlgs[catlgType]
+      return state.catlgs[catlgType]['data']
     },
 
     GETcatlgByLabel: state => (catlgType, label) => {
       var catlg = []
-      for (let key in state.catlgs[catlgType]) {
-        if (state.catlgs[catlgType][key]['label'].toLowerCase().indexOf(label.toLowerCase()) != -1) {
-          catlg.push(state.catlgs[catlgType][key])
+      for (let key in state.catlgs[catlgType]['data']) {
+        if (state.catlgs[catlgType]['data'][key]['label'].toLowerCase().indexOf(label.toLowerCase()) != -1) {
+          catlg.push(state.catlgs[catlgType]['data'][key])
         }
       }
       return catlg
@@ -106,6 +143,8 @@ export const store = new Vuex.Store({
         status = state.currentDoc.status.tableUnit.sort
       } else if (objType == "docs") {
         status = state.docs.status.sort
+      } else if ('catlg' in objType) {
+        status = state.catlgs[objType.catlg].status.sort
       }
       return status
     }
@@ -201,11 +240,11 @@ export const store = new Vuex.Store({
     },
 
     SETcatlgItem: (state, [catlgType, item]) => {
-      Vue.set(state.catlgs[catlgType], item.id, item)
+      Vue.set(state.catlgs[catlgType]['data'], item.id, item)
     },
 
     SETcatlgItemLabel: (state, [catlgType, id, label]) => {
-      Vue.set(state.catlgs[catlgType][id], 'label', label)
+      Vue.set(state.catlgs[catlgType]['data'][id], 'label', label)
     },
 
     sortTU: (state, [field, fieldType]) => {
@@ -258,6 +297,9 @@ export const store = new Vuex.Store({
       } else if (objType == "docs") {
         status = state.docs.status.sort
         data = state.docs.data
+      } else if ('catlg' in objType) {
+        status = state.catlgs[objType.catlg].status.sort
+        data = state.catlgs[objType.catlg].data
       }
 
       if (status.field != field) {
@@ -274,8 +316,8 @@ export const store = new Vuex.Store({
         if (!a[field]) return 1;
         if (!b[field]) return -1;
 
-        var aLabel = state.catlgs[field][a[field]]['label']
-        var bLabel = state.catlgs[field][b[field]]['label']
+        var aLabel = state.catlgs[field]['data'][a[field]]['label']
+        var bLabel = state.catlgs[field]['data'][b[field]]['label']
         return aLabel < bLabel ? -1 * order : 1 * order;
       }
 

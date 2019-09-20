@@ -4,7 +4,9 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Тип</th>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
+            Тип
+          </sort-header>
           <th>Наименование</th>
           <th>Серийный номер</th>
           <th>Инвентарный номер</th>
@@ -12,21 +14,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in catlgs['device']" :key="device['id']">
+        <tr v-for="device in GETcatlg('device')" :key="device.id">
           <td>
-            {{displayCatlgItem('deviceType', device['deviceType'])}}
+            {{GETcatlgItemLabel('deviceType', device.deviceType)}}
           </td>
           <td>
-            {{displayCatlgItem('nomenclature', device['nomenclature'])}}
+            {{GETcatlgItemLabel('nomenclature', device.nomenclature)}}
           </td>
           <td>
-            {{device['serial_num']}}
+            {{device.serial_num}}
           </td>
           <td>
-            {{device['inv_num']}}
+            {{device.inv_num}}
           </td>
           <td>
-            {{device['comment']}}
+            {{device.comment}}
           </td>
         </tr>
       </tbody>
@@ -41,11 +43,17 @@ import {HTTP} from '../http-common'
 import {EventBus} from './event-bus.js'
 var _ = require('lodash');
 import CatlgCommon from './CatlgCommon.vue';
+import SortHeader from './SortHeader.vue'
+import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
+
 
 export default {
   name: 'CatlgDeviceList',
   
   components: {
+    SortHeader,
   },
 
 /*
@@ -62,6 +70,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'FETCHcatlg',
+    ]),
+    
     async loadCatlgList () {
       var vm = this
       //await vm.fetchCatlg('nomenclature')
@@ -77,8 +89,15 @@ export default {
     }
 
   },
+  computed: {
+    ...mapGetters([
+      'GETcatlg',
+      'GETcatlgItemLabel',
+    ]),
+  },
   mounted: function () {
-    this.loadCatlgList()
+    //this.loadCatlgList()
+    this.FETCHcatlg(['device']);
   },
 
   created: function () {
