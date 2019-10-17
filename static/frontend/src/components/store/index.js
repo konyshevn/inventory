@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
-import * as DocConstructor from '../doc-constructor.js'
+import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 export const store = new Vuex.Store({
   state: {

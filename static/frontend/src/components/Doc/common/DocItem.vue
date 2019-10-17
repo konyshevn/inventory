@@ -1,6 +1,7 @@
 <template>
   <div>
-    <component :is="docAlias[docType]['list']"></component>
+    <component :is="docAlias[docType]['item']" :id="id"></component>
+    <catlg-widget-modal></catlg-widget-modal>
   </div>
 </template>
 
@@ -8,18 +9,20 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue';
-import DocIncomeList from './DocIncomeList.vue';
-import {aliases} from './aliases.js';
+import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue';
+import {aliases} from '@/components/common/aliases.js';
+import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 
 
 export default {
-  name: 'DocList',
+  name: 'DocItem',
   components: {
-    DocIncomeList,
+    DocIncomeItem,
+    CatlgWidgetModal,
 
   },
   props: {
-    id: Number,
+    id: null,
     docType: String
   },
   

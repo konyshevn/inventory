@@ -45,16 +45,14 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue';
-import {HTTP} from '../http-common';
-import moment from 'moment';
-var _ = require('lodash');
-import CatlgCommon from './CatlgCommon.vue';
-import DocCommon from './DocCommon.vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
-import DocListControlPanel from './DocListControlPanel.vue'
-import SortHeader from './SortHeader.vue'
+import moment from 'moment';
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import DocCommon from '@/components/Doc/common/DocCommon.vue';
+import DocListControlPanel from '@/components/Doc/common/ControlPanel/DocListControlPanel.vue'
+import SortHeader from '@/components/common/SortHeader.vue'
 
 Vue.filter('formatDate', function(value) {
   if (value) {
@@ -70,9 +68,7 @@ export default {
     SortHeader,
   },
   props: {
-    //msg: String
   },
- // mixins: [CatlgCommon, DocCommon],
   data () {
     return {
       status: {
@@ -106,7 +102,6 @@ export default {
   },
   
   created() {
-    //this.fetchDocs('docincome');
 
   },
 

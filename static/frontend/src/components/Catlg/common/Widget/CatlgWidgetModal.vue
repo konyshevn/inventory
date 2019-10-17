@@ -13,10 +13,7 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import {EventBus} from './event-bus.js'
-var _ = require('lodash');
-import CatlgDeviceList from './CatlgDeviceList.vue';
+import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
 
 export default {
   name: 'CatlgWidgetModal',
@@ -40,8 +37,6 @@ export default {
     showModal: function (catlgType) {
       var vm = this
       vm.showCatlg[catlgType] = true
-      EventBus.$emit('reloadCatlgList', catlgType)
-      console.log('Open Modal ' + catlgType)
     },
     
     hideModal: function (catlgType){

@@ -17,11 +17,7 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import {EventBus} from './event-bus.js'
-var _ = require('lodash');
-import CatlgDeviceList from './CatlgDeviceList.vue';
-import CatlgWidget from './CatlgWidget.vue';
+import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';

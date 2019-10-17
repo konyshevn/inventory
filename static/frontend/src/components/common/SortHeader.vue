@@ -9,14 +9,10 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import {EventBus} from './event-bus.js'
-var _ = require('lodash');
 
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
-
 
 export default {
   name: 'SortHeader',
@@ -41,6 +37,7 @@ export default {
     return {
     }
   },
+  
   computed: {
     ...mapGetters([
       'GETsortStatus',

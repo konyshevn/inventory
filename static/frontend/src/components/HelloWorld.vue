@@ -31,30 +31,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
-  },
-
-  mounted: function () {
-    console.log(this.currentDoc)
-    console.log(this.catlgExist('device1'))
-    //this.$store.dispatch('FETCHcurrentDoc', ['docincome', 216])
-    //this.$store.dispatch('FETCHcatlg', ['stock'])
-    //this.$store.dispatch('FETCHdocs', 'docincome')
-    //let myt = this.$store.getters.catlgExist('device')
-    //console.log(myt)
-  },
-
-  computed: {
-    ...mapGetters([
-      'currentDoc',
-      'catlgExist',
-    ])
-  },
+  }
 }
 </script>
 

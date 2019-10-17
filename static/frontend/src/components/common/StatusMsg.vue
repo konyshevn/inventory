@@ -13,10 +13,7 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import {EventBus} from './event-bus.js'
-var _ = require('lodash');
-import CatlgDeviceList from './CatlgDeviceList.vue';
+import {EventBus} from '@/components/common/event-bus.js'
 
 export default {
   name: 'StatusMsg',

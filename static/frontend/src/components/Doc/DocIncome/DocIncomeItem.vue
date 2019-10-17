@@ -85,22 +85,19 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue';
-import {HTTP} from '../http-common';
-import moment from 'moment';
-var _ = require('lodash');
-import CatlgCommon from './CatlgCommon.vue';
-import DocCommon from './DocCommon.vue';
-import CatlgWidget from './CatlgWidget.vue';
-import DatetimeWidget from './DatetimeWidget.vue';
-import CatlgWidgetModal from './CatlgWidgetModal.vue';
-import DocItemControlPanel from './DocItemControlPanel.vue';
-import TableUnitControlPanel from './TableUnitControlPanel.vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
-import TableUnitItem from './TableUnitItem.vue';
-import TableUnitHeader from './TableUnitHeader.vue';
-import SortHeader from './SortHeader.vue'
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import DocCommon from '@/components/Doc/common/DocCommon.vue';
+import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
+import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
+import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
+import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
+import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
+import SortHeader from '@/components/common/SortHeader.vue'
+import TableUnitItem from '@/components/Doc/DocIncome/TableUnitItem.vue'
+
 
 function mapTwoWay (key, getter, mutation) {
   return {
@@ -134,7 +131,6 @@ export default {
     DocItemControlPanel,
     TableUnitControlPanel,
     TableUnitItem,
-    TableUnitHeader,
     SortHeader,
 
   },

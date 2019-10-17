@@ -7,13 +7,13 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue'
-import HelloWorld from './components/HelloWorld.vue'
-import DocIncomeList from './components/DocIncomeList.vue'
-import DocIncomeItem from './components/DocIncomeItem.vue'
-import DocItem from './components/DocItem.vue'
-import DocList from './components/DocList.vue'
-import CatlgDeviceList from './components/CatlgDeviceList.vue'
-import {store} from './components/store';
+import HelloWorld from '@/components/HelloWorld.vue'
+import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue'
+import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue'
+import DocItem from '@/components/Doc/common/DocItem.vue'
+import DocList from '@/components/Doc/common/DocList.vue'
+import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue'
+import {store} from '@/components/store';
 
 Vue.use(VueRouter)
 Vue.config.devtools = true
@@ -22,6 +22,7 @@ Vue.use(VueSelect, {
   theme: 'bootstrap' // or 'material-design'
 })
 Vue.use(BootstrapVue)
+
 const routes = [
   { 
     path: '/',

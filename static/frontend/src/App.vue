@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import StatusMsg from './components/StatusMsg.vue';
+import StatusMsg from '@/components/common/StatusMsg.vue';
 export default {
   name: 'app',
   components: {

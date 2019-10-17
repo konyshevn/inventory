@@ -48,11 +48,8 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import {EventBus} from './event-bus.js'
-var _ = require('lodash');
-import CatlgCommon from './CatlgCommon.vue';
-import SortHeader from './SortHeader.vue'
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import SortHeader from '@/components/common/SortHeader.vue'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
@@ -64,12 +61,6 @@ export default {
   components: {
     SortHeader,
   },
-
-/*
-  props: {
-    catlgs: Object,
-  },
-*/
 
   mixins: [CatlgCommon],
   
@@ -85,17 +76,8 @@ export default {
     
     async loadCatlgList () {
       var vm = this
-      //await vm.fetchCatlg('nomenclature')
-      //await vm.fetchCatlg('deviceType')
       await vm.fetchCatlg('device')
     },
-
-    clearCatlgList: function () {
-      var vm = this
-      vm.catlgs['device'] = {}
-      vm.catlgs['deviceType'] = {}
-      vm.catlgs['nomenclature'] = {}
-    }
 
   },
   computed: {
@@ -105,21 +87,10 @@ export default {
     ]),
   },
   mounted: function () {
-    //this.loadCatlgList()
     this.FETCHcatlg(['device']);
   },
 
   created: function () {
-    var vm = this;
-    EventBus.$on('reloadCatlgList', catlgType => {
-      console.log('EventBus: showCatlg ' + catlgType)
-      if (catlgType == 'device') {
-        console.log('Refresh catalog')
-        vm.clearCatlgList()
-        vm.loadCatlgList()
-      }
-      
-    });
   },
 
   

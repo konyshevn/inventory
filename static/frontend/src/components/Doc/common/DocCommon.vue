@@ -5,16 +5,12 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-import CatlgCommon from './CatlgCommon.vue';
-import Common from './Common.vue';
-var _ = require('lodash');
-import {EventBus} from './event-bus.js'
-import moment from 'moment';
-import * as DocConstructor from './doc-constructor.js'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import Common from '@/components/common/Common.vue';
+import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 export default {
   name: 'DocCommon',
@@ -24,16 +20,6 @@ export default {
   },
   data () {
     return {
-      doc: {},
-      docs: [],
-      widgetIsValid: {},
-      tableUnit:{
-        sort:{
-          field: "",
-          order: -1,
-        },
-        selected: []
-      }
     }
   },
 
@@ -55,37 +41,6 @@ export default {
       'UPDcurrentDoc',
     ]),
 
-    fetchDocs (docType) {
-      var vm = this;
-      HTTP.get(docType + '/')
-        .then(function (response) {
-          var DocsReady = response.data
-          vm.docs = DocsReady
-          for (var key in DocsReady[0]){
-            if (key in vm.catlgs) {
-              var catlgToLoad = _.uniq(_.map(DocsReady, _.property(key)))
-              catlgToLoad = catlgToLoad.filter(function (el) {
-                return el != null;
-              });
-
-              vm.fetchCatlgItem(key, catlgToLoad)
-            }
-          }
-        })
-    },
-
-    async getDocItem (docType, id) {
-      var vm = this;
-      var response = await HTTP.get(docType + '/' + id + '/')
-      vm.fetchWidgetInitCatlg(response.data['table_unit'], {'device': 'device', 'person': 'person'})
-      vm.doc = response.data;
-      for (var key in vm.doc){
-        if ((key in vm.catlgs) && (vm.doc[key])) {
-          vm.fetchCatlgItem(key, vm.doc[key])
-        }
-      }
-
-    },
 
     getErrorMsg: function(error) {
       var errorMsg = ''
@@ -102,49 +57,6 @@ export default {
         errorMsg = errorMsg + JSON.stringify(error)
       }
       return errorMsg
-    },
-
-    sortTU_old: function(TU, field, fieldType){
-      var vm = this
-      if (vm.tableUnit.sort.field != field) {
-        vm.tableUnit.sort.order = -1
-      }
-      vm.tableUnit.sort.order *= -1
-      vm.tableUnit.sort.field = field
-      var order = vm.tableUnit.sort.order
-
-      function compareTUrowWidget(a, b) {
-        if (!a[field]) return 1;
-        if (!b[field]) return -1;
-
-        var aLabel = vm.catlgs[field][a[field]]['label']
-        var bLabel = vm.catlgs[field][b[field]]['label']
-        return aLabel < bLabel ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowNumber(a, b) {
-        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowText(a, b) {
-        if(a[field] === "" || a[field] === null) return 1;
-        if(b[field] === "" || b[field] === null) return -1;
-        if(a[field] === b[field]) return 0;
-        return a[field] < b[field] ? -1 * order : 1 * order;
-      }
-
-      if (fieldType == 'widget') {
-        TU.sort(compareTUrowWidget);
-      } else if (fieldType == 'number') {
-        TU.sort(compareTUrowNumber);
-      } else if (fieldType == 'text') {
-        TU.sort(compareTUrowText);
-      }
-
-      TU.map(function(value, index){
-        value.rowOrder = index + 1
-      })
-
     },
 
     async regWriteDocItem () {
@@ -240,47 +152,13 @@ export default {
         EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
       } 
     },
-
-
-    addRowTableUnit: function(docType, doc) {
-      var vm = this
-      var newDoc = new DocConstructor[docType]
-      doc.table_unit.push(newDoc.table_unit[0])
-
-    },
-
-    deleteRowTableUnit: function(doc, rowToDelete) {
-      var vm = this
-      var newRows  = doc.table_unit.filter(function(value){
-        return (rowToDelete.indexOf(value.id) >= 0) ? false : true 
-      })
-      doc.table_unit = newRows
-
-    },
-
-     
-    isValid: function () {
-      var vm = this
-      var result = true
-      for (var uid in vm.widgetIsValid) {
-        result = result && vm.widgetIsValid[uid]
-      }
-      return result
-    },
-
-  },
+    
+ },
 
   mounted: function () {
-
   },
 
-
-
   created: function() {
-    var vm = this;
-    EventBus.$on('widgetState', state => {
-      Vue.set(vm.widgetIsValid, state[0], state[1])
-    });
   },
   
 }

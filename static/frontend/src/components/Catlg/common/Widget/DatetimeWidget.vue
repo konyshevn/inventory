@@ -16,7 +16,6 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-var _ = require('lodash');
 var Inputmask = require('inputmask');
 import moment from 'moment';
 

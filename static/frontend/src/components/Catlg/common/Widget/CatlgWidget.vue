@@ -35,21 +35,16 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import {HTTP} from '../http-common'
-var _ = require('lodash');
-import { CoolSelect } from 'vue-cool-select'
-import CatlgCommon from './CatlgCommon.vue';
-import {EventBus} from './event-bus.js'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
+import { CoolSelect } from 'vue-cool-select'
 
 export default {
   name: 'CatlgWidget',
   components: {
     CoolSelect
   },
-  mixins: [CatlgCommon],
   props: {
     model: Number,
     widgetType: String,
