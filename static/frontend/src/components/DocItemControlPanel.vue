@@ -21,7 +21,6 @@ export default {
   },
   mixins: [DocCommon],
   props: {
-    doc: Object,
   },
 
   data () {

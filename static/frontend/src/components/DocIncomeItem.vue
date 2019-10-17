@@ -6,7 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
-        <doc-item-control-panel :doc="currentDoc"></doc-item-control-panel>
+        <doc-item-control-panel></doc-item-control-panel>
         <p></p>
 
         <b-row align-v="end" class="mb-2">
