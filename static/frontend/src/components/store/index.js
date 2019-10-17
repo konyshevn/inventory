@@ -22,7 +22,7 @@ export const store = new Vuex.Store({
     },
 
     docs: {
-      data: {},
+      data: [],
       filtered: [],
       status: {
         sort: {field: "doc_date", fieldType: "text", order: -1},
@@ -31,42 +31,42 @@ export const store = new Vuex.Store({
     },
     catlgs: {
       department: {
-        data: {},
+        data: [],
         status: {
           sort: {field: "label", fieldType: "text", order: -1},
           selected: [],
         },
       },
       stock: {
-        data: {},
+        data: [],
         status: {
           sort: {field: "label", fieldType: "text", order: -1},
           selected: [],
         },
       },
       person: {
-        data: {},
+        data: [],
         status: {
           sort: {field: "label", fieldType: "text", order: -1},
           selected: [],
         },
       },
       device: {
-        data: {},
+        data: [],
         status: {
-          sort: {field: "deviceType", fieldType: "text", order: -1},
+          sort: {field: "deviceType", fieldType: "widget", order: -1},
           selected: [],
         },
       },
       deviceType: {
-        data: {},
+        data: [],
         status: {
           sort: {field: "label", fieldType: "text", order: -1},
           selected: [],
         },
       },
       nomenclature: {
-        data: {},
+        data: [],
         status: {
           sort: {field: "label", fieldType: "text", order: -1},
           selected: [],
@@ -110,12 +110,14 @@ export const store = new Vuex.Store({
     },
 
     GETcatlgItem: state => (catlgType, id) => {
-        return state.catlgs[catlgType]['data'][id]
+      let catlgItem = _.find(state.catlgs[catlgType]['data'], {id: id})
+      return catlgItem
     },
 
     GETcatlgItemLabel: state => (catlgType, id) => {
-      if (id in state.catlgs[catlgType]['data']){
-        return state.catlgs[catlgType]['data'][id]['label']
+      let catlgItem = _.find(state.catlgs[catlgType]['data'], {id: id})
+      if (!!catlgItem){
+        return catlgItem.label
       }
     },
 
@@ -124,12 +126,17 @@ export const store = new Vuex.Store({
     },
 
     GETcatlgByLabel: state => (catlgType, label) => {
+      let catlg = _.filter(state.catlgs[catlgType]['data'], function(item) { 
+        return item['label'].toLowerCase().indexOf(label.toLowerCase()) != -1
+      })
+      /*
       var catlg = []
       for (let key in state.catlgs[catlgType]['data']) {
         if (state.catlgs[catlgType]['data'][key]['label'].toLowerCase().indexOf(label.toLowerCase()) != -1) {
           catlg.push(state.catlgs[catlgType]['data'][key])
         }
       }
+      */
       return catlg
     },
 
@@ -240,54 +247,22 @@ export const store = new Vuex.Store({
     },
 
     SETcatlgItem: (state, [catlgType, item]) => {
-      Vue.set(state.catlgs[catlgType]['data'], item.id, item)
+      var catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: item.id})
+      //console.log('SETcatlgItem: item, index', item, catlgItemIndex)
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'][catlgItemIndex] = item
+      } else {
+        state.catlgs[catlgType]['data'].push(item)
+      }
     },
 
     SETcatlgItemLabel: (state, [catlgType, id, label]) => {
-      Vue.set(state.catlgs[catlgType]['data'][id], 'label', label)
+      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'][catlgItemIndex]['label'] = label
+      }
     },
 
-    sortTU: (state, [field, fieldType]) => {
-      if (state.currentDoc.status.tableUnit.sort.field != field) {
-        state.currentDoc.status.tableUnit.sort.order = -1
-      }
-      state.currentDoc.status.tableUnit.sort.order *= -1
-      state.currentDoc.status.tableUnit.sort.field = field
-      var order = state.currentDoc.status.tableUnit.sort.order
-
-      function compareTUrowWidget(a, b) {
-        if (!a[field]) return 1;
-        if (!b[field]) return -1;
-
-        var aLabel = state.catlgs[field][a[field]]['label']
-        var bLabel = state.catlgs[field][b[field]]['label']
-        return aLabel < bLabel ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowNumber(a, b) {
-        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowText(a, b) {
-        if(a[field] === "" || a[field] === null) return 1;
-        if(b[field] === "" || b[field] === null) return -1;
-        if(a[field] === b[field]) return 0;
-        return a[field] < b[field] ? -1 * order : 1 * order;
-      }
-
-      let data = state.currentDoc.data.table_unit
-      if (fieldType == 'widget') {
-        data.sort(compareTUrowWidget);
-      } else if (fieldType == 'number') {
-        data.sort(compareTUrowNumber);
-      } else if (fieldType == 'text') {
-        data.sort(compareTUrowText);
-      }
-
-      state.currentDoc.data.table_unit.map(function(value, index){
-        value.rowOrder = index + 1
-      })
-    },
 
     sortObjList: (state, [objType, field, fieldType, changeOrder = true]) => {
       var status, data 
@@ -316,8 +291,11 @@ export const store = new Vuex.Store({
         if (!a[field]) return 1;
         if (!b[field]) return -1;
 
-        var aLabel = state.catlgs[field]['data'][a[field]]['label']
-        var bLabel = state.catlgs[field]['data'][b[field]]['label']
+        
+        let catlgItemA = _.find(state.catlgs[field]['data'], {id: a[field]})
+        let catlgItemB = _.find(state.catlgs[field]['data'], {id: b[field]})
+        var aLabel = catlgItemA.label
+        var bLabel = catlgItemB.label
         return aLabel < bLabel ? -1 * order : 1 * order;
       }
 

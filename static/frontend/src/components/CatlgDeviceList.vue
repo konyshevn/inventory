@@ -7,10 +7,19 @@
           <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
             Тип
           </sort-header>
-          <th>Наименование</th>
-          <th>Серийный номер</th>
-          <th>Инвентарный номер</th>
-          <th>Комментарий</th>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="label">
+            Наименование
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="serial_num">
+            Серийный номер
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="inv_num">
+            Инвентарный номер
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="comment">
+            Комментарий
+          </sort-header>
+
         </tr>
       </thead>
       <tbody>
