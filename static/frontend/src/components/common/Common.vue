@@ -41,6 +41,23 @@ export default {
       return value
     },
 
+    getErrorMsg: function(error) {
+      var errorMsg = ''
+      errorMsg = errorMsg + JSON.stringify(error)
+      if (error.response) {
+        if (error.response.data) {
+          errorMsg = errorMsg + error.response.data
+        }
+      } else if (error.message) {
+        errorMsg = errorMsg + error.message
+      } else if (error.data) {
+        errorMsg = errorMsg + error.data
+      } else {
+        errorMsg = errorMsg + JSON.stringify(error)
+      }
+      return errorMsg
+    },
+
   },
 
   computed: {

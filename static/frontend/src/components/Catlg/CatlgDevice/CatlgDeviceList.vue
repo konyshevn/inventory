@@ -1,9 +1,13 @@
 <template>
   <div class = "catlg-device-list container">
     <h1 align="left">Устройства</h1>
-    <table class="table table-bordered">
+    <b-container class="text-left">
+      <catlg-list-control-panel :status="status"></catlg-list-control-panel>
+    </b-container>
+    <table class="table table-bordered catlg-list" id="catlg-list">
       <thead>
         <tr>
+          <th>У</th>
           <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
             Тип
           </sort-header>
@@ -24,6 +28,13 @@
       </thead>
       <tbody>
         <tr v-for="device in GETcatlg('device')" :key="device.id">
+          <td>
+            <b-form-checkbox
+            v-model="status.selected"
+            :value="device.id"
+            >
+            </b-form-checkbox>
+          </td>
           <td>
             {{GETcatlgItemLabel('deviceType', device.deviceType)}}
           </td>
@@ -50,6 +61,7 @@
 import Vue from 'vue'
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
+import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
@@ -60,13 +72,16 @@ export default {
   
   components: {
     SortHeader,
+    CatlgListControlPanel,
   },
 
   mixins: [CatlgCommon],
   
   data () {
     return {
-      type: 'CatlgList'
+      status: {
+        selected: [],
+      },
     }
   },
   methods: {
@@ -74,11 +89,6 @@ export default {
       'FETCHcatlg',
     ]),
     
-    async loadCatlgList () {
-      var vm = this
-      await vm.fetchCatlg('device')
-    },
-
   },
   computed: {
     ...mapGetters([
@@ -96,3 +106,25 @@ export default {
   
 }
 </script>
+
+<style>
+.catlg-list td:nth-child(1), .catlg-list th:nth-child(1) {
+  width: 50px;
+}
+.catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
+  width: 150px;
+}
+.catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
+  width: 250px;
+}
+.catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
+  width: 250px;
+}
+.catlg-list td:nth-child(5), .catlg-list th:nth-child(5) {
+  width: 250px;
+}
+.catlg-list td:nth-child(6), .catlg-list th:nth-child(6) {
+  width: 150px;
+}
+
+</style>

@@ -12,6 +12,7 @@ import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue'
 import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue'
 import DocItem from '@/components/Doc/common/DocItem.vue'
 import DocList from '@/components/Doc/common/DocList.vue'
+import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue'
 import {store} from '@/components/store';
 
@@ -47,9 +48,12 @@ const routes = [
     component: DocItem
   },
   { 
-    path: '/catlg/device',
-    name: 'catlg.device.list', 
-    component: CatlgDeviceList 
+    path: '/catlg/:catlgType',
+    name: 'catlg.list',
+    props: (route) => ({
+      catlgType: String(route.params.catlgType),
+    }),
+    component: CatlgList 
   },
 
 ]

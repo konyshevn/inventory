@@ -248,7 +248,6 @@ export const store = new Vuex.Store({
 
     SETcatlgItem: (state, [catlgType, item]) => {
       var catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: item.id})
-      //console.log('SETcatlgItem: item, index', item, catlgItemIndex)
       if (catlgItemIndex >= 0) {
         state.catlgs[catlgType]['data'][catlgItemIndex] = item
       } else {
@@ -325,6 +324,12 @@ export const store = new Vuex.Store({
       }
     },
 
+    DELcatlgItem: (state, [catlgType, id]) => {
+      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'].splice(catlgItemIndex, 1)
+      }
+    },
 
     currentDocTUclearNullId: (state) => {
       state.currentDoc.data.table_unit.forEach(function(item, i, arr){
@@ -369,6 +374,14 @@ export const store = new Vuex.Store({
       let response = await HTTP.delete(docType + '/' + id + '/')
       if (response.status == 204) {
         dispatch('FETCHdocs', docType)
+      }
+      return response
+    },
+
+    DELcatlg: async ({commit, dispatch, getters}, [catlgType, id]) => {
+      let response = await HTTP.delete(catlgType + '/' + id + '/')
+      if (response.status == 204) {
+        commit('DELcatlgItem', [catlgType, id])
       }
       return response
     },

@@ -8,13 +8,13 @@ import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
-import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import {EventBus} from '@/components/common/event-bus.js'
 import Common from '@/components/common/Common.vue';
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 export default {
   name: 'DocCommon',
-  mixins: [Common, CatlgCommon],
+  mixins: [Common],
   props: {
     //msg: String
   },
@@ -41,23 +41,6 @@ export default {
       'UPDcurrentDoc',
     ]),
 
-
-    getErrorMsg: function(error) {
-      var errorMsg = ''
-      errorMsg = errorMsg + JSON.stringify(error)
-      if (error.response) {
-        if (error.response.data) {
-          errorMsg = errorMsg + error.response.data
-        }
-      } else if (error.message) {
-        errorMsg = errorMsg + error.message
-      } else if (error.data) {
-        errorMsg = errorMsg + error.data
-      } else {
-        errorMsg = errorMsg + JSON.stringify(error)
-      }
-      return errorMsg
-    },
 
     async regWriteDocItem () {
       var vm = this;
