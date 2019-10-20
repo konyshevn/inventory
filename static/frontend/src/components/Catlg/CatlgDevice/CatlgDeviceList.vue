@@ -108,23 +108,25 @@ export default {
 </script>
 
 <style>
+
 .catlg-list td:nth-child(1), .catlg-list th:nth-child(1) {
-  width: 50px;
+  width: 181px;
 }
 .catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
-  width: 150px;
+  width: 181px;
 }
 .catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
-  width: 250px;
+  width: 181px;
 }
 .catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
-  width: 250px;
+  width: 181px;
 }
 .catlg-list td:nth-child(5), .catlg-list th:nth-child(5) {
-  width: 250px;
+  width: 181px;
 }
 .catlg-list td:nth-child(6), .catlg-list th:nth-child(6) {
-  width: 150px;
+  width: 181px;
 }
+
 
 </style>

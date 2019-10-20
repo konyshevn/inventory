@@ -65,7 +65,7 @@ color: #000000
 .catlg-list thead {
   grid-area: head-fixed;
   /* fallback */
-  width: 100%;
+ /* width: 100%;
   /* minus scroll bar width */
   width: calc( 100% - 1em ) !important;/* scrollbar is average 1em/16px width, remove it from thead width */
   cursor: pointer;
