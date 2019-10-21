@@ -108,25 +108,42 @@ export default {
 </script>
 
 <style>
-
 .catlg-list td:nth-child(1), .catlg-list th:nth-child(1) {
-  width: 181px;
+  width: 5%;
 }
 .catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
-  width: 181px;
+  width: 20%;
 }
 .catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
-  width: 181px;
+  width: 20%;
 }
 .catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
-  width: 181px;
+  width: 25%;
 }
 .catlg-list td:nth-child(5), .catlg-list th:nth-child(5) {
-  width: 181px;
+  width: 15%;
 }
 .catlg-list td:nth-child(6), .catlg-list th:nth-child(6) {
-  width: 181px;
+  width: 15%;
 }
+
+.catlg-list tbody{
+  display:block;
+  overflow:auto;
+  min-width: 1000px;
+  height: calc(100vh  - 250px);
+}
+.catlg-list thead tr{
+  display:table;
+  width: calc( 100% - 1em ) !important;
+}
+
+.catlg-list tbody tr:hover {
+background-color: #f2f2f2;
+color: #000000
+}
+
+
 
 
 </style>
