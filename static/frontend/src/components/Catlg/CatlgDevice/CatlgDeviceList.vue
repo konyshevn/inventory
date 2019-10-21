@@ -4,33 +4,55 @@
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
+    <table class="table table-bordered catlg-list" id="catlg-list">
+      <thead>
+        <tr>
+          <th>У</th>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
+            Тип
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="label">
+            Наименование
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="serial_num">
+            Серийный номер
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="inv_num">
+            Инвентарный номер
+          </sort-header>
+          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="comment">
+            Комментарий
+          </sort-header>
 
-    <b-table
-      striped 
-      hover
-      small
-      bordered
-      sort-null-last
-      primary-key="id"
-      :sort-compare="compareTUrowWidget"
-      :filter="status.tableFilter"
-      sticky-header="calc(100vh  - 180px)"
-      :items="items"
-      :fields="[
-        {key: 'deviceType', label: 'Тип', sortable: true, sortByFormatted: false, filterByFormatted: true,
-          formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'nomenclature', label: 'Наименование', sortable: true, sortByFormatted: true, filterByFormatted: true,
-          formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'serial_num', label: 'Серийный номер', sortable: true},
-        {key: 'inv_num', label: 'Инвентарный номер', sortable: true},
-        {key: 'comment', label: ' Комментарий', sortable: true},
-      ]"
-    >
-    </b-table>
-
-
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="device in GETcatlg('device')" :key="device.id">
+          <td>
+            <b-form-checkbox
+            v-model="status.selected"
+            :value="device.id"
+            >
+            </b-form-checkbox>
+          </td>
+          <td>
+            {{GETcatlgItemLabel('deviceType', device.deviceType)}}
+          </td>
+          <td>
+            {{GETcatlgItemLabel('nomenclature', device.nomenclature)}}
+          </td>
+          <td>
+            {{device.serial_num}}
+          </td>
+          <td>
+            {{device.inv_num}}
+          </td>
+          <td>
+            {{device.comment}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -57,10 +79,8 @@ export default {
   
   data () {
     return {
-      items: [],
       status: {
         selected: [],
-        tableFilter: null,
       },
     }
   },
@@ -68,19 +88,6 @@ export default {
     ...mapActions([
       'FETCHcatlg',
     ]),
-
-    compareTUrowWidget: function (a, b, field) {
-        var vm = this
-        if (!a[field]) return 1;
-        if (!b[field]) return -1;
-
-        
-        //let catlgItemA = _.find(state.catlgs[field]['data'], {id: a[field]})
-        //let catlgItemB = _.find(state.catlgs[field]['data'], {id: b[field]})
-        var aLabel = vm.GETcatlgItemLabel(field, a[field])
-        var bLabel = vm.GETcatlgItemLabel(field, b[field])
-        return aLabel < bLabel ? 1 : -1;
-      },
     
   },
   computed: {
@@ -91,7 +98,6 @@ export default {
   },
   mounted: function () {
     this.FETCHcatlg(['device']);
-    this.items = this.GETcatlg('device')
   },
 
   created: function () {
