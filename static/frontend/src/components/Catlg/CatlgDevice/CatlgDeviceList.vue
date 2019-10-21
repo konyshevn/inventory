@@ -134,8 +134,9 @@ export default {
   height: calc(100vh  - 220px);
 }
 .catlg-list thead tr{
-  display:table;
+  display:block;
   width: calc( 100% - 1em ) !important;
+  cursor: pointer;
 }
 
 .catlg-list tbody tr:hover {

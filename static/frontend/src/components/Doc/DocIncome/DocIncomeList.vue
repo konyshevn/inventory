@@ -124,8 +124,9 @@ export default {
   height: calc(100vh  - 200px);
 }
 .doc-list thead tr{
-  display:table;
+  display:block;
   width: calc( 100% - 1em ) !important;
+  cursor: pointer;
 }
 
 .doc-list tbody tr:hover {
