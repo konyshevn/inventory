@@ -1,6 +1,6 @@
 <template>
   <div class = "catlg-device-list container">
-    <h1 align="left">Устройства</h1>
+    <h2 align="left">Устройства</h2>
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
@@ -131,7 +131,7 @@ export default {
   display:block;
   overflow:auto;
   min-width: 1000px;
-  height: calc(100vh  - 250px);
+  height: calc(100vh  - 220px);
 }
 .catlg-list thead tr{
   display:table;
@@ -144,6 +144,9 @@ color: #000000
 }
 
 
+.catlg-list th, .catlg-list td {
+padding: 0.25rem !important;
+}
 
 
 </style>

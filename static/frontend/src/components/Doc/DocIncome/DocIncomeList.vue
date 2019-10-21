@@ -117,36 +117,25 @@ export default {
 </script>
 
 <style scoped>
+.doc-list tbody{
+  display:block;
+  overflow:auto;
+  min-width: 1100px;
+  height: calc(100vh  - 200px);
+}
+.doc-list thead tr{
+  display:table;
+  width: calc( 100% - 1em ) !important;
+}
+
 .doc-list tbody tr:hover {
 background-color: #f2f2f2;
 color: #000000
 }
 
-.doc-list {
-  display: inline-grid;
-  grid-template-areas: 
-  "head-fixed" 
-  "body-scrollable";
-}
 
-.doc-list thead {
-  grid-area: head-fixed;
-  /* fallback */
-  width: 100%;
-  /* minus scroll bar width */
-  width: calc( 100% - 1em ) !important;/* scrollbar is average 1em/16px width, remove it from thead width */
-  cursor: pointer;
-}
-
-.doc-list tbody {
-  grid-area: body-scrollable;
-  overflow-y: scroll;
-  height: calc(90vh  - 140px);
-}
-
-.doc-list thead, .doc-list tbody tr {
-    display:table;
-    table-layout:fixed;/* even columns width , fix width of table too*/
+.doc-list th, .doc-list td {
+padding: 0.25rem !important;
 }
 
 .doc-list td:nth-child(1), .doc-list th:nth-child(1) {
