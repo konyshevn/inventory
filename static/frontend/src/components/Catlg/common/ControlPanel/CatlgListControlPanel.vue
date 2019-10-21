@@ -7,7 +7,7 @@
           <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected)">Удалить</b-button>
         </b-col>
         <b-col sm="4">
-          <b-form-input v-model="status.tableFilter" placeholder="Поиск"></b-form-input>
+          <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
         </b-col>
       </b-row>
     </b-container>

@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in GETcatlg('device')" :key="device.id">
+        <tr v-for="device in GETcatlg('device')" :key="device.id" @dblclick="clickRow(device.id, $event)">
           <td>
             <b-form-checkbox
             v-model="status.selected"
@@ -88,7 +88,11 @@ export default {
     ...mapActions([
       'FETCHcatlg',
     ]),
-    
+
+    clickRow: function (id, event) {
+      console.log(id);
+      this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: 'device'} })
+    },
   },
   computed: {
     ...mapGetters([
