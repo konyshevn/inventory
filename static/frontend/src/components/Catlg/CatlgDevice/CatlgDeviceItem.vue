@@ -6,6 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
+    <catlg-item-control-panel :item="item"></catlg-item-control-panel>
     <div>
       <b-table-simple small class="table-borderless" style="width: 500px">
         <b-tr>
@@ -66,55 +67,27 @@ import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import DocCommon from '@/components/Doc/common/DocCommon.vue';
+import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
-import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
-import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
-import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
-import TableUnitItem from '@/components/Doc/DocIncome/TableUnitItem.vue'
 
 
-function mapTwoWay (key, getter, mutation) {
-  return {
-    get () {
-      return this.$store.getters[getter][key]
-    },
-    set (value) {
-      this.$store.commit(mutation, [key, value])
-    }
-  }
-}
-
-function mapTwoWayTU (key, getter, mutation) {
-  return {
-    get () {
-      return this.$store.getters[getter][key]
-    },
-    set (value) {
-      console.log(value)
-      this.$store.commit(mutation, [key, value])
-    }
-  }
-}
 
 export default {
   name: 'CatlgDeviceItem',
   components: {
     CatlgWidget,
     CatlgWidgetModal,
-    DatetimeWidget,
-    TableUnitControlPanel,
-    TableUnitItem,
     SortHeader,
+    CatlgItemControlPanel,
 
   },
   props: {
     id: Number,
   },
   
-  mixins: [CatlgCommon, DocCommon],
+  mixins: [CatlgCommon,],
   
   data () {
     return {
@@ -125,24 +98,15 @@ export default {
 
   methods: {
     ...mapMutations([
-      'UPDcurrentDoc',
-      'UPDcurrentDocTU',
-      'DELcurrentDoc',
-      'sortTU',
-      'INITcurrentDoc',
     ]),
 
     ...mapActions([
-      'FETCHcurrentDoc',
       'FETCHcatlgItem',
     ])
   },
 
   computed: {
     ...mapGetters([
-      'currentDoc',
-      'currentDocTU',
-      'GETcatlgItemLabel',
       'GETcatlgItem',
 
     ])
@@ -174,7 +138,6 @@ export default {
 
   beforeDestroy: function() {
     console.log('beforeDestroy')
-    this.DELcurrentDoc()
   },
 
 }

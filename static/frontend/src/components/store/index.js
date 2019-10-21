@@ -129,14 +129,6 @@ export const store = new Vuex.Store({
       let catlg = _.filter(state.catlgs[catlgType]['data'], function(item) { 
         return item['label'].toLowerCase().indexOf(label.toLowerCase()) != -1
       })
-      /*
-      var catlg = []
-      for (let key in state.catlgs[catlgType]['data']) {
-        if (state.catlgs[catlgType]['data'][key]['label'].toLowerCase().indexOf(label.toLowerCase()) != -1) {
-          catlg.push(state.catlgs[catlgType]['data'][key])
-        }
-      }
-      */
       return catlg
     },
 
@@ -358,9 +350,17 @@ export const store = new Vuex.Store({
         var response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', currentDoc)
       }
 
-      console.log('PUTcurrentDoc: response', response.status, response.statusText, response.data, )
       if (response.status == 200 || response.status == 201) {
         dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
+      }
+      return response
+    },
+
+    PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
+      if (item.id == null) {
+        var response = await HTTP.post(catlgType + '/', item)
+      } else {
+        var response = await HTTP.put(catlgType + '/' + item.id + '/', item)
       }
       return response
     },
@@ -383,6 +383,7 @@ export const store = new Vuex.Store({
       if (response.status == 204) {
         commit('DELcatlgItem', [catlgType, id])
       }
+      console.log(response)
       return response
     },
 

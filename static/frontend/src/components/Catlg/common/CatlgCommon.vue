@@ -22,24 +22,43 @@ export default {
 	},
 	methods: {
 		...mapActions([
-      'DELcatlg',
-    ]),
-    
+	  'DELcatlg',
+	  'PUTcatlg',
+	]),
+	
 		async delCatlgs (catlgType, ids) {
-      var vm = this;
+	  	var vm = this;
+	  	try {
+				var confirm = await vm.confirmMsg('Вы действительно хотите удалить выделенные элементы?')
+				if (confirm) {
+		  		ids.forEach(function(item, i, arr){
+					vm.DELcatlg([catlgType, item])
+		  	})
+				}
+	  	} catch(error) {
+				console.log(error)
+				EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
+	  	} 
+	},
+	
+
+		async saveCatlgItem (catlgType, item){
+			var vm = this
+      var isNewCatlg = item.id
       try {
-        var confirm = await vm.confirmMsg('Вы действительно хотите удалить выделенные элементы?')
-        if (confirm) {
-          ids.forEach(function(item, i, arr){
-            vm.DELcatlg([catlgType, item])
-          })
+        //if (!vm.widgetsIsValid) { 
+        //  throw new Error('Заполните все необходимые реквизиты документа.')
+        //}
+        var response = await vm.PUTcatlg([catlgType, item])
+        if (!(isNewCatlg) && (response.status == 200 || response.status == 201)) {
+          vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
         }
       } catch(error) {
         console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
-      } 
-    },
-	
+        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
+      }
+		}
+
 	},
 	
 	mounted: function () {
