@@ -60,7 +60,7 @@ const routes = [
     path: '/catlg/:catlgType/:id',
     name: 'catlg.item',
     props: (route) => ({
-      id: Number(route.params.id),
+      id: String(route.params.id),
       catlgType: String(route.params.catlgType),
     }),
     component: CatlgItem

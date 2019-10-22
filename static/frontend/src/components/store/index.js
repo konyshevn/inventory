@@ -110,7 +110,7 @@ export const store = new Vuex.Store({
     },
 
     GETcatlgItem: state => (catlgType, id) => {
-      let catlgItem = _.find(state.catlgs[catlgType]['data'], {id: id})
+      let catlgItem = _.find(state.catlgs[catlgType]['data'], {id: Number(id)})
       return catlgItem
     },
 
@@ -379,12 +379,16 @@ export const store = new Vuex.Store({
     },
 
     DELcatlg: async ({commit, dispatch, getters}, [catlgType, id]) => {
-      let response = await HTTP.delete(catlgType + '/' + id + '/')
-      if (response.status == 204) {
-        commit('DELcatlgItem', [catlgType, id])
+      try{
+        var response = await HTTP.delete(catlgType + '/' + id + '/')
+        if (response.status == 204) {
+          commit('DELcatlgItem', [catlgType, id])
+        }
+      } catch(error) {
+        response = error['response']
+      } finally {
+        return response
       }
-      console.log(response)
-      return response
     },
 
     FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {

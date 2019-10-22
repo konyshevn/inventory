@@ -71,6 +71,7 @@ import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgI
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
+import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
 
 
 
@@ -129,8 +130,13 @@ export default {
 */
    async mounted () {
     var vm = this
-    await vm.FETCHcatlgItem(['device', vm.id])
-    vm.item = vm.GETcatlgItem('device', vm.id)
+    if (vm.id == 'new') {
+      vm.item = new CatlgConstructor['device']
+      //Vue.set(vm, 'item', new CatlgConstructor['device'])
+    } else {
+      await vm.FETCHcatlgItem(['device', vm.id])
+      vm.item = vm.GETcatlgItem('device', vm.id)
+    }
   },
 
   created: function() {
