@@ -13,7 +13,7 @@ import {aliases} from '@/components/common/aliases.js';
 
 
 export default {
-  name: 'DocList',
+  name: 'CatlgList',
   components: {
     CatlgDeviceList,
 

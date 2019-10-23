@@ -387,6 +387,7 @@ export const store = new Vuex.Store({
       } catch(error) {
         response = error['response']
       } finally {
+        console.log('DELcatlg', response)
         return response
       }
     },

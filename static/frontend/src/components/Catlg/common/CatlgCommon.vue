@@ -44,11 +44,15 @@ export default {
 		  	ids.forEach(async function(item, i, arr){
 				  let response = await vm.DELcatlg([catlgType, item])
           if (!(response.status == 200 || response.status == 201 || response.status == 204)) {
+            console.log('delCatlgs', response)
             errors.push(`Ошибка удаления "${vm.GETcatlgItemLabel(catlgType, item)}": ${response.data}`)
           }
 		    })
-        if (errors.length >= 1){
+      
+        if (errors && errors.length > 0){
           EventBus.$emit('openStatusMsg', errors)
+        } else {
+          vm.$router.push({ name: 'catlg.list', params: {catlgType: catlgType} })
         }
 			}
 	},
@@ -63,7 +67,9 @@ export default {
         //}
         var response = await vm.PUTcatlg([catlgType, item])
         if (!(isNewCatlg) && (response.status == 200 || response.status == 201)) {
+
           vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
+          item.id = response.data.id
         }
       } catch(error) {
         console.log(error)
