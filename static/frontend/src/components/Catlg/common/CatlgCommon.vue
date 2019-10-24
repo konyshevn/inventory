@@ -11,6 +11,12 @@ import { mapMutations } from 'vuex';
 import Common from '@/components/common/Common.vue';
 import {EventBus} from '@/components/common/event-bus.js'
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
 export default {
 	name: 'CatlgCommon',
 	mixins: [Common,],
@@ -41,7 +47,7 @@ export default {
       var errors = []
 	  	var confirm = await vm.confirmMsg('Вы действительно хотите удалить выбранные элементы?')
 			if (confirm) {
-		  	ids.forEach(async function(item, i, arr){
+		  	await asyncForEach(ids, async function(item){
 				  let response = await vm.DELcatlg([catlgType, item])
           if (!(response.status == 200 || response.status == 201 || response.status == 204)) {
             console.log('delCatlgs', response)
@@ -49,10 +55,10 @@ export default {
           }
 		    })
       
-        if (errors && errors.length > 0){
-          EventBus.$emit('openStatusMsg', errors)
-        } else {
+        if (errors.length == 0){
           vm.$router.push({ name: 'catlg.list', params: {catlgType: catlgType} })
+        } else {
+          EventBus.$emit('openStatusMsg', errors)
         }
 			}
 	},
@@ -61,19 +67,18 @@ export default {
 		async saveCatlgItem (catlgType, item){
 			var vm = this
       var isNewCatlg = item.id
-      try {
+      var errors = []
         //if (!vm.widgetsIsValid) { 
         //  throw new Error('Заполните все необходимые реквизиты документа.')
         //}
-        var response = await vm.PUTcatlg([catlgType, item])
-        if (!(isNewCatlg) && (response.status == 200 || response.status == 201)) {
-
-          vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
-          item.id = response.data.id
-        }
-      } catch(error) {
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
+      var response = await vm.PUTcatlg([catlgType, item])
+      if (!(isNewCatlg) && (response.status == 200 || response.status == 201)) {
+        vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
+        item.id = response.data.id
+      } 
+      if (!(response.status == 200 || response.status == 201)) {
+        errors.push(`Ошибка сохранения "${vm.GETcatlgItemLabel(catlgType, item.id)}": ${response.data}`)
+        EventBus.$emit('openStatusMsg', errors)
       }
 		}
 

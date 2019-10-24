@@ -357,12 +357,19 @@ export const store = new Vuex.Store({
     },
 
     PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
-      if (item.id == null) {
-        var response = await HTTP.post(catlgType + '/', item)
-      } else {
-        var response = await HTTP.put(catlgType + '/' + item.id + '/', item)
+      try{
+        var response = null
+        if (item.id == null) {
+          response = await HTTP.post(catlgType + '/', item)
+        } else {
+          response = await HTTP.put(catlgType + '/' + item.id + '/', item)
+        }
+      } catch(error) {
+        response = error['response']
+      } finally {
+        console.log('PUTcatlg', response)
+        return response
       }
-      return response
     },
 
     DELcurrentDoc: async ({commit, dispatch, getters}) => {
