@@ -33,42 +33,42 @@ export const store = new Vuex.Store({
       department: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: -1},
+          sort: {field: "label", fieldType: "text", order: 1},
           selected: [],
         },
       },
       stock: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: -1},
+          sort: {field: "label", fieldType: "text", order: 1},
           selected: [],
         },
       },
       person: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: -1},
+          sort: {field: "label", fieldType: "text", order: 1},
           selected: [],
         },
       },
       device: {
         data: [],
         status: {
-          sort: {field: "deviceType", fieldType: "widget", order: -1},
+          sort: {field: "deviceType", fieldType: "widget", order: 1},
           selected: [],
         },
       },
       deviceType: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: -1},
+          sort: {field: "label", fieldType: "text", order: 1},
           selected: [],
         },
       },
       nomenclature: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: -1},
+          sort: {field: "label", fieldType: "text", order: 1},
           selected: [],
         },
       },
@@ -482,6 +482,8 @@ export const store = new Vuex.Store({
             dispatch('SETcatlgLabel', [catlgType, item.id])
           }    
         })
+        let sortStatus = getters.GETsortStatus({catlg: catlgType})
+        commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
       } catch(error) {
         console.log(error)
       }

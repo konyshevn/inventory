@@ -72,11 +72,13 @@ export default {
         //  throw new Error('Заполните все необходимые реквизиты документа.')
         //}
       var response = await vm.PUTcatlg([catlgType, item])
-      if (!(isNewCatlg) && (response.status == 200 || response.status == 201)) {
-        vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
-        item.id = response.data.id
-      } 
-      if (!(response.status == 200 || response.status == 201)) {
+      if (response.status == 200 || response.status == 201) {
+        if (!(isNewCatlg)) {
+          vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
+          item.id = response.data.id
+        } 
+
+      } else {
         errors.push(`Ошибка сохранения "${vm.GETcatlgItemLabel(catlgType, item.id)}": ${response.data}`)
         EventBus.$emit('openStatusMsg', errors)
       }

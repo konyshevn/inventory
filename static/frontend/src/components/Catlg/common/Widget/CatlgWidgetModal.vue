@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <b-modal id="device-modal" size="xl" scrollable title="Устройства" @show="showModal('device')" @hidden="hideModal('device')">
+    <b-modal id="device-modal" size="xl" scrollable @show="showModal('device')" @hidden="hideModal('device')">
       <catlg-device-list v-if="showCatlg['device']"></catlg-device-list>
     </b-modal>
     
