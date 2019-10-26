@@ -84,6 +84,11 @@ export default {
       },
     }
   },
+
+  props: {
+    modal: false,
+  },
+
   methods: {
     ...mapActions([
       'FETCHcatlg',

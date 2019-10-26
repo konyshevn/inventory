@@ -78,6 +78,7 @@
         </tbody>
       </table>
   </div>
+
   </div>
 </template>
 
@@ -90,9 +91,9 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
-import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
+import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget2.vue';
 import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
-import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
+import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal2.vue';
 import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
@@ -132,6 +133,8 @@ export default {
     TableUnitControlPanel,
     TableUnitItem,
     SortHeader,
+    CatlgWidgetModal,
+
 
   },
   props: {

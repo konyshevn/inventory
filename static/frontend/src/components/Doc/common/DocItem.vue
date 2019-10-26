@@ -1,7 +1,6 @@
 <template>
   <div>
     <component :is="docAlias[docType]['item']" :id="id"></component>
-    <catlg-widget-modal></catlg-widget-modal>
   </div>
 </template>
 

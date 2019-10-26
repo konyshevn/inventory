@@ -24,11 +24,12 @@
           </div>
         </template>
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">O</b-button>
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">...</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">O</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">...</b-button>
         </template>
       </cool-select>
     </div>
+    <catlg-widget-modal :uid="uid" :catlgType="widgetType"> </catlg-widget-modal>
   </div>
 
 </template>
@@ -115,7 +116,14 @@ export default {
   },
 
   computed: {
-   
+    modalId: function () {
+      let vm = this
+      return `modal-${vm.widgetType}-${vm.uid}`
+    },
+
+    uid: function () {
+      return this._uid
+    },
   },
 
   watch: {
@@ -147,9 +155,6 @@ export default {
   mounted: function() {
   },
 
-  computed: {
-    
-  },
 
   beforeDestroy: function(){
     var vm = this
