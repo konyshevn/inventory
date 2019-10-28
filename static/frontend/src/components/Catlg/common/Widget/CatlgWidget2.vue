@@ -42,6 +42,7 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import { CoolSelect } from 'vue-cool-select';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal2.vue';
+import {EventBus} from '@/components/common/event-bus.js'
 
 export default {
   name: 'CatlgWidget',
@@ -150,6 +151,12 @@ export default {
   },
 
   created: function() {
+    const vm = this
+    EventBus.$on('catlgWidgetSetModel', event => {
+      if (event.modalId == vm.modalId){
+        vm.$emit('update:model', event.id)
+      }
+    })
   },
 
   mounted: function() {
