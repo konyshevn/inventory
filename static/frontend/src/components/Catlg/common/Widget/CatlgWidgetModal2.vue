@@ -7,7 +7,7 @@
     @hidden="showModal=false" 
     @ok="handleOk">
       modal
-      <component :is="catlgAlias[catlgType]['list']" :modal="modalId" v-if="showModal"></component>
+      <catlg-list :modal="modalId" :catlgType="catlgType" v-if="showModal"></catlg-list>
     </b-modal>
     
   </div>
@@ -17,13 +17,14 @@
 /* eslint-disable no-console */
 import Vue from 'vue'
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
+import CatlgList from '@/components/Catlg/common/CatlgList.vue';
 import {aliases} from '@/components/common/aliases.js';
 import {EventBus} from '@/components/common/event-bus.js'
 
 export default {
   name: 'CatlgWidgetModal',
   components: {
-    CatlgDeviceList,
+    CatlgList,
   },
 
   props: {
@@ -39,20 +40,7 @@ export default {
     }
   },
   methods: {
-    /*
-    showModal: function () {
-      var vm = this
-      vm.showModal = true
-    },
-    
-    hideModal: function () {
-      var vm = this
-      vm.showModal = false
-    },
-*/
     handleOk: function (bvModalEvt) {
-      // Prevent modal from closing
-      //bvModalEvt.preventDefault()
       const vm = this
       EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: vm.selectedItemId})
     },

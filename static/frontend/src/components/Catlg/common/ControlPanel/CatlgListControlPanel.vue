@@ -5,6 +5,7 @@
         <b-col align="left">
           <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
           <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected)">Удалить</b-button>
+          <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected)">Редактировать</b-button>
         </b-col>
         <b-col sm="4">
           <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
@@ -64,7 +65,7 @@ export default {
   },
   computed: {
     catlgType: function() {
-      return this.$route.params.catlgType
+      return this.status.catlgType
     }
   },
   mounted: function () {

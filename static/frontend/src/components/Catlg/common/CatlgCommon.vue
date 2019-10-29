@@ -61,7 +61,7 @@ export default {
           EventBus.$emit('openStatusMsg', errors)
         }
 			}
-	},
+    },
 	
 
 		async saveCatlgItem (catlgType, item){
@@ -82,7 +82,12 @@ export default {
         errors.push(`Ошибка сохранения "${vm.GETcatlgItemLabel(catlgType, item.id)}": ${response.data}`)
         EventBus.$emit('openStatusMsg', errors)
       }
-		}
+		},
+
+    editCatlgItemModal: function (catlgType, itemId) {
+      const vm = this
+      EventBus.$emit('editCatlgItemModal', {catlgType: catlgType, id: itemId})
+    },
 
 	},
 	
