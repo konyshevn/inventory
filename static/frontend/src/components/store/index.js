@@ -47,7 +47,7 @@ export const store = new Vuex.Store({
       person: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
+          sort: {field: "surname", fieldType: "text", order: 1},
           selected: [],
         },
       },

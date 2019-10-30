@@ -9,6 +9,7 @@
 /* eslint-disable no-console */
 import Vue from 'vue';
 import CatlgDeviceItem from '@/components/Catlg/CatlgDevice/CatlgDeviceItem.vue';
+import CatlgPersonItem from '@/components/Catlg/CatlgPerson/CatlgPersonItem.vue';
 import {aliases} from '@/components/common/aliases.js';
 
 
@@ -16,6 +17,7 @@ export default {
   name: 'CatlgItem',
   components: {
     CatlgDeviceItem,
+    CatlgPersonItem,
   },
 
   props: {

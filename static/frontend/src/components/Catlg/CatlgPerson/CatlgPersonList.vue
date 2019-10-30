@@ -1,6 +1,6 @@
 <template>
-  <div class = "catlg-device-list container">
-    <h2 align="left">Устройства</h2>
+  <div class = "catlg-person-list container">
+    <h2 align="left">Сотрудники</h2>
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
@@ -8,47 +8,34 @@
       <thead>
         <tr>
           <th>У</th>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
-            Тип
+          <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="surname">
+            Фамилия
           </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="label">
-            Наименование
+          <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="name">
+            Имя
           </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="serial_num">
-            Серийный номер
+          <sort-header :obj-type="{catlg: status.catlgType}" field-type="widget" sort-field="department">
+            Подразделение
           </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="inv_num">
-            Инвентарный номер
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="comment">
-            Комментарий
-          </sort-header>
-
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in GETcatlg('device')" :key="device.id" @dblclick="clickRow(device.id, $event)">
+        <tr v-for="item in GETcatlg(status.catlgType)" :key="item.id" @dblclick="clickRow(item.id, $event)">
           <td>
             <b-form-checkbox
             v-model="status.selected"
-            :value="device.id"
+            :value="item.id"
             @input="selectedInput">
             </b-form-checkbox>
           </td>
           <td>
-            {{GETcatlgItemLabel('deviceType', device.deviceType)}}
+            {{item.surname}}
           </td>
           <td>
-            {{GETcatlgItemLabel('nomenclature', device.nomenclature)}}
+            {{item.name}}
           </td>
           <td>
-            {{device.serial_num}}
-          </td>
-          <td>
-            {{device.inv_num}}
-          </td>
-          <td>
-            {{device.comment}}
+            {{GETcatlgItemLabel('department', item.department)}}
           </td>
         </tr>
       </tbody>
@@ -70,7 +57,7 @@ import { mapMutations } from 'vuex';
 
 
 export default {
-  name: 'CatlgDeviceList',
+  name: 'CatlgPersonList',
   
   components: {
     SortHeader,
@@ -83,7 +70,7 @@ export default {
     return {
       status: {
         selected: [],
-        catlgType: 'device',
+        catlgType: 'person',
         modal: null,
       },
     }
@@ -103,7 +90,7 @@ export default {
       if (vm.modal) {
         EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: id, handleOk: true})
       } else {
-        this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: 'device'} })
+        this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: vm.status.catlgType} })
       }
     },
 
@@ -124,7 +111,7 @@ export default {
     const vm = this
     vm.status.modal = vm.modal
     if (vm.modal) {vm.status.selected = null}
-    this.FETCHcatlg(['device']);
+    this.FETCHcatlg([vm.status.catlgType]);
   },
 
   created: function () {
@@ -139,20 +126,15 @@ export default {
   width: 5%;
 }
 .catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
-  width: 20%;
+  width: 35%;
 }
 .catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
-  width: 20%;
+  width: 30%;
 }
 .catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
-  width: 25%;
+  width: 30%;
 }
-.catlg-list td:nth-child(5), .catlg-list th:nth-child(5) {
-  width: 15%;
-}
-.catlg-list td:nth-child(6), .catlg-list th:nth-child(6) {
-  width: 15%;
-}
+
 
 .catlg-list tbody{
   display:block;

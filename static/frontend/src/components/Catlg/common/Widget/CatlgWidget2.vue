@@ -173,7 +173,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .widget-invalid {
   border: 1px solid red !important;
   border-radius: .25rem !important;

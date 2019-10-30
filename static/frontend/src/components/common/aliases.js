@@ -6,7 +6,7 @@ export const aliases = {
   },
   catlgAlias: {
     device: {item: 'CatlgDeviceItem', list: 'CatlgDeviceList'},
-	department: {item: 'CatlgDeviceItem', list: 'CatlgDeviceList'},
+    department: {item: 'CatlgDeviceItem', list: 'CatlgDeviceList'},
     stock: {item: 'CatlgStockItem', list: 'CatlgStockList'},
     person: {item: 'CatlgPersonItem', list: 'CatlgPersonList'},
 

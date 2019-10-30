@@ -68,7 +68,7 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
-import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
+import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget2.vue';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
 import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'

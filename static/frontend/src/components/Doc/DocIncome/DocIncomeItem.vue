@@ -127,7 +127,7 @@ export default {
   name: 'DocIncomeItem',
   components: {
     CatlgWidget,
-    CatlgWidgetModal,
+    //CatlgWidgetModal,
     DatetimeWidget,
     DocItemControlPanel,
     TableUnitControlPanel,
