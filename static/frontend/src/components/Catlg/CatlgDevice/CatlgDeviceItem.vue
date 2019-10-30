@@ -6,7 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
-    <catlg-item-control-panel :item="item"></catlg-item-control-panel>
+    <catlg-item-control-panel :item="item" :catlgType="catlgType"></catlg-item-control-panel>
     <div>
       <b-table-simple small class="table-borderless" style="width: 500px">
         <b-tr>
@@ -92,7 +92,7 @@ export default {
   
   data () {
     return {
-      docChanged: false,
+      catlgType: 'device',
       item: {},
     }       
   },

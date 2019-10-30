@@ -357,13 +357,23 @@ export const store = new Vuex.Store({
     },
 
     PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
-      try{
+      try {
         var response = null
         if (item.id == null) {
           response = await HTTP.post(catlgType + '/', item)
         } else {
           response = await HTTP.put(catlgType + '/' + item.id + '/', item)
         }
+        if (response.status >= 200 && response.status < 300) {
+          item = response.data
+          commit('SETcatlgItem', [catlgType, item])
+          if ( !('label' in item)) {
+            dispatch('SETcatlgLabel', [catlgType, item.id])
+          }
+          let sortStatus = getters.GETsortStatus({catlg: catlgType})
+          commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
+        }
+
       } catch(error) {
         response = error['response']
       } finally {

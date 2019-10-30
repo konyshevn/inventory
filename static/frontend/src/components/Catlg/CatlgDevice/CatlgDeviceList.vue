@@ -84,6 +84,7 @@ export default {
       status: {
         selected: [],
         catlgType: 'device',
+        modal: null,
       },
     }
   },
@@ -121,6 +122,7 @@ export default {
   },
   mounted: function () {
     const vm = this
+    vm.status.modal = vm.modal
     if (vm.modal) {vm.status.selected = null}
     this.FETCHcatlg(['device']);
   },

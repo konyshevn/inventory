@@ -3,8 +3,8 @@
     <b-container class="text-right" >
       <b-row align-v="end" class="mb-2">
         <b-col align="left">
-          <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
-          <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected)">Удалить</b-button>
+          <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, 'new')">Добавить</b-button>
+          <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected, status.modal)">Удалить</b-button>
           <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected)">Редактировать</b-button>
         </b-col>
         <b-col sm="4">

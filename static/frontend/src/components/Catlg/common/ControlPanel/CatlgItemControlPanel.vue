@@ -2,7 +2,7 @@
   <div>
     <b-button-group align="left">
       <b-button type="submit" variant="light" size="sm" @click="saveCatlgItem(catlgType, item)">Сохранить</b-button>
-      <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delCatlgs(catlgType, [item.id])">Удалить</b-button>
+      <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delCatlgs(catlgType, [item.id], modal)">Удалить</b-button>
     </b-button-group>
   </div>
 </template>
@@ -20,6 +20,7 @@ export default {
   mixins: [CatlgCommon],
   props: {
     item: {},
+    catlgType: '',
   },
 
   data () {
@@ -34,9 +35,14 @@ export default {
     ...mapGetters([
       'currentDoc',
     ]),
-    
-    catlgType: function() {
-      return this.$route.params.catlgType
+
+    modal: function () {
+      const vm = this
+      if (!(vm.$route.params.catlgType === undefined) && (vm.$route.params.id == vm.item.id)) {
+        return false
+      } else {
+        return true
+      }
     },
   },
 

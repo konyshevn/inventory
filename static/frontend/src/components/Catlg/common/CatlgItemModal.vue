@@ -55,6 +55,9 @@ export default {
       vm.catlgType = event.catlgType
       vm.$root.$emit('bv::show::modal', 'catlg-item-modal')
     })
+    EventBus.$on('closeCatlgItemModal', event => {
+      vm.$root.$emit('bv::hide::modal', 'catlg-item-modal')
+    })
   }, 
 
 }

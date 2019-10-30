@@ -42,13 +42,19 @@ export default {
 	  'PUTcatlg',
 	]),
 	
-		async delCatlgs (catlgType, ids) {
+		async delCatlgs (catlgType, ids, modal=false) {
 	  	var vm = this;
       var errors = []
+      if (!Array.isArray(ids)){
+        ids = [ids]
+      }
+
 	  	var confirm = await vm.confirmMsg('Вы действительно хотите удалить выбранные элементы?')
 			if (confirm) {
+        console.log('delCatlgs: confirm')
 		  	await asyncForEach(ids, async function(item){
 				  let response = await vm.DELcatlg([catlgType, item])
+          console.log('delCatlgs: response', response)
           if (!(response.status == 200 || response.status == 201 || response.status == 204)) {
             console.log('delCatlgs', response)
             errors.push(`Ошибка удаления "${vm.GETcatlgItemLabel(catlgType, item)}": ${response.data}`)
@@ -56,7 +62,11 @@ export default {
 		    })
       
         if (errors.length == 0){
-          vm.$router.push({ name: 'catlg.list', params: {catlgType: catlgType} })
+          if (!modal) {
+            vm.$router.push({ name: 'catlg.list', params: {catlgType: catlgType} })
+          } else {
+            EventBus.$emit('closeCatlgItemModal')
+          }
         } else {
           EventBus.$emit('openStatusMsg', errors)
         }
@@ -74,7 +84,7 @@ export default {
       var response = await vm.PUTcatlg([catlgType, item])
       if (response.status == 200 || response.status == 201) {
         if (!(isNewCatlg)) {
-          vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
+          //vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
           item.id = response.data.id
         } 
 
