@@ -8,13 +8,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue'
 import HelloWorld from '@/components/HelloWorld.vue'
-import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue'
-import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue'
 import DocItem from '@/components/Doc/common/DocItem.vue'
 import DocList from '@/components/Doc/common/DocList.vue'
 import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
-import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue'
 import {store} from '@/components/store';
 
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');

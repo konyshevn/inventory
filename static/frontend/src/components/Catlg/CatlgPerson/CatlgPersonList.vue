@@ -126,24 +126,28 @@ export default {
   width: 5%;
 }
 .catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
-  width: 35%;
+  width: 40%;
 }
 .catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
-  width: 30%;
+  width: 20%;
 }
 .catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
-  width: 30%;
+  width: 35%;
 }
 
+.catlg-list {
+  max-width: 900px;
+  min-width: 700px;
+
+}
 
 .catlg-list tbody{
   display:block;
   overflow:auto;
-  min-width: 1000px;
   height: calc(100vh  - 220px);
 }
-.catlg-list thead tr{
-  display:block;
+.catlg-list thead tr {
+  display: table;
   width: calc( 100% - 1em ) !important;
   cursor: pointer;
 }

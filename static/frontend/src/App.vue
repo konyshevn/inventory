@@ -10,6 +10,7 @@
 
         <b-nav-item-dropdown text="Справочники" right>
           <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'device'}}">Устройства</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'person'}}">Сотрудники</b-dropdown-item>
           <b-dropdown-item href="#">Settings</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
