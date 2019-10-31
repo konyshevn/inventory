@@ -17,6 +17,9 @@ import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue'
 import {store} from '@/components/store';
 
+//var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');
+//Vue.component('CatlgItem', Vue.extend(catlgItemPath))
+
 Vue.use(VueRouter)
 Vue.config.devtools = true
 Vue.config.productionTip = false

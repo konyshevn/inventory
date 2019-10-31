@@ -17,7 +17,7 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget2.vue';
+import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';

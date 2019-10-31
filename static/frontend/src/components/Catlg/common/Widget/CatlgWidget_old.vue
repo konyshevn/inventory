@@ -24,12 +24,11 @@
           </div>
         </template>
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">O</b-button>
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">...</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">O</b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="widgetType + '-modal'">...</b-button>
         </template>
       </cool-select>
     </div>
-    <catlg-widget-modal :uid="uid" :catlgType="widgetType"> </catlg-widget-modal>
   </div>
 
 </template>
@@ -42,7 +41,6 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import { CoolSelect } from 'vue-cool-select';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal2.vue';
-import {EventBus} from '@/components/common/event-bus.js'
 
 export default {
   name: 'CatlgWidget',
@@ -117,14 +115,7 @@ export default {
   },
 
   computed: {
-    modalId: function () {
-      let vm = this
-      return `modal-${vm.widgetType}-${vm.uid}`
-    },
-
-    uid: function () {
-      return this._uid
-    },
+   
   },
 
   watch: {
@@ -151,17 +142,14 @@ export default {
   },
 
   created: function() {
-    const vm = this
-    EventBus.$on('catlgWidgetSetModel', event => {
-      if (event.modalId == vm.modalId){
-        vm.$emit('update:model', event.id)
-      }
-    })
   },
 
   mounted: function() {
   },
 
+  computed: {
+    
+  },
 
   beforeDestroy: function(){
     var vm = this
@@ -173,7 +161,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .widget-invalid {
   border: 1px solid red !important;
   border-radius: .25rem !important;

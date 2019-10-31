@@ -11,14 +11,14 @@
 import Vue from 'vue';
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
 import CatlgPersonList from '@/components/Catlg/CatlgPerson/CatlgPersonList.vue';
-import CatlgItemModal from '@/components/Catlg/common/CatlgItemModal.vue';
+//import CatlgItemModal from '@/components/Catlg/common/CatlgItemModal.vue';
 import {aliases} from '@/components/common/aliases.js';
 
 
 export default {
   name: 'CatlgList',
   components: {
-    CatlgItemModal,
+    CatlgItemModal: () => import('@/components/Catlg/common/CatlgItemModal.vue'),
     CatlgDeviceList,
     CatlgPersonList,
 

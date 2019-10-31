@@ -1,52 +1,73 @@
 <template>
-  <div class="container">
-    <b-modal id="device-modal" size="xl" scrollable @show="showModal('device')" @hidden="hideModal('device')">
-      <catlg-device-list :modal="true" v-if="showCatlg['device']"></catlg-device-list>
+  <div >
+    <b-modal :id="modalId" size="xl" scrollable
+    ok-title="Выбрать"
+    cancel-title="Отмена" 
+    @show="showModal=true" 
+    @hidden="showModal=false" 
+    @ok="handleOk">
+      <catlg-list :modal="modalId" :catlgType="catlgType" v-if="showModal"></catlg-list>
     </b-modal>
     
-    <b-modal id="person-modal">
-      Person Modal
-    </b-modal>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
+//import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
+import CatlgList from '@/components/Catlg/common/CatlgList.vue';
+import {aliases} from '@/components/common/aliases.js';
+import {EventBus} from '@/components/common/event-bus.js'
 
 export default {
   name: 'CatlgWidgetModal',
   components: {
-    CatlgDeviceList,
+    CatlgList,
   },
-  /*
+
   props: {
-    catlgs: Object
+    uid: Number,
+    catlgType: String,
   },
-*/
+
   data () {
     return {
-      showCatlg:{
-        'device': false,
-        'person': false
-      }
+      showModal: false,
+      catlgAlias: aliases.catlgAlias,
+      selectedItemId: null,
     }
   },
   methods: {
-    showModal: function (catlgType) {
-      var vm = this
-      vm.showCatlg[catlgType] = true
+    handleOk: function (bvModalEvt) {
+      const vm = this
+      EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: vm.selectedItemId})
     },
-    
-    hideModal: function (catlgType){
-      var vm = this
-      vm.showCatlg[catlgType] = false
-    },
-  },
-  mounted: function () {
 
-  }
+  },
+
+  computed: {
+    modalId: function () {
+      let vm = this
+      return `modal-${vm.catlgType}-${vm.uid}`
+    }
+  },
+
+  mounted: function () {
+  },
+
+  created: function () {
+    var vm = this
+    EventBus.$on('modalItemSelected', event => {
+      if (event.modalId == vm.modalId) {
+        vm.selectedItemId = event.id
+        if (event.handleOk) { 
+          vm.handleOk()
+          vm.$root.$emit('bv::hide::modal', vm.modalId)
+        }
+      }
+    })
+  },
   
 }
 </script>
