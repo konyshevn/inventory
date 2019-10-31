@@ -7,7 +7,7 @@
           <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected, status.modal)">Удалить</b-button>
           <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected)">Редактировать</b-button>
         </b-col>
-        <b-col sm="4">
+        <b-col sm="3">
           <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
         </b-col>
       </b-row>
@@ -76,3 +76,9 @@ export default {
   
 }
 </script>
+
+<style scoped>
+.col {
+  max-width: 350px;
+}
+</style>

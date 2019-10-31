@@ -10,6 +10,8 @@
 import Vue from 'vue';
 import CatlgDeviceItem from '@/components/Catlg/CatlgDevice/CatlgDeviceItem.vue';
 import CatlgPersonItem from '@/components/Catlg/CatlgPerson/CatlgPersonItem.vue';
+import CatlgDepartmentItem from '@/components/Catlg/CatlgDepartment/CatlgDepartmentItem.vue';
+
 import {aliases} from '@/components/common/aliases.js';
 
 
@@ -18,6 +20,10 @@ export default {
   components: {
     CatlgDeviceItem,
     CatlgPersonItem,
+    CatlgDepartmentItem,
+    CatlgStockItem: () => import('@/components/Catlg/CatlgStock/CatlgStockItem.vue'),
+    CatlgDeviceTypeItem: () => import('@/components/Catlg/CatlgDeviceType/CatlgDeviceTypeItem.vue'),
+    CatlgNomenclatureItem: () => import('@/components/Catlg/CatlgNomenclature/CatlgNomenclatureItem.vue'),
   },
 
   props: {

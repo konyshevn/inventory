@@ -10,8 +10,13 @@
 
         <b-nav-item-dropdown text="Справочники" right>
           <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'device'}}">Устройства</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'deviceType'}}">Типы устройств</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'nomenclature'}}">Номенклатура</b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
+          <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'department'}}">Подразделения</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'stock'}}">Склады</b-dropdown-item>
+          <b-dropdown-divider></b-dropdown-divider>
           <b-dropdown-item :to="{name: 'catlg.list', params: {catlgType: 'person'}}">Сотрудники</b-dropdown-item>
-          <b-dropdown-item href="#">Settings</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
