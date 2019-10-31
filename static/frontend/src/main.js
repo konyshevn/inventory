@@ -17,6 +17,22 @@ import {store} from '@/components/store';
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');
 //Vue.component('CatlgItem', Vue.extend(catlgItemPath))
 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faEdit)
+library.add(faSearch)
+library.add(faCheckSquare)
+library.add(faCheck)
+
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+
 Vue.use(VueRouter)
 Vue.config.devtools = true
 Vue.config.productionTip = false

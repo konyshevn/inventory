@@ -7,7 +7,7 @@
     <table class="table table-bordered catlg-list" id="catlg-list">
       <thead>
         <tr>
-          <th>У</th>
+          <th><font-awesome-icon icon="check-square"/></th>
           <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="surname">
             Фамилия
           </sort-header>

@@ -46,4 +46,7 @@ export default {
   margin-top: 40px;
   background: white;
 }
+.svg-inline--fa {
+  color: grey;
+}
 </style>

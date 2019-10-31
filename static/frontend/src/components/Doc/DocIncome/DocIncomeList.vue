@@ -7,7 +7,7 @@
     <table class="table table-bordered doc-list" id="doc-list">
       <thead>
         <tr>
-          <th>У</th>
+          <th><font-awesome-icon icon="check-square"/></th>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_date">Дата</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_num">Номер</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="active">Проведен</sort-header>
@@ -28,7 +28,7 @@
         <td>{{doc.doc_date | formatDate}}</td>
         <td>{{doc.doc_num}}</td>
         <td>
-          <span v-if="doc.active">Да</span>
+          <span v-if="doc.active"><font-awesome-icon icon="check"/></span>
           <span v-else></span>
         </td>
         <td><span>{{GETcatlgItemLabel('department', doc.department)}}</span></td>
@@ -160,5 +160,7 @@ padding: 0.25rem !important;
 .doc-list td:nth-child(7), .doc-list th:nth-child(7) {
   width: 15%;
 }
-
+.svg-inline--fa {
+  color: grey;
+}
 </style>

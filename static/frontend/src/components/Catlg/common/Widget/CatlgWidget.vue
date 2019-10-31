@@ -24,8 +24,8 @@
           </div>
         </template>
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">O</b-button>
-          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId">...</b-button>
+          <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model)"><font-awesome-icon icon="edit"/></b-button>
+          <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
         </template>
       </cool-select>
     </div>
@@ -43,13 +43,16 @@ import { mapMutations } from 'vuex';
 import { CoolSelect } from 'vue-cool-select';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 import {EventBus} from '@/components/common/event-bus.js'
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 
 export default {
   name: 'CatlgWidget',
   components: {
     CoolSelect,
     CatlgWidgetModal,
+
   },
+  mixins: [CatlgCommon],
   props: {
     model: Number,
     widgetType: String,
