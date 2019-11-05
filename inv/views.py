@@ -19,7 +19,7 @@ from django.db.models import Q
 from rest_framework import viewsets, status
 from . import serializers
 from rest_framework.response import Response
-
+from rest_framework.decorators import action
 
 class DocumentViewSet(viewsets.ViewSet):
     def destroy(self, request, pk, format=None):
@@ -30,19 +30,26 @@ class DocumentViewSet(viewsets.ViewSet):
         else:
             return Response(dd['data'], status=status.HTTP_400_BAD_REQUEST)
 
-    def get_queryset(self):
+    @action(detail=False, url_path='next_doc_num')
+    def next_doc_num(self, request, pk=None):
+        doc_num = self.serializer_class.Meta.model.objects.get_doc_num()
+        doc_num_json = json.dumps({'doc_num': doc_num})
+        return HttpResponse(doc_num_json)
 
-        # Get URL parameter as a string, if exists
-        get_doc_num = self.request.query_params.get('get_doc_num', None)
-        if get_doc_num is not None:
-            doc_num = self.serializer_class.Meta.model.objects.get_doc_num()
-            queryset =  ({'doc_num': doc_num},)
-            print(queryset)
-        else:
-            # Else no parameters, return all objects
-            queryset = self.serializer_class.Meta.model.objects.all()
+    @action(detail=False, url_path='get_labels')
+    def get_labels(self, *args):
+        labels = {}
 
-        return queryset
+        for field in self.serializer_class.Meta.model._meta.get_fields():
+            if field.name in self.serializer_class.Meta.model._meta.fields:
+                labels[field.name] = field.verbose_name
+
+        labels['_model'] = {
+            'singular': self.serializer_class.Meta.model._meta.verbose_name.title(),
+            'plural': self.serializer_class.Meta.model._meta.verbose_name_plural.title(),
+        }
+        labels_json = json.dumps(labels)
+        return HttpResponse(labels_json)
 
 
 class CatalogViewSet(viewsets.ViewSet):

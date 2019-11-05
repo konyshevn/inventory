@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from . import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -15,7 +16,29 @@ class leaderField(serializers.RelatedField):
 
 
 class CatalogSerializer(serializers.Serializer):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(CatalogSerializer, self).__init__(*args, **kwargs)
+
+        if 'labels' in self.fields:
+            raise RuntimeError(
+                'You cant have labels field defined '
+                'while using MyModelSerializer'
+            )
+
+        self.fields['labels'] = SerializerMethodField()
+
+    def get_labels(self, *args):
+        labels = {}
+
+        for field in self.Meta.model._meta.get_fields():
+            if field.name in self.fields:
+                labels[field.name] = field.verbose_name
+
+        labels['_model'] = {
+            'singular': self.Meta.model._meta.verbose_name.title(),
+            'plural': self.Meta.model._meta.verbose_name_plural.title(),
+        }
+        return labels
 
 
 class DocumentSerializer(serializers.Serializer):
