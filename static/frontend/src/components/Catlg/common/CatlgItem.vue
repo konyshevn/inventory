@@ -1,6 +1,8 @@
 <template>
   <div align="left">
     <component :is="catlgAlias[catlgType]['item']" :id="id"></component>
+
+
   </div>
 </template>
 

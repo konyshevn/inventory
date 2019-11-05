@@ -5,7 +5,7 @@
         <b-col align="left">
           <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, 'new')">Добавить</b-button>
           <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected, status.modal)">Удалить</b-button>
-          <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected)">Редактировать</b-button>
+          <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected, `catlg-item-modal-${catlgType}-list`)">Редактировать</b-button>
         </b-col>
         <b-col sm="3">
           <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>

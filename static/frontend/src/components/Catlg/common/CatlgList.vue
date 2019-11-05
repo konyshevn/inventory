@@ -1,7 +1,7 @@
 <template>
   <div style="text-align: center">
     <component :is="catlgAlias[catlgType]['list']" :modal="modal"></component>
-    <catlg-item-modal></catlg-item-modal>
+    <catlg-item-modal uid="list" :catlgType="catlgType"></catlg-item-modal>
   </div>
 </template>
 

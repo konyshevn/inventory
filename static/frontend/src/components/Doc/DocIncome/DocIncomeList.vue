@@ -22,6 +22,7 @@
           <b-form-checkbox
           v-model="status.selected"
           :value="doc.id"
+          button-variant="danger"
           >
           </b-form-checkbox>
         </td>

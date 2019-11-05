@@ -24,12 +24,13 @@
           </div>
         </template>
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model)"><font-awesome-icon icon="edit"/></b-button>
+          <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
         </template>
       </cool-select>
     </div>
     <catlg-widget-modal :uid="uid" :catlgType="widgetType"> </catlg-widget-modal>
+    <catlg-item-modal :uid="uid" :catlgType="widgetType"></catlg-item-modal>
   </div>
 
 </template>
@@ -48,6 +49,7 @@ import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 export default {
   name: 'CatlgWidget',
   components: {
+    CatlgItemModal: () => import('@/components/Catlg/common/CatlgItemModal.vue'),
     CoolSelect,
     CatlgWidgetModal,
 
@@ -125,6 +127,11 @@ export default {
       return `modal-${vm.widgetType}-${vm.uid}`
     },
 
+    catlgItemModalId: function () {
+      let vm = this
+      return `catlg-item-modal-${vm.widgetType}-${vm.uid}`
+    },
+
     uid: function () {
       return this._uid
     },
@@ -160,9 +167,6 @@ export default {
         vm.$emit('update:model', event.id)
       }
     })
-  },
-
-  mounted: function() {
   },
 
 

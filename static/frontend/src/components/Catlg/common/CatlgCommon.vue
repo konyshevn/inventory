@@ -94,9 +94,9 @@ export default {
       }
 		},
 
-    editCatlgItemModal: function (catlgType, itemId) {
+    editCatlgItemModal: function (catlgType, itemId, modalId=null) {
       const vm = this
-      EventBus.$emit('editCatlgItemModal', {catlgType: catlgType, id: itemId})
+      EventBus.$emit('editCatlgItemModal', {catlgType: catlgType, id: itemId, modalId: modalId})
     },
 
 	},

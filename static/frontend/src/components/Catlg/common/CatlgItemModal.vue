@@ -1,6 +1,6 @@
 <template>
   <div align="left">
-    <b-modal id="catlg-item-modal" size="lg" scrollable 
+    <b-modal :id="modalId" size="lg" scrollable 
     ok-only 
     ok-variant="secondary" 
     ok-title="Закрыть"
@@ -29,13 +29,15 @@ export default {
   },
 
   props: {
+    uid: String,
+    catlgType: String,
   },
   
   data () {
     return {
       showModal: false,
       id: null,
-      catlgType: ''
+      //catlgType: ''
     }       
   },
 
@@ -43,6 +45,10 @@ export default {
   },
 
   computed: {
+    modalId: function () {
+      let vm = this
+      return `catlg-item-modal-${vm.catlgType}-${vm.uid}`
+    }
   },
   
   mounted: function () {
@@ -52,12 +58,16 @@ export default {
     const vm = this
     EventBus.$on('editCatlgItemModal', event => {
       console.log('$on.editCatlgItemModal: event', event)
-      vm.id = event.id
-      vm.catlgType = event.catlgType
-      vm.$root.$emit('bv::show::modal', 'catlg-item-modal')
+      if (event.modalId == vm.modalId) {
+        vm.id = event.id
+        //vm.catlgType = event.catlgType
+        vm.$root.$emit('bv::show::modal', vm.modalId)
+      }
     })
     EventBus.$on('closeCatlgItemModal', event => {
-      vm.$root.$emit('bv::hide::modal', 'catlg-item-modal')
+      if (event.modalId == vm.modalId) {
+        vm.$root.$emit('bv::hide::modal', vm.modalId)
+      }
     })
   }, 
 

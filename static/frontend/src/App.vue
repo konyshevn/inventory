@@ -31,7 +31,7 @@ import StatusMsg from '@/components/common/StatusMsg.vue';
 export default {
   name: 'app',
   components: {
-    StatusMsg
+    StatusMsg,
   }
 }
 </script>
