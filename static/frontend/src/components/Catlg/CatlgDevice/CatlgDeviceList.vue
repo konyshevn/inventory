@@ -1,6 +1,6 @@
 <template>
   <div class = "catlg-device-list container">
-    <h2 align="left">Устройства</h2>
+    <h2 v-if="!modal" align="left">{{catlgTitle(status.catlgType, 'plural')}}</h2>
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>

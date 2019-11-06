@@ -1,6 +1,7 @@
 <template>
   <div >
     <b-modal :id="modalId" size="xl" scrollable
+    :title="catlgTitle(catlgType, 'plural')"
     ok-title="Выбрать"
     cancel-title="Отмена" 
     @show="showModal=true" 
@@ -19,13 +20,14 @@ import Vue from 'vue'
 import CatlgList from '@/components/Catlg/common/CatlgList.vue';
 import {aliases} from '@/components/common/aliases.js';
 import {EventBus} from '@/components/common/event-bus.js'
+import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 
 export default {
   name: 'CatlgWidgetModal',
   components: {
     CatlgList,
   },
-
+  mixins: [CatlgCommon],
   props: {
     uid: Number,
     catlgType: String,

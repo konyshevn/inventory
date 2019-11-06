@@ -1,6 +1,6 @@
 <template>
   <div class="doc-income-list container">
-    <h2 align="left">Оприходование</h2>
+    <h2 align="left">{{docTitle(status.docType, 'plural')}}</h2>
     <b-container class="text-left">
       <doc-list-control-panel :status="status"></doc-list-control-panel>
     </b-container>
@@ -68,20 +68,23 @@ export default {
     DocListControlPanel,
     SortHeader,
   },
+  mixins:[DocCommon],
   props: {
   },
   data () {
     return {
       status: {
         selected: [],
+        docType: 'docincome',
       },
     }
   },
   methods: {
 
     clickRow: function (id, event) {
+      const vm = this
       console.log(id);
-      this.$router.push({ name: 'doc.item', params: {id: id, docType: 'docincome'} })
+      this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
     },
      
     ...mapActions([
@@ -93,7 +96,8 @@ export default {
   },
 
   mounted: function () {
-    this.FETCHdocs('docincome');
+    const vm = this
+    this.FETCHdocs(vm.status.docType);
     
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {

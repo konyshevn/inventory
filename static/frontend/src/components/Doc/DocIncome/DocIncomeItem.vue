@@ -2,7 +2,7 @@
   <div class="doc-income-item container">
     <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
     <header>
-      <h2 align="left">Оприходование</h2>
+      <h2 align="left">{{docTitle(docType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
@@ -146,6 +146,7 @@ export default {
   data () {
     return {
       docChanged: false,
+      docType: 'docincome',
     }       
   },
 
@@ -180,15 +181,15 @@ export default {
 
  
   mounted: function () {
-    var vm = this
+    const vm = this
     //this.$nextTick(function () {
     //  vm.getDocItem('docincome', vm.id);
     //})
     if (vm.id == "new") {
       vm.DELcurrentDoc()
-      vm.INITcurrentDoc('docincome')
+      vm.INITcurrentDoc(vm.docType)
     } else {
-      vm.FETCHcurrentDoc(['docincome', vm.id])
+      vm.FETCHcurrentDoc([vm.docType, vm.id])
     }
   },
 

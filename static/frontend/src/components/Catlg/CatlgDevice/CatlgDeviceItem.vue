@@ -2,7 +2,7 @@
   <div class="catlg-device-item container" >
     <div class="container">
     <header>
-      <h2 align="left">Устройство</h2>
+      <h2 align="left">{{catlgTitle(catlgType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>

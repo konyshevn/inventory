@@ -41,6 +41,26 @@ export default {
       return value
     },
 
+    catlgTitle(catlgType, type='singular'){
+      let title = 'unknown'
+      if (type == 'singular'){
+        title = aliases.catlgAlias[catlgType]['titleSingular']
+      } else if (type == 'plural') {
+        title = aliases.catlgAlias[catlgType]['titlePlural']
+      }
+      return title
+    },
+
+    docTitle(docType, type='singular'){
+      let title = 'unknown'
+      if (type == 'singular'){
+        title = aliases.docAlias[docType]['titleSingular']
+      } else if (type == 'plural') {
+        title = aliases.docAlias[docType]['titlePlural']
+      }
+      return title
+    },
+
     getErrorMsg: function(error) {
       var errorMsg = ''
       errorMsg = errorMsg + JSON.stringify(error)
