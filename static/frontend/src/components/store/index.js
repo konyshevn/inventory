@@ -337,6 +337,9 @@ export const store = new Vuex.Store({
     PUTcurrentDoc: async ({commit, dispatch, getters}) => {
       //commit('currentDocTUclearNullId')
       var currentDoc = getters.currentDoc
+      if (currentDoc.doc_num == "") {
+        currentDoc.doc_num = null
+      }
 
       currentDoc.table_unit.forEach(function(item, i, arr){
         if (String(item.id).indexOf("null_") == 0) {

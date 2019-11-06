@@ -42,9 +42,10 @@ class CatalogSerializer(serializers.Serializer):
 
 
 class DocumentSerializer(serializers.Serializer):
+    doc_num = serializers.IntegerField(required=False, allow_null=True)
     def create(self, validated_data):
         print(validated_data)
-        print(dict(validated_data['table_unit'][0]))
+        #print(dict(validated_data['table_unit'][0]))
         cd = self.Meta.model.objects.create_doc(doc_attr=validated_data, table_unit=validated_data['table_unit'])
         if not cd['success']:
             raise serializers.ValidationError(cd['data'])
@@ -55,6 +56,14 @@ class DocumentSerializer(serializers.Serializer):
         if not cd['success']:
             raise serializers.ValidationError(cd['data'])
         return cd['data'][0]
+    
+    #def validate(self, data):
+        """
+        Check that start is before finish.
+        """
+        #if data['start'] > data['finish']:
+        #    raise serializers.ValidationError("finish must occur after start")
+        #return data
 
 
 class DocIncomeTableUnitSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 export function docincome() {
   this.id = null
   this.doc_date = new Date
-  this.doc_num = ''
+  this.doc_num = null
   this.active = false
   this.department = ''
   this.stock = ''

@@ -327,6 +327,11 @@ class Document(models.Model):
             # то присвоить соотвествующему атрибуту документа переданное значение из формы.
             if attr in doc_attr:
                 setattr(self, attr, doc_attr[attr])
+
+            # если это новый документ и у него не заполнен номер, то получить номер автоматом
+            if ((doc_attr['doc_num'] is None) and (doc_attr['id'] is None)):
+                setattr(self, 'doc_num', doc_model.objects.get_doc_num())
+
         try:
             self.save()
         except Exception as err:
