@@ -138,7 +138,7 @@ export default {
 
   },
   props: {
-    id: Number,
+    id: String,
   },
   
   mixins: [CatlgCommon, DocCommon],
@@ -197,7 +197,7 @@ export default {
   }, 
 
   beforeDestroy: function() {
-    console.log('beforeDestroy')
+    //console.log('beforeDestroy')
     this.DELcurrentDoc()
   },
 

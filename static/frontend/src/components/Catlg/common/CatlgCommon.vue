@@ -96,7 +96,13 @@ export default {
 
     editCatlgItemModal: function (catlgType, itemId, modalId=null) {
       const vm = this
-      EventBus.$emit('editCatlgItemModal', {catlgType: catlgType, id: itemId, modalId: modalId})
+      //console.log('editCatlgItemModal: itemId', itemId)
+      if (Array.isArray(itemId)) {
+        itemId = itemId[0]
+      }
+      if (!((itemId == null) || (itemId == undefined))){
+        EventBus.$emit('editCatlgItemModal', {catlgType: catlgType, id: itemId, modalId: modalId})
+      }
     },
 
 	},

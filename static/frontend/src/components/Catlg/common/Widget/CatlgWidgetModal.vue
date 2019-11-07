@@ -29,7 +29,7 @@ export default {
   },
   mixins: [CatlgCommon],
   props: {
-    uid: Number,
+    uid: String,
     catlgType: String,
   },
 

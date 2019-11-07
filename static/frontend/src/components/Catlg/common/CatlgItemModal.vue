@@ -57,7 +57,7 @@ export default {
   created: function() {
     const vm = this
     EventBus.$on('editCatlgItemModal', event => {
-      console.log('$on.editCatlgItemModal: event', event)
+      //console.log('$on.editCatlgItemModal: event', event)
       if (event.modalId == vm.modalId) {
         vm.id = event.id
         //vm.catlgType = event.catlgType

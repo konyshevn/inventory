@@ -133,7 +133,7 @@ export default {
     },
 
     uid: function () {
-      return this._uid
+      return String(this._uid)
     },
   },
 
