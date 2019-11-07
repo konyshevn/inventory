@@ -27,12 +27,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in GETcatlg('device')" :key="device.id" @dblclick="clickRow(device.id, $event)">
+        <tr v-for="device in GETcatlg('device')" :key="device.id" @dblclick="clickRow(device.id, $event)" @click="selectRow(device.id, $event)">
           <td>
             <b-form-checkbox
             v-model="status.selected"
             :value="device.id"
-            @input="selectedInput">
+            @input="selectedInput"
+            class="row-checkbox">
             </b-form-checkbox>
           </td>
           <td>
@@ -104,6 +105,17 @@ export default {
         EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: id, handleOk: true})
       } else {
         this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: 'device'} })
+      }
+    },
+
+    selectRow: function (id, event) {
+      const vm = this
+      if (event.srcElement.className == 'custom-control-label') { return }
+      if (!vm.modal) {
+        let idIndex = vm.status.selected.indexOf(id)
+        let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
+      } else {
+        vm.status.selected = (vm.status.selected == id) ? null : id
       }
     },
 
