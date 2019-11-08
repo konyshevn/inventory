@@ -4,7 +4,7 @@
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
-    <table class="table table-bordered catlg-list" id="catlg-list">
+    <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
@@ -27,7 +27,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in GETcatlg('device')" :key="device.id" @dblclick="clickRow(device.id, $event)" @click="selectRow(device.id, $event)">
+        <tr v-for="device in GETcatlg('device')" :key="device.id" 
+        @dblclick="clickRow(device.id, $event)" 
+        @click="selectRow(device.id, $event)"
+        :class="{'row-selected': isRowSelected(device.id)}">
           <td>
             <b-form-checkbox
             v-model="status.selected"
@@ -108,16 +111,7 @@ export default {
       }
     },
 
-    selectRow: function (id, event) {
-      const vm = this
-      if (event.srcElement.className == 'custom-control-label') { return }
-      if (!vm.modal) {
-        let idIndex = vm.status.selected.indexOf(id)
-        let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
-      } else {
-        vm.status.selected = (vm.status.selected == id) ? null : id
-      }
-    },
+
 
     selectedInput: function (value) {
       const vm = this
@@ -135,7 +129,7 @@ export default {
   mounted: function () {
     const vm = this
     vm.status.modal = vm.modal
-    if (vm.modal) {vm.status.selected = null}
+    if (vm.modal) {vm.status.selected = ''}
     this.FETCHcatlg(['device']);
   },
 
@@ -172,6 +166,7 @@ export default {
   min-width: 1000px;
   height: calc(100vh  - 220px);
 }
+
 .catlg-list thead tr{
   display:block;
   width: calc( 100% - 1em ) !important;
@@ -183,10 +178,10 @@ background-color: #f2f2f2;
 color: #000000
 }
 
-
 .catlg-list th, .catlg-list td {
 padding: 0.25rem !important;
 }
+
 
 
 </style>

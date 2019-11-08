@@ -17,7 +17,10 @@
         </tr>
       </thead>
       <tbody>
-      <tr v-for="doc in GETdocs" :key="doc.id" @dblclick="clickRow(doc.id, $event)" >
+      <tr v-for="doc in GETdocs" :key="doc.id" 
+      @dblclick="clickRow(doc.id, $event)" 
+      @click="selectRow(doc.id, $event)"
+      :class="{'row-selected': isRowSelected(doc.id)}">
         <td>
           <b-form-checkbox
           v-model="status.selected"
@@ -57,7 +60,7 @@ import SortHeader from '@/components/common/SortHeader.vue'
 
 Vue.filter('formatDate', function(value) {
   if (value) {
-    return moment(String(value)).format('DD.MM.YYYY hh:mm:ss')
+    return moment(String(value)).format('DD.MM.YYYY HH:mm:ss')
   }
 })
 

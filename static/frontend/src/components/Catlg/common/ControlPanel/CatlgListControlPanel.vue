@@ -43,7 +43,7 @@ export default {
     tableSearch: function() {
       var phrase = this.searchText;
       console.log('phrase: ', phrase)
-      var table = document.getElementById('catlg-list');
+      var table = document.getElementById(`catlg-list-${this.catlgType}`);
       var regPhrase = new RegExp(phrase, 'i');
       var flag = false;
       for (var i = 1; i < table.rows.length; i++) {

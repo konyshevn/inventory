@@ -49,4 +49,11 @@ export default {
 .svg-inline--fa {
   color: grey;
 }
+
+.row-selected {
+background-color: #f2f2f2;
+color: #000000;
+font-weight: bold;
+}
+
 </style>

@@ -4,7 +4,7 @@
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
-    <table class="table table-bordered catlg-list" id="catlg-list">
+    <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
@@ -20,7 +20,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in GETcatlg(status.catlgType)" :key="item.id" @dblclick="clickRow(item.id, $event)">
+        <tr v-for="item in GETcatlg(status.catlgType)" :key="item.id" 
+        @dblclick="clickRow(item.id, $event)"
+        @click="selectRow(item.id, $event)"
+        :class="{'row-selected': isRowSelected(item.id)}">
           <td>
             <b-form-checkbox
             v-model="status.selected"

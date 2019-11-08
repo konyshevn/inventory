@@ -61,6 +61,30 @@ export default {
       return title
     },
 
+    selectRow: function (id, event) {
+      const vm = this
+      if (event.srcElement.className == 'custom-control-label') { return }
+      if (!vm.modal) {
+        let idIndex = vm.status.selected.indexOf(id)
+        let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
+      } else {
+        vm.status.selected = (vm.status.selected == id) ? null : id
+      }
+    },
+
+    isRowSelected: function (id) {
+      const vm = this
+      let result = false
+      if (!vm.modal) {
+        let idIndex = vm.status.selected.indexOf(id)
+        result = (idIndex >= 0) ? true : false
+      } else {
+        result = (vm.status.selected == id) ? true : false
+      }
+      return result
+
+    },
+
     getErrorMsg: function(error) {
       var errorMsg = ''
       errorMsg = errorMsg + JSON.stringify(error)
