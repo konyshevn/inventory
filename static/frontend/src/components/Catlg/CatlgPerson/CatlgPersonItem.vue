@@ -6,7 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
-    <catlg-item-control-panel :item="item" :catlgType="catlgType"></catlg-item-control-panel>
+    <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid"></catlg-item-control-panel>
     <div>
       <b-table-simple small class="table-borderless" style="width: 500px">
         <b-tr>
@@ -32,7 +32,7 @@
             Подразделение
           </b-td>
           <b-td>
-            <catlg-widget widget-type="department" :model.sync="item.department" required></catlg-widget>
+            <catlg-widget widget-type="department" :model.sync="item.department" :required="uid"></catlg-widget>
           </b-td>
         </b-tr>
                
