@@ -46,56 +46,72 @@ export default {
       var vm = this;
       var itemStatus = vm.currentDoc.active
       var isNewDoc = vm.currentDoc.id
+      let response = {}
+      let errors = []
 
       await vm.UPDcurrentDoc(['active', true])
-      try {
-        if (!vm.widgetsIsValid(parent)) { 
-          throw new Error('Заполните все необходимые реквизиты документа.')
-        }
-        var response = await vm.PUTcurrentDoc()
-        if (!(isNewDoc) && (response.status == 200 || response.status == 201)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
-        }
-        //vm.$bvModal.show('status-msg')
-      } catch(error) {
-        await vm.UPDcurrentDoc(['active', itemStatus])
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка проведения: ${vm.getErrorMsg(error)}`])
+      if (!vm.widgetsIsValid(parent)) {
+        response.status = 400
+        response.data = `Заполните все необходимые реквизиты.`
+      } else {
+        response = await vm.PUTcurrentDoc()
       }
+
+      if (response.status == 200 || response.status == 201) {
+        if (!(isNewDoc)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
+        } 
+      } else {
+        await vm.UPDcurrentDoc(['active', itemStatus])
+        errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
+        EventBus.$emit('openStatusMsg', errors)
+      }
+
     },
 
     async regDelDocItem (parent) {
       var vm = this;
       var itemStatus = vm.currentDoc.active
-      vm.UPDcurrentDoc(['active', false])
-      try {
-        if (!vm.widgetsIsValid(parent)) { 
-          throw new Error('Заполните все необходимые реквизиты документа.')
-        }
-        var response = await vm.PUTcurrentDoc()
-      } catch(error) {
-        vm.UPDcurrentDoc(['active', itemStatus])
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка отмены проведения: ${vm.getErrorMsg(error)}`])
+      var response = {}
+      var errors = []
+      await vm.UPDcurrentDoc(['active', false])
+      
+      if (!vm.widgetsIsValid(parent)) {
+        response.status = 400
+        response.data = `Заполните все необходимые реквизиты.`
+      } else {
+        response = await vm.PUTcurrentDoc()
+      }
+
+      if (!(response.status == 200 || response.status == 201)) {
+        await vm.UPDcurrentDoc(['active', itemStatus])
+        errors.push(`Ошибка отмены проведения: ${JSON.stringify(response.data)}`)
+        EventBus.$emit('openStatusMsg', errors)
       }
     },
 
     async saveDocItem (parent) {
       var vm = this;
       var isNewDoc = vm.currentDoc.id
-      console.log('saveDocItem: widgetsIsValid(parent)', vm.widgetsIsValid(parent))
-      try {
-        if (!vm.widgetsIsValid(parent)) { 
-          throw new Error('Заполните все необходимые реквизиты документа.')
-        }
-        var response = await vm.PUTcurrentDoc()
-        if (!(isNewDoc) && (response.status == 200 || response.status == 201)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
-        }
-      } catch(error) {
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка сохранения: ${vm.getErrorMsg(error)}`])
+      var response = {}
+      var errors = []
+
+      if (!vm.widgetsIsValid(parent)) {
+        response.status = 400
+        response.data = `Заполните все необходимые реквизиты.`
+      } else {
+        response = await vm.PUTcurrentDoc()
       }
+
+      if (response.status == 200 || response.status == 201) {
+        if (!(isNewDoc)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
+        } 
+      } else {
+        errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
+        EventBus.$emit('openStatusMsg', errors)
+      }
+
     },
 
     async delDocItem (docType, item) {

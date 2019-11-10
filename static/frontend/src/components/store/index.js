@@ -346,28 +346,33 @@ export const store = new Vuex.Store({
 
   actions: {
     PUTcurrentDoc: async ({commit, dispatch, getters}) => {
-      //commit('currentDocTUclearNullId')
-      var currentDoc = getters.currentDoc
-      if (currentDoc.doc_num == "") {
-        currentDoc.doc_num = null
-      }
-
-      currentDoc.table_unit.forEach(function(item, i, arr){
-        if (String(item.id).indexOf("null_") == 0) {
-          item.id = null
+      try {
+        var currentDoc = getters.currentDoc
+        var response = {}
+        if (currentDoc.doc_num == "") {
+          currentDoc.doc_num = null
         }
-      })
 
-      if (currentDoc.id == null) {
-        var response = await HTTP.post(getters.currentDocStatus.docType + '/', currentDoc)
-      } else {
-        var response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', currentDoc)
-      }
+        currentDoc.table_unit.forEach(function(item, i, arr){
+          if (String(item.id).indexOf("null_") == 0) {
+            item.id = null
+          }
+        })
 
-      if (response.status == 200 || response.status == 201) {
-        dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
+        if (currentDoc.id == null) {
+          response = await HTTP.post(getters.currentDocStatus.docType + '/', currentDoc)
+        } else {
+          response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', currentDoc)
+        }
+
+        if (response.status >= 200 && response.status < 300) {
+          dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
+        }
+      } catch(error) {
+        response = error['response']
+      } finally {
+        return response
       }
-      return response
     },
 
     PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
