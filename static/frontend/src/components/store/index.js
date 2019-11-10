@@ -12,7 +12,6 @@ export const store = new Vuex.Store({
       data: {},
       status: {
         docType: String,
-        widgetIsValid: {},
         tableUnit: {
           sort: {field: "", fieldType: "", order: -1},
           selected: []
@@ -164,7 +163,6 @@ export const store = new Vuex.Store({
       state.currentDoc.data = {}
       state.currentDoc.status = {
         docType: String,
-        widgetIsValid: {},
         tableUnit: {
           sort: {field: "", fieldType: "", order: -1},
           selected: []
@@ -181,15 +179,6 @@ export const store = new Vuex.Store({
 
     SETcurrentDocType: (state, data) => {
       state.currentDoc.status.docType = data
-    },
-
-
-    SETcurrentDocWidgetState: (state, [uid, isValid]) => {
-      Vue.set(state.currentDoc.status.widgetIsValid, uid, isValid)
-    },
-
-    DELcurrentDocWidgetState: (state, uid) => {
-      Vue.delete(state.currentDoc.status.widgetIsValid, uid)
     },
 
 
