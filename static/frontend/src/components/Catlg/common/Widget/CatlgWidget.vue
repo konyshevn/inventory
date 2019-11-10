@@ -59,8 +59,8 @@ export default {
     model: Number,
     widgetType: String,
     required: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: null,
     },
   },
 
@@ -84,8 +84,8 @@ export default {
 
   methods: {
     ...mapMutations([
-      'SETcurrentDocWidgetState',
-      'DELcurrentDocWidgetState',
+      'SETwidgetState',
+      'DELwidgetState',
     ]),
 
     onInput: function () {
@@ -151,8 +151,9 @@ export default {
         } else {
           vm.isValid = false
         }
-        if (vm.required) {
-          vm.SETcurrentDocWidgetState([vm._uid, vm.isValid])
+        if (vm.required != null) {
+          console.log('CatlgWidget: watch required', vm.required)
+          vm.SETwidgetState([vm.required, vm._uid, vm.isValid])
         }
       },
       immediate: true,
@@ -173,7 +174,7 @@ export default {
   beforeDestroy: function(){
     var vm = this
     // Костыль. Исправить на удаление uid из списка uid'ов widgetIsValid
-    vm.DELcurrentDocWidgetState(vm._uid)
+    vm.DELwidgetState(vm._uid)
   },
 
   

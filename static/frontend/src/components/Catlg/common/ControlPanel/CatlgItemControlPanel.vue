@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-button-group align="left">
-      <b-button type="submit" variant="light" size="sm" @click="saveCatlgItem(catlgType, item)">Сохранить</b-button>
+      <b-button type="submit" variant="light" size="sm" @click="saveCatlgItem(catlgType, item, parent)">Сохранить</b-button>
       <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delCatlgs(catlgType, [item.id], modal)">Удалить</b-button>
     </b-button-group>
   </div>
@@ -21,6 +21,7 @@ export default {
   props: {
     item: {},
     catlgType: '',
+    parent: null,
   },
 
   data () {

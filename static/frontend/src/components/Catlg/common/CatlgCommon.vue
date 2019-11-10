@@ -32,6 +32,7 @@ export default {
     ...mapGetters([
       'GETcatlgItem',
       'GETcatlgItemLabel',
+      'widgetsIsValid',
     ])
   },
 
@@ -74,20 +75,22 @@ export default {
     },
 	
 
-		async saveCatlgItem (catlgType, item){
+		async saveCatlgItem (catlgType, item, parent){
 			var vm = this
       var isNewCatlg = item.id
       var errors = []
-        //if (!vm.widgetsIsValid) { 
-        //  throw new Error('Заполните все необходимые реквизиты документа.')
-        //}
-      var response = await vm.PUTcatlg([catlgType, item])
+      let response = {}
+      if (!vm.widgetsIsValid(parent)) {
+        response.status = 400
+        response.data = `Заполните все необходимые реквизиты.`
+      } else {
+        response = await vm.PUTcatlg([catlgType, item])
+      }
+
       if (response.status == 200 || response.status == 201) {
         if (!(isNewCatlg)) {
-          //vm.$router.push({ name: 'catlg.item', params: {catlgType: catlgType, id: response.data.id} })
           item.id = response.data.id
         } 
-
       } else {
         errors.push(`Ошибка сохранения "${vm.GETcatlgItemLabel(catlgType, item.id)}": ${response.data}`)
         EventBus.$emit('openStatusMsg', errors)

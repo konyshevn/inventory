@@ -105,6 +105,10 @@ export default {
   },
 
   computed: {
+    uid: function () {
+      return String(this._uid)
+    },
+
   },
   
   mounted: function () {

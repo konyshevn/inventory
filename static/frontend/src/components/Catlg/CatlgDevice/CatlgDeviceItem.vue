@@ -6,7 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
-    <catlg-item-control-panel :item="item" :catlgType="catlgType"></catlg-item-control-panel>
+    <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid"></catlg-item-control-panel>
     <div>
       <b-table-simple small class="table-borderless" style="width: 500px">
         <b-tr>
@@ -14,7 +14,7 @@
             Тип
           </b-td>
           <b-td >
-            <catlg-widget widget-type="deviceType" :model.sync="item.deviceType" required></catlg-widget>
+            <catlg-widget widget-type="deviceType" :model.sync="item.deviceType" :required="uid"></catlg-widget>
           </b-td>
         </b-tr>
 
@@ -23,7 +23,7 @@
             Наименование
           </b-td>
           <b-td>
-            <catlg-widget widget-type="nomenclature" :model.sync="item.nomenclature" required></catlg-widget>
+            <catlg-widget widget-type="nomenclature" :model.sync="item.nomenclature" :required="uid"></catlg-widget>
           </b-td>
         </b-tr>
         
@@ -55,7 +55,7 @@
         </b-tr>
       </b-table-simple>
     </div>
-
+    {{widgetsIsValid(uid)}}
   </div>
 </template>
 
@@ -90,6 +90,7 @@ export default {
     return {
       catlgType: 'device',
       item: {},
+      widgetIsValid: {},
     }       
   },
 
@@ -105,8 +106,9 @@ export default {
   computed: {
     ...mapGetters([
       'GETcatlgItem',
+      'widgetsIsValid',
+    ]),
 
-    ])
   },
 
  /*

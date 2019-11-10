@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-button-group align="left">
-      <b-button type="submit" variant="light" size="sm" @click="regWriteDocItem()">Провести</b-button>
-      <b-button type="submit" variant="light" size="sm" @click="regDelDocItem()">Отмена проведения</b-button>
-      <b-button type="submit" variant="light" size="sm" @click="saveDocItem()">Сохранить</b-button>
+      <b-button type="submit" variant="light" size="sm" @click="regWriteDocItem(parent)">Провести</b-button>
+      <b-button type="submit" variant="light" size="sm" @click="regDelDocItem(parent)">Отмена проведения</b-button>
+      <b-button type="submit" variant="light" size="sm" @click="saveDocItem(parent)">Сохранить</b-button>
       <b-button type="submit" variant="light" size="sm" :disabled="!currentDoc.id" @click="delDocItem()">Удалить</b-button>
     </b-button-group>
   </div>
@@ -21,6 +21,7 @@ export default {
   },
   mixins: [DocCommon],
   props: {
+    parent: null,
   },
 
   data () {

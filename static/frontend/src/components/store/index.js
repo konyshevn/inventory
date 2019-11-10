@@ -20,7 +20,9 @@ export const store = new Vuex.Store({
         loading: true,
       }
     },
-
+    
+    widgetIsValid: [],
+    
     docs: {
       data: [],
       filtered: [],
@@ -99,13 +101,16 @@ export const store = new Vuex.Store({
       }
     },
 
-    widgetsIsValid: state => {
-      var result = true
-      for (let uid in state.currentDoc.status.widgetIsValid) {
-        console.log('widgetIsValid: uid, state', uid, state.currentDoc.status.widgetIsValid[uid])
-        result = result && state.currentDoc.status.widgetIsValid[uid]
-      }
-      console.log('widgetIsValid: result', result)
+    widgetsIsValid: state => parent => {
+      let result = true
+      console.log('widgetsIsValid: parent', parent)
+      //if (state.widgetIsValid.length == 0) {return result}
+      let widgets = _.filter(state.widgetIsValid, {parent: parent})
+      console.log('widgetsIsValid: state.widgetIsValid, widgets', state.widgetIsValid, widgets)
+      
+      widgets.forEach(function(item){
+        result = result && item.isValid
+      })
       return result
     },
 
@@ -186,6 +191,23 @@ export const store = new Vuex.Store({
     DELcurrentDocWidgetState: (state, uid) => {
       Vue.delete(state.currentDoc.status.widgetIsValid, uid)
     },
+
+
+    SETwidgetState: (state, [parent, uid, isValid]) => {
+      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
+      if (uidIndex >= 0) {
+        state.widgetIsValid.splice(uidIndex, 1)
+      }
+      state.widgetIsValid.push({parent: parent, uid: uid, isValid: isValid})
+    },
+
+    DELwidgetState: (state, uid) => {
+      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
+      if (uidIndex >= 0) {
+        state.widgetIsValid.splice(uidIndex, 1)
+      }
+    },
+
 
     UPDcurrentDocTU: (state, [index, key, value]) => {
       state.currentDoc.data.table_unit[index][key] = value

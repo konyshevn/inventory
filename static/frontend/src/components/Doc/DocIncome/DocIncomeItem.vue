@@ -5,8 +5,9 @@
       <h2 align="left">{{docTitle(docType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
+    {{widgetsIsValid(uid)}}
       <b-container class="text-left" >
-        <doc-item-control-panel></doc-item-control-panel>
+        <doc-item-control-panel :parent="uid"></doc-item-control-panel>
         <p></p>
 
         <b-row align-v="end" class="mb-2">
@@ -33,7 +34,7 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" required :model.sync="department"></catlg-widget>
+            <catlg-widget widget-type="department" :required="uid" :model.sync="department"></catlg-widget>
             
           </b-col> 
         </b-row>
@@ -73,7 +74,7 @@
           </tr>
         </thead>
         <tbody>
-          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index">
+          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index" :parent="uid">
           </table-unit-item>
         </tbody>
       </table>
@@ -175,6 +176,7 @@ export default {
     ...mapGetters([
       'currentDoc',
       'currentDocTU',
+      'widgetsIsValid',
 
     ])
   },

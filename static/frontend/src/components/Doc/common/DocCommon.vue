@@ -42,14 +42,14 @@ export default {
     ]),
 
 
-    async regWriteDocItem () {
+    async regWriteDocItem (parent) {
       var vm = this;
       var itemStatus = vm.currentDoc.active
       var isNewDoc = vm.currentDoc.id
 
       await vm.UPDcurrentDoc(['active', true])
       try {
-        if (!vm.widgetsIsValid) { 
+        if (!vm.widgetsIsValid(parent)) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
         var response = await vm.PUTcurrentDoc()
@@ -64,12 +64,12 @@ export default {
       }
     },
 
-    async regDelDocItem (docType, item) {
+    async regDelDocItem (parent) {
       var vm = this;
       var itemStatus = vm.currentDoc.active
       vm.UPDcurrentDoc(['active', false])
       try {
-        if (!vm.widgetsIsValid) { 
+        if (!vm.widgetsIsValid(parent)) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
         var response = await vm.PUTcurrentDoc()
@@ -80,11 +80,12 @@ export default {
       }
     },
 
-    async saveDocItem (docType, item) {
+    async saveDocItem (parent) {
       var vm = this;
       var isNewDoc = vm.currentDoc.id
+      console.log('saveDocItem: widgetsIsValid(parent)', vm.widgetsIsValid(parent))
       try {
-        if (!vm.widgetsIsValid) { 
+        if (!vm.widgetsIsValid(parent)) { 
           throw new Error('Заполните все необходимые реквизиты документа.')
         }
         var response = await vm.PUTcurrentDoc()
