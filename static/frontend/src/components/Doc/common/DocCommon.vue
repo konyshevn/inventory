@@ -12,6 +12,14 @@ import {EventBus} from '@/components/common/event-bus.js'
 import Common from '@/components/common/Common.vue';
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
+
 export default {
   name: 'DocCommon',
   mixins: [Common],
@@ -116,41 +124,37 @@ export default {
 
     async delDocItem (docType, item) {
       var vm = this;
-      var status = true
-      try {
-        var confirm = await vm.confirmMsg('Вы действительно хотите удалить документ?')
-        if (confirm) {
-          var response = await vm.DELcurrentDoc()
-        } else {
-          status = false
-        }
-      } catch(error) {
-        status = false
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
-      } finally {
-        if (status) {
+      var response = {}
+      var errors = []
+
+      var confirm = await vm.confirmMsg('Вы действительно хотите удалить документ?')
+      if (confirm) {
+        response = await vm.DELcurrentDoc()
+        if (response.status >= 200 && response.status < 300) {
           vm.$router.push({ name: 'doc.list', params: {docType: vm.currentDocStatus.docType} })
+        } else {
+          errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
+          EventBus.$emit('openStatusMsg', errors)
         }
-      }
+      } 
     },
 
   async delDocs (docType, ids) {
       var vm = this;
-      try {
-        var confirm = await vm.confirmMsg('Вы действительно хотите удалить выделенные документы?')
-        if (confirm) {
-          ids.forEach(function(item, i, arr){
-            vm.DELdoc([docType, item])
-          })
-        } else {
-          status = false
+      var response = {}
+      var errors = []
+      var confirm = await vm.confirmMsg('Вы действительно хотите удалить выделенные документы?')
+      if (confirm) {
+        await asyncForEach(ids, async function(item){
+          response = await vm.DELdoc([docType, item])
+          if (!(response.status >= 200 && response.status < 300)) {
+            errors.push(`Ошибка удаления: ${JSON.stringify(response.data)}`)
+          }
+        })
+        if (errors.length > 0){
+          EventBus.$emit('openStatusMsg', errors)
         }
-      } catch(error) {
-        status = false
-        console.log(error)
-        EventBus.$emit('openStatusMsg', [`Ошибка удаления: ${vm.getErrorMsg(error)}`])
-      } 
+      }
     },
     
  },

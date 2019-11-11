@@ -402,16 +402,27 @@ export const store = new Vuex.Store({
     },
 
     DELcurrentDoc: async ({commit, dispatch, getters}) => {
-      let response = HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
-      return response
+      try{
+        var response = await HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
+      } catch(error) {
+        response = error['response']
+      } finally {
+        return response
+      }
+
     },
 
     DELdoc: async ({commit, dispatch, getters}, [docType, id]) => {
-      let response = await HTTP.delete(docType + '/' + id + '/')
-      if (response.status == 204) {
-        dispatch('FETCHdocs', docType)
+      try {
+        var response = await HTTP.delete(docType + '/' + id + '/')
+        if (response.status == 204) {
+          dispatch('FETCHdocs', docType)
+        }
+      } catch (error) {
+        response = error['response']
+      } finally{
+        return response
       }
-      return response
     },
 
     DELcatlg: async ({commit, dispatch, getters}, [catlgType, id]) => {
