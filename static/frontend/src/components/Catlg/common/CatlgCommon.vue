@@ -99,7 +99,7 @@ export default {
 
     editCatlgItemModal: function (catlgType, itemId, modalId=null) {
       const vm = this
-      //console.log('editCatlgItemModal: itemId', itemId)
+      console.log('editCatlgItemModal: modalId', modalId)
       if (Array.isArray(itemId)) {
         itemId = itemId[0]
       }

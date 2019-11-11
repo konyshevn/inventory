@@ -93,7 +93,6 @@ import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
-//import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal2.vue';
 import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
@@ -127,22 +126,19 @@ export default {
   name: 'DocIncomeItem',
   components: {
     CatlgWidget,
-    //CatlgWidgetModal,
     DatetimeWidget,
     DocItemControlPanel,
     TableUnitControlPanel,
     TableUnitItem,
     SortHeader,
-    //CatlgWidgetModal,
-
-
   },
+
+  mixins: [CatlgCommon, DocCommon],
+  
   props: {
     id: String,
   },
-  
-  mixins: [CatlgCommon, DocCommon],
-  
+    
   data () {
     return {
       docChanged: false,
@@ -155,7 +151,6 @@ export default {
       'UPDcurrentDoc',
       'UPDcurrentDocTU',
       'DELcurrentDoc',
-      'sortTU',
       'INITcurrentDoc',
     ]),
 
@@ -183,9 +178,6 @@ export default {
  
   mounted: function () {
     const vm = this
-    //this.$nextTick(function () {
-    //  vm.getDocItem('docincome', vm.id);
-    //})
     if (vm.id == "new") {
       vm.DELcurrentDoc()
       vm.INITcurrentDoc(vm.docType)
@@ -198,7 +190,6 @@ export default {
   }, 
 
   beforeDestroy: function() {
-    //console.log('beforeDestroy')
     this.DELcurrentDoc()
   },
 
