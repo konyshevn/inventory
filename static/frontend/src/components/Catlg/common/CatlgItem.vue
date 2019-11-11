@@ -59,7 +59,10 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+header { text-align: left; }
+header > h2 { display: inline-block; }
+header span { margin-left: 10px;}
 
 </style>
 

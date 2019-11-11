@@ -1,11 +1,10 @@
 <template>
   <div class="doc-income-item container">
-    <div class="sticky1 container" style1="position: fixed; background: white; z-index: 10;">
+    <div class="container">
     <header>
-      <h2 align="left">{{docTitle(docType)}}</h2>
+      <h2>{{docTitle(docType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
-    {{widgetsIsValid(uid)}}
       <b-container class="text-left" >
         <doc-item-control-panel :parent="uid"></doc-item-control-panel>
         <p></p>
@@ -211,14 +210,6 @@ export default {
 </script>
 
 <style >
-.table_unit tbody tr:hover {
-    background-color: #f2f2f2;
-    color: #000000
-  }
-
-.table_unit td, .table_unit th {
-  padding: 0.30rem !important;
-}
 
 
 .table_unit td:nth-child(1), .table_unit th:nth-child(1) {
@@ -265,14 +256,6 @@ export default {
     table-layout:fixed;/* even columns width , fix width of table too*/
 }
 
-.select-row {
-  vertical-align: middle; 
-  text-align: center;
-}
-
-header { text-align: left; }
-header > h2 { display: inline-block; }
-header span { margin-left: 10px;}
 
 
 </style>

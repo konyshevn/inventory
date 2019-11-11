@@ -29,8 +29,8 @@
         </template>
       </cool-select>
     </div>
-    <catlg-widget-modal :uid="uid" :catlgType="widgetType"> </catlg-widget-modal>
-    <catlg-item-modal :uid="uid" :catlgType="widgetType"></catlg-item-modal>
+    <catlg-widget-modal :parent="uid" :catlgType="widgetType"> </catlg-widget-modal>
+    <catlg-item-modal :parent="uid" :catlgType="widgetType"></catlg-item-modal>
   </div>
 
 </template>

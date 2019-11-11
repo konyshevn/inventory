@@ -49,7 +49,24 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+.select-row {
+  vertical-align: middle; 
+  text-align: center;
+}
 
+header { text-align: left; }
+header > h2 { display: inline-block; }
+header span { margin-left: 10px;}
+
+.doc-list tbody tr:hover {
+background-color: #f2f2f2;
+color: #000000
+}
+
+
+.doc-list th, .doc-list td {
+padding: 0.25rem !important;
+}
 </style>
 

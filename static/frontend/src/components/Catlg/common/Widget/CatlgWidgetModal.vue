@@ -29,7 +29,7 @@ export default {
   },
   mixins: [CatlgCommon],
   props: {
-    uid: String,
+    parent: String,
     catlgType: String,
   },
 
@@ -51,7 +51,7 @@ export default {
   computed: {
     modalId: function () {
       let vm = this
-      return `modal-${vm.catlgType}-${vm.uid}`
+      return `modal-${vm.catlgType}-${vm.parent}`
     }
   },
 

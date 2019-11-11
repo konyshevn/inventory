@@ -2,7 +2,7 @@
   <div class="catlg-person-item container" >
     <div class="container">
     <header>
-      <h2 align="left">{{catlgTitle(catlgType)}}</h2>
+      <h2>{{catlgTitle(catlgType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
@@ -120,12 +120,6 @@ export default {
 </script>
 
 <style scoped>
-
-
-header { text-align: left; }
-header > h2 { display: inline-block; }
-header span { margin-left: 10px;}
-
 
 </style>
 

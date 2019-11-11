@@ -2,7 +2,7 @@
   <div class="catlg-device-item container" >
     <div class="container">
     <header>
-      <h2 align="left">{{catlgTitle(catlgType)}}</h2>
+      <h2>{{catlgTitle(catlgType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
@@ -111,21 +111,6 @@ export default {
 
   },
 
- /*
-  mounted: function () {
-    var vm = this
-    //this.$nextTick(function () {
-    //  vm.getDocItem('docincome', vm.id);
-    //})
-    if (vm.id == "new") {
-      vm.DELcurrentDoc()
-      vm.INITcurrentDoc('docincome')
-    } else {
-      vm.FETCHcatlgItem(['device', vm.id])
-      vm.item = vm.GETcatlgItem('device', vm.id)
-    }
-  },
-*/
    async mounted () {
     var vm = this
     if (vm.id == 'new') {
@@ -202,15 +187,6 @@ export default {
     display:table;
     table-layout:fixed;/* even columns width , fix width of table too*/
 }
-
-.select-row {
-  vertical-align: middle; 
-  text-align: center;
-}
-
-header { text-align: left; }
-header > h2 { display: inline-block; }
-header span { margin-left: 10px;}
 
 
 </style>

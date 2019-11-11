@@ -1,6 +1,8 @@
 <template>
   <div class="doc-income-list container">
-    <h2 align="left">{{docTitle(status.docType, 'plural')}}</h2>
+    <header>
+      <h2>{{docTitle(status.docType, 'plural')}}</h2>
+    </header>
     <b-container class="text-left">
       <doc-list-control-panel :status="status"></doc-list-control-panel>
     </b-container>
@@ -131,20 +133,11 @@ export default {
   min-width: 1100px;
   height: calc(100vh  - 200px);
 }
+
 .doc-list thead tr{
   display:block;
   width: calc( 100% - 1em ) !important;
   cursor: pointer;
-}
-
-.doc-list tbody tr:hover {
-background-color: #f2f2f2;
-color: #000000
-}
-
-
-.doc-list th, .doc-list td {
-padding: 0.25rem !important;
 }
 
 .doc-list td:nth-child(1), .doc-list th:nth-child(1) {
@@ -168,7 +161,5 @@ padding: 0.25rem !important;
 .doc-list td:nth-child(7), .doc-list th:nth-child(7) {
   width: 15%;
 }
-.svg-inline--fa {
-  color: grey;
-}
+
 </style>

@@ -51,7 +51,24 @@ export default {
 
 </script>
 
-<style scoped>
+<style >
+.select-row {
+  vertical-align: middle; 
+  text-align: center;
+}
+
+header { text-align: left; }
+header > h2 { display: inline-block; }
+header span { margin-left: 10px;}
+
+.table_unit tbody tr:hover {
+    background-color: #f2f2f2;
+    color: #000000
+  }
+
+.table_unit td, .table_unit th {
+  padding: 0.30rem !important;
+}
 
 </style>
 
