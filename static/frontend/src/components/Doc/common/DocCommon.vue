@@ -154,6 +154,12 @@ export default {
         }
       }
     },
+
+    clickRow: function (id) {
+      const vm = this
+      console.log(id);
+      this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
+    },
     
  },
 

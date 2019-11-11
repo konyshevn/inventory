@@ -55,7 +55,6 @@ import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import moment from 'moment';
-import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import DocListControlPanel from '@/components/Doc/common/ControlPanel/DocListControlPanel.vue'
 import SortHeader from '@/components/common/SortHeader.vue'
@@ -86,12 +85,6 @@ export default {
   },
   methods: {
 
-    clickRow: function (id, event) {
-      const vm = this
-      console.log(id);
-      this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
-    },
-     
     ...mapActions([
       'FETCHdocs',
     ]),

@@ -6,7 +6,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import {aliases} from '@/components/common/aliases.js';
 
 

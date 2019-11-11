@@ -104,6 +104,15 @@ export default {
       }
     },
 
+    clickRow: function (id) {
+      const vm = this
+      if (vm.modal) {
+        EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: id, handleOk: true})
+      } else {
+        this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: vm.status.catlgType} })
+      }
+    },
+
 	},
 	
 	mounted: function () {

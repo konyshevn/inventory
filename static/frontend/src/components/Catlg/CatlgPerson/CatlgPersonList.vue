@@ -48,7 +48,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
 import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
@@ -56,7 +55,6 @@ import {EventBus} from '@/components/common/event-bus.js'
 
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
 
 
 export default {
@@ -87,15 +85,6 @@ export default {
     ...mapActions([
       'FETCHcatlg',
     ]),
-
-    clickRow: function (id, event) {
-      const vm = this
-      if (vm.modal) {
-        EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: id, handleOk: true})
-      } else {
-        this.$router.push({ name: 'catlg.item', params: {id: id, catlgType: vm.status.catlgType} })
-      }
-    },
 
     selectedInput: function (value) {
       const vm = this
