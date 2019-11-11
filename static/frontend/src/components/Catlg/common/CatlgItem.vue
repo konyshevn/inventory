@@ -9,7 +9,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import CatlgDeviceItem from '@/components/Catlg/CatlgDevice/CatlgDeviceItem.vue';
 import CatlgPersonItem from '@/components/Catlg/CatlgPerson/CatlgPersonItem.vue';
 import CatlgDepartmentItem from '@/components/Catlg/CatlgDepartment/CatlgDepartmentItem.vue';

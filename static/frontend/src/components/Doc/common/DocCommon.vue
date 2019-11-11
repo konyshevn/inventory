@@ -4,13 +4,11 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import {EventBus} from '@/components/common/event-bus.js'
 import Common from '@/components/common/Common.vue';
-import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
 async function asyncForEach(array, callback) {
@@ -122,7 +120,7 @@ export default {
 
     },
 
-    async delDocItem (docType, item) {
+    async delDocItem () {
       var vm = this;
       var response = {}
       var errors = []

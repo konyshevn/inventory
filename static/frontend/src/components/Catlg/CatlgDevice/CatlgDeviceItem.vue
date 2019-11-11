@@ -55,7 +55,6 @@
         </b-tr>
       </b-table-simple>
     </div>
-    {{widgetsIsValid(uid)}}
   </div>
 </template>
 

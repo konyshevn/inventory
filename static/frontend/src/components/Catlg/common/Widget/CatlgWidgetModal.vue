@@ -15,8 +15,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
-//import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
 import CatlgList from '@/components/Catlg/common/CatlgList.vue';
 import {aliases} from '@/components/common/aliases.js';
 import {EventBus} from '@/components/common/event-bus.js'
@@ -41,7 +39,7 @@ export default {
     }
   },
   methods: {
-    handleOk: function (bvModalEvt) {
+    handleOk: function () {
       const vm = this
       EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: vm.selectedItemId})
     },

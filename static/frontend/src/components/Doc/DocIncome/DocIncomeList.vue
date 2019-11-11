@@ -9,7 +9,7 @@
     <table class="table table-bordered doc-list" id="doc-list">
       <thead>
         <tr>
-          <th><font-awesome-icon icon="check-square"/></th>
+          <th @click="selectAllRows(GETdocs)"><font-awesome-icon icon="check-square"/></th>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_date">Дата</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="doc_num">Номер</sort-header>
           <sort-header obj-type="docs" field-type="text" sort-field="active">Проведен</sort-header>
@@ -97,7 +97,9 @@ export default {
     ]),
     ...mapMutations([
       'UPDdocsSelected',
-    ])
+    ]),
+
+
   },
 
   mounted: function () {

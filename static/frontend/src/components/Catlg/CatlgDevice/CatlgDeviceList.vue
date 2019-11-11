@@ -7,7 +7,7 @@
     <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
       <thead>
         <tr>
-          <th><font-awesome-icon icon="check-square"/></th>
+          <th @click="selectAllRows(GETcatlg(status.catlgType))"><font-awesome-icon icon="check-square"/></th>
           <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
             Тип
           </sort-header>
@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in GETcatlg('device')" :key="device.id" 
+        <tr v-for="device in GETcatlg(status.catlgType)" :key="device.id" 
         @dblclick="clickRow(device.id, $event)" 
         @click="selectRow(device.id, $event)"
         :class="{'row-selected': isRowSelected(device.id)}">

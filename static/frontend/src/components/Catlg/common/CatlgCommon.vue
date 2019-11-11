@@ -4,10 +4,8 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
 import Common from '@/components/common/Common.vue';
 import {EventBus} from '@/components/common/event-bus.js'
 
@@ -38,29 +36,29 @@ export default {
 
 
 	methods: {
-		...mapActions([
-	  'DELcatlg',
-	  'PUTcatlg',
+  ...mapActions([
+    'DELcatlg',
+    'PUTcatlg',
 	]),
 	
 		async delCatlgs (catlgType, ids, modal=false) {
-	  	var vm = this;
+      var vm = this;
       var errors = []
       if (!Array.isArray(ids)){
         ids = [ids]
       }
 
-	  	var confirm = await vm.confirmMsg('Вы действительно хотите удалить выбранные элементы?')
+      var confirm = await vm.confirmMsg('Вы действительно хотите удалить выбранные элементы?')
 			if (confirm) {
         console.log('delCatlgs: confirm')
-		  	await asyncForEach(ids, async function(item){
-				  let response = await vm.DELcatlg([catlgType, item])
+        await asyncForEach(ids, async function(item){
+          let response = await vm.DELcatlg([catlgType, item])
           console.log('delCatlgs: response', response)
           if (!(response.status == 200 || response.status == 201 || response.status == 204)) {
             console.log('delCatlgs', response)
             errors.push(`Ошибка удаления "${vm.GETcatlgItemLabel(catlgType, item)}": ${response.data}`)
           }
-		    })
+        })
       
         if (errors.length == 0){
           if (!modal) {
@@ -98,8 +96,6 @@ export default {
 		},
 
     editCatlgItemModal: function (catlgType, itemId, modalId=null) {
-      const vm = this
-      console.log('editCatlgItemModal: modalId', modalId)
       if (Array.isArray(itemId)) {
         itemId = itemId[0]
       }

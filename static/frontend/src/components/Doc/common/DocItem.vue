@@ -7,7 +7,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue';
 import {aliases} from '@/components/common/aliases.js';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';

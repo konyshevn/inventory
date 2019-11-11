@@ -38,8 +38,6 @@
 <script>
 /* eslint-disable no-console */
 import Vue from 'vue'
-import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import { CoolSelect } from 'vue-cool-select';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';

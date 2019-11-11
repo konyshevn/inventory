@@ -15,9 +15,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
-//let CatlgItem = require('@/components/Catlg/common/CatlgItem.vue');
-//Vue.component('CatlgItem', Vue.extend(CatlgItem))
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue';
 import {EventBus} from '@/components/common/event-bus.js'
 

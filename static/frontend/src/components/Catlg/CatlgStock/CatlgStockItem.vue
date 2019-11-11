@@ -26,13 +26,11 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
-import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
 
 
@@ -40,7 +38,6 @@ import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.j
 export default {
   name: 'CatlgStockItem',
   components: {
-    CatlgWidget,
     CatlgItemControlPanel,
   },
   

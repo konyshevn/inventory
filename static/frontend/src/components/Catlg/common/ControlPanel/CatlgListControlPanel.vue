@@ -17,11 +17,7 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
 
 
 export default {

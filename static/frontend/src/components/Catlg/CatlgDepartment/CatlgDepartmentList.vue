@@ -7,7 +7,7 @@
     <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
       <thead>
         <tr>
-          <th><font-awesome-icon icon="check-square"/></th>
+          <th @click="selectAllRows(GETcatlg(status.catlgType))"><font-awesome-icon icon="check-square"/></th>
           <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="label">
             Наименование
           </sort-header>

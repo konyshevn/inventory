@@ -65,7 +65,7 @@
       <table class="table table-bordered table_unit">
         <thead >
           <tr >
-            <th>У</th>
+            <th><font-awesome-icon icon="check-square"/></th>
             <sort-header obj-type="TU" field-type="widget" sort-field="device">Устройство</sort-header>
             <sort-header obj-type="TU" field-type="widget" sort-field="person">Сотрудник</sort-header>
             <sort-header obj-type="TU" field-type="number" sort-field="qty">Количество</sort-header>
@@ -73,7 +73,7 @@
           </tr>
         </thead>
         <tbody>
-          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index" :parent="uid">
+          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index" :key="rec.id" :parent="uid">
           </table-unit-item>
         </tbody>
       </table>
@@ -85,7 +85,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
@@ -105,18 +104,6 @@ function mapTwoWay (key, getter, mutation) {
       return this.$store.getters[getter][key]
     },
     set (value) {
-      this.$store.commit(mutation, [key, value])
-    }
-  }
-}
-
-function mapTwoWayTU (key, getter, mutation) {
-  return {
-    get () {
-      return this.$store.getters[getter][key]
-    },
-    set (value) {
-      console.log(value)
       this.$store.commit(mutation, [key, value])
     }
   }

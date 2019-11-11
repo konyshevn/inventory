@@ -72,6 +72,19 @@ export default {
       }
     },
 
+    selectAllRows: function (items) {
+      const vm = this
+      if (vm.modal) {return}
+      if (vm.status.selected >= 0) {
+        vm.status.selected = []
+        items.forEach(function(item){
+          vm.status.selected.push(item.id)
+        })
+      } else {
+        vm.status.selected = []
+      }
+    },
+
     isRowSelected: function (id) {
       const vm = this
       let result = false
