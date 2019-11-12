@@ -149,8 +149,9 @@ export default {
 
 .catlg-list tbody{
   display:block;
-  overflow:auto;
+  overflow-y:scroll;
   min-width: 1000px;
+  width: 100%;
   height: calc(100vh  - 220px);
 }
 
