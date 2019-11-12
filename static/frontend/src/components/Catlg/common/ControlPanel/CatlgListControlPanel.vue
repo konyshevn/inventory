@@ -37,6 +37,19 @@ export default {
   },
   methods: {
     tableSearch: function() {
+      const vm = this
+      let itemsFilter = _.filter(vm.status.items, function(item){
+        let findItem = false
+        for (let key in item) {
+          if (item[key].indexOf(vm.searchText) >= 0) {findItem = true}
+        }
+        return findItem
+      })
+      vm.status.items = itemsFilter
+      
+    },
+
+    tableSearch2: function() {
       var phrase = this.searchText;
       console.log('phrase: ', phrase)
       var table = document.getElementById(`catlg-list-${this.catlgType}`);

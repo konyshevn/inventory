@@ -87,6 +87,7 @@ export default {
         selected: [],
         catlgType: 'device',
         modal: null,
+        items: [],
       },
     }
   },
@@ -118,6 +119,7 @@ export default {
     vm.status.modal = vm.modal
     if (vm.modal) {vm.status.selected = ''}
     this.FETCHcatlg(['device']);
+    vm.status.items = this.FETCHcatlg(['device']);
   },
 
   created: function () {
