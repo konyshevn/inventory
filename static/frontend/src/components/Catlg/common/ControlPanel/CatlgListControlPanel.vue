@@ -7,9 +7,6 @@
           <b-button variant="light" size="sm" @click="delCatlgs(catlgType, status.selected, status.modal)">Удалить</b-button>
           <b-button variant="light" size="sm" @click="editCatlgItemModal(catlgType, status.selected, `catlg-item-modal-${catlgType}-list`)">Редактировать</b-button>
         </b-col>
-        <b-col sm="3">
-          <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
-        </b-col>
       </b-row>
     </b-container>
   </div>
@@ -18,6 +15,7 @@
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+var _ = require('lodash');
 
 
 export default {
@@ -38,13 +36,21 @@ export default {
   methods: {
     tableSearch: function() {
       const vm = this
+      //console.log('tableSearch: vm.status.items', vm.status.items)
+
       let itemsFilter = _.filter(vm.status.items, function(item){
-        let findItem = false
+        var findItem = false
+        //console.log('tableSearch: item', item)
+
         for (let key in item) {
-          if (item[key].indexOf(vm.searchText) >= 0) {findItem = true}
+          console.log('tableSearch: item.key', item[key])
+          //console.log('tableSearch: searchText', vm.searchText)
+
+          if (String(item[key]).indexOf(vm.searchText) >= 0) {findItem = true}
         }
         return findItem
       })
+      //console.log('tableSearch: itemsFilter', itemsFilter)
       vm.status.items = itemsFilter
       
     },
