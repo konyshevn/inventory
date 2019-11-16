@@ -6,6 +6,12 @@ import {HTTP} from '../../http-common'
 var _ = require('lodash');
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
 export const store = new Vuex.Store({
   state: {
     currentDoc: {
@@ -489,10 +495,11 @@ export const store = new Vuex.Store({
           
         await dispatch('FETCHdependentCatlg', catlgItemFetch)
 
-        catlgItemFetch.forEach(function(item){
+        //catlgItemFetch.forEach(function(item){
+        await asyncForEach(catlgItemFetch, async function(item){
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
-            dispatch('SETcatlgLabel', [catlgType, item.id])
+            await dispatch('SETcatlgLabel', [catlgType, item.id])
           }
         })
       } catch(error) {
@@ -512,10 +519,11 @@ export const store = new Vuex.Store({
         var catlgItemFetch = response.data
 
         await dispatch('FETCHdependentCatlg', catlgItemFetch)      
-        catlgItemFetch.forEach(function(item){
+        //catlgItemFetch.forEach(function(item){
+        await asyncForEach(catlgItemFetch, async function(item){
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
-            dispatch('SETcatlgLabel', [catlgType, item.id])
+            await dispatch('SETcatlgLabel', [catlgType, item.id])
           }    
         })
         let sortStatus = getters.GETsortStatus({catlg: catlgType})

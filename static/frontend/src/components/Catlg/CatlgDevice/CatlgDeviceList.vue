@@ -5,59 +5,21 @@
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
     <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
-    <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
-      <thead>
-        <tr>
-          <th @click="selectAllRows(status.itemsFilter)"><font-awesome-icon icon="check-square"/></th>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
-            Тип
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="label">
-            Наименование
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="serial_num">
-            Серийный номер
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="inv_num">
-            Инвентарный номер
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="comment">
-            Комментарий
-          </sort-header>
-
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="device in status.itemsFilter" :key="device.id" 
-        @dblclick="clickRow(device.id, $event)" 
-        @click="selectRow(device.id, $event)"
-        :class="{'row-selected': isRowSelected(device.id)}">
-          <td>
-            <b-form-checkbox
-            v-model="status.selected"
-            :value="device.id"
-            @input="selectedInput"
-            class="row-checkbox">
-            </b-form-checkbox>
-          </td>
-          <td>
-            {{GETcatlgItemLabel('deviceType', device.deviceType)}}
-          </td>
-          <td>
-            {{GETcatlgItemLabel('nomenclature', device.nomenclature)}}
-          </td>
-          <td>
-            {{device.serial_num}}
-          </td>
-          <td>
-            {{device.inv_num}}
-          </td>
-          <td>
-            {{device.comment}}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <smart-table
+      :items="status.items"
+      :fields="[
+        {key: 'deviceType', label: 'Тип',
+        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        },
+        {key: 'nomenclature', label: 'Наименование'
+        },
+        {key: 'serial_num', label: 'Серийный номер'},
+        {key: 'inv_num', label: 'Инвентарный номер'},
+        {key: 'comment', label: ' Комментарий'},
+      ]"
+    >
+      
+    </smart-table>
   </div>
 </template>
 
@@ -65,6 +27,8 @@
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
+import SmartTable from '@/components/common/SmartTable.vue'
+
 import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
 import {EventBus} from '@/components/common/event-bus.js'
 var _ = require('lodash');
@@ -78,6 +42,7 @@ export default {
   components: {
     SortHeader,
     CatlgListControlPanel,
+    SmartTable,
   },
 
   mixins: [CatlgCommon],
@@ -138,6 +103,7 @@ export default {
       'GETcatlgItemLabel',
     ]),
   },
+  
   async mounted () {
     const vm = this
     vm.status.modal = vm.modal

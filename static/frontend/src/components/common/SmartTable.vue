@@ -4,52 +4,23 @@
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
-
-          <sort-header :obj-type="{catlg: 'device'}" field-type="widget" sort-field="deviceType">
-            Тип
+          <sort-header v-for="field in fields" :key="field.key">
+            {{field.label}}
           </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="label">
-            Наименование
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="serial_num">
-            Серийный номер
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="inv_num">
-            Инвентарный номер
-          </sort-header>
-          <sort-header :obj-type="{catlg: 'device'}" field-type="text" sort-field="comment">
-            Комментарий
-          </sort-header>
-
         </tr>
       </thead>
       <tbody>
-        <tr v-for="device in status.itemsFilter" :key="device.id" 
-        @dblclick="clickRow(device.id, $event)" 
-        @click="selectRow(device.id, $event)"
-        :class="{'row-selected': isRowSelected(device.id)}">
+        <tr v-for="item in itemsFilter" :key="item.id">
           <td>
             <b-form-checkbox
-            v-model="status.selected"
-            :value="device.id"
-            @input="selectedInput"
+            v-model="selected"
+            :value="item.id"
             class="row-checkbox">
             </b-form-checkbox>
           </td>
-          <td>
-            {{GETcatlgItemLabel('deviceType', device.deviceType)}}
-          </td>
-          <td>
-            {{GETcatlgItemLabel('nomenclature', device.nomenclature)}}
-          </td>
-          <td>
-            {{device.serial_num}}
-          </td>
-          <td>
-            {{device.inv_num}}
-          </td>
-          <td>
-            {{device.comment}}
+          <td v-for="field in fields" :key="field.key">
+            <span v-if="'formatter' in field">{{field.formatter(item[field.key], field.key)}}</span>
+            <span >{{item[field.key]}}</span>
           </td>
         </tr>
       </tbody>
@@ -60,7 +31,7 @@
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import SortHeader from '@/components/common/SortHeader.vue'
+import SortHeader from '@/components/common/SortHeader2.vue'
 import {EventBus} from '@/components/common/event-bus.js'
 var _ = require('lodash');
 
@@ -81,12 +52,13 @@ export default {
     return {
       itemsFilter: [],
       searchText: '',
+      selected: [],
     }
   },
 
   props: {
-    items: [],
-    fields: [],
+    items: Array,
+    fields: Array,
   },
 
   computed: {
@@ -177,6 +149,7 @@ export default {
   mounted: function () {
     const vm = this
     vm.itemsFilter = vm.items
+    console.log('formatter:', vm.fields[0].formatter(100, 'deviceType'))
   },
 
   created: function () {

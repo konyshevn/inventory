@@ -1,7 +1,7 @@
 <template>
-  <th v-on:click="sortObjList([objType, sortField, fieldType])">
+  <th>
     <slot></slot>
-    <span class="arrow" v-if="GETsortStatus(objType).field == sortField" :class="GETsortStatus(objType).order > 0 ? 'asc' : 'dsc'">
+    <span>
     </span>
   </th>
 </template>
