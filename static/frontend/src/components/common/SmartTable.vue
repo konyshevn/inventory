@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{fields}}
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -19,7 +20,7 @@
             </b-form-checkbox>
           </td>
           <td v-for="field in fields" :key="field.key">
-            <span v-if="'formatter' in field">{{field.formatter(item[field.key], field.key)}}</span>
+            <span v-if="('formatter' in field) && (formatterValue(item, field) != undefined)">{{formatterValue(item, field)}}</span>
             <span >{{item[field.key]}}</span>
           </td>
         </tr>
@@ -40,7 +41,7 @@ import { mapActions } from 'vuex';
 
 
 export default {
-  name: 'CatlgDeviceList',
+  name: 'SmartTable',
   
   components: {
     SortHeader,
@@ -65,6 +66,25 @@ export default {
   },
   
   methods: {
+
+    formatterValue: function(item, field) {
+      console.log('formatterValue:', field.formatter(item[field.key], field.key))
+      return field.formatter(item[field.key], field.key)
+    },
+
+    itemValue: function (item, field) {
+      const vm = this
+      var value
+      if ('formatter' in field){
+        value = field.formatter(item[field.key], field.key)
+      } else {
+        value = item[field.key]
+      }
+      if (value == undefined) {
+        value = ''
+      }
+      return value
+    },
 
     tableSearch: function() {
       const vm = this
@@ -148,7 +168,12 @@ export default {
 
   mounted: function () {
     const vm = this
-    vm.itemsFilter = vm.items
+    this.$nextTick(function () {
+      vm.itemsFilter = vm.items
+    })
+    console.log('items:', vm.items)
+    console.log('itemsFilter:', vm.itemsFilter)
+ 
     console.log('formatter:', vm.fields[0].formatter(100, 'deviceType'))
   },
 
