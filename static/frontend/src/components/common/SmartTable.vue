@@ -68,12 +68,22 @@ export default {
   },
 
   computed: {
+    sortByField: function() {
+      const vm = this
+      return _.find(vm.fields, {key: vm.sortBy})
+    },
   },
   
   methods: {
 
     formatterValue: function(item, field) {
-      return field.formatter(item[field.key], field.key)
+      let value
+      if (field.type == 'number') {
+        value = Number(field.formatter(item[field.key], field.key))
+      } else {
+        value = String(field.formatter(item[field.key], field.key))
+      }
+      return value
     },
 
     itemValue: function (item, field) {
@@ -109,21 +119,34 @@ export default {
     },
 
     sortItemsFilter: function(field) {
-//    sortItemsFilter: (state, [objType, field, fieldType, changeOrder = true]) => {
       const vm = this 
       console.log('sortItemsFilter: field', field) 
       console.log('sortItemsFilter: sortAsc', vm.sortAsc) 
       var order = vm.sortAsc ? -1 : 1
 
-      function compareTUrowText(a, b) {
-        //console.log('compareTUrowText: a, b', a, b)
+      function compareText(a, b) {
         if(a[field.key] === "" || a[field.key] === null) return 1;
         if(b[field.key] === "" || b[field.key] === null) return -1;
         if(a[field.key] === b[field.key]) return 0;
         return a[field.key] < b[field.key] ? 1 * order : -1 * order;
       }
 
-      vm.itemsFilter.sort(compareTUrowText);
+
+      function compareFormatter(a, b) {
+        let aFormatter = vm.formatterValue(a, field)
+        let bFormatter = vm.formatterValue(b, field)
+
+        if(aFormatter === "" || aFormatter === null) return 1;
+        if(bFormatter === "" || bFormatter === null) return -1;
+        if(aFormatter === bFormatter) return 0;
+        return aFormatter < bFormatter ? 1 * order : -1 * order;
+      }
+
+      if ('formatter' in field) {
+        vm.itemsFilter.sort(compareFormatter);
+      } else if (field.type == 'text') {
+        vm.itemsFilter.sort(compareText);
+      }
 
       /*
       var status, data 
@@ -190,7 +213,7 @@ export default {
       handler(){
         var vm = this
         if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
-          //vm.sortItemsFilter(vm.fields[2])
+          vm.sortItemsFilter(vm.sortByField)
           vm.isInited = true
         }
       },

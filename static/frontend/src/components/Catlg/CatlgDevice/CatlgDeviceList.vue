@@ -7,18 +7,18 @@
     <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
     <smart-table
       sort-by="deviceType"
-      :sort-asc.sync="sortAsc"
+      :sort-asc.sync="status.sortAsc"
       :items="GETcatlg('device')"
       :fields="[
-        {key: 'deviceType', label: 'Тип',
+        {key: 'deviceType', label: 'Тип', type: 'text',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'nomenclature', label: 'Наименование',
+        {key: 'nomenclature', label: 'Наименование', type: 'text',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'serial_num', label: 'Серийный номер'},
-        {key: 'inv_num', label: 'Инвентарный номер'},
-        {key: 'comment', label: ' Комментарий'},
+        {key: 'serial_num', label: 'Серийный номер', type: 'text'},
+        {key: 'inv_num', label: 'Инвентарный номер', type: 'text'},
+        {key: 'comment', label: ' Комментарий', type: 'text'},
       ]"
     >
       
