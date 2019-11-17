@@ -1,11 +1,10 @@
 <template>
   <div>
-    {{fields}}
     <table class="table table-bordered">
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
-          <sort-header v-for="field in fields" :key="field.key">
+          <sort-header v-for="field in fields" :key="field.key" :field="field">
             {{field.label}}
           </sort-header>
         </tr>
@@ -20,8 +19,8 @@
             </b-form-checkbox>
           </td>
           <td v-for="field in fields" :key="field.key">
-            <span v-if="('formatter' in field) && (formatterValue(item, field) != undefined)">{{formatterValue(item, field)}}</span>
-            <span >{{item[field.key]}}</span>
+            <span v-if="('formatter' in field)">{{formatterValue(item, field)}}</span>
+            <span v-else>{{item[field.key]}}</span>
           </td>
         </tr>
       </tbody>
@@ -51,15 +50,21 @@ export default {
   
   data () {
     return {
-      itemsFilter: [],
+      itemsFilter: this.items,
       searchText: '',
       selected: [],
+      isInited: false,
     }
   },
 
   props: {
     items: Array,
     fields: Array,
+    sortBy: String,
+    sortAsc: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   computed: {
@@ -68,7 +73,6 @@ export default {
   methods: {
 
     formatterValue: function(item, field) {
-      console.log('formatterValue:', field.formatter(item[field.key], field.key))
       return field.formatter(item[field.key], field.key)
     },
 
@@ -104,7 +108,24 @@ export default {
       vm.itemsFilter = itemsFilter
     },
 
-    sortItemsFilter: (state, [objType, field, fieldType, changeOrder = true]) => {
+    sortItemsFilter: function(field) {
+//    sortItemsFilter: (state, [objType, field, fieldType, changeOrder = true]) => {
+      const vm = this 
+      console.log('sortItemsFilter: field', field) 
+      console.log('sortItemsFilter: sortAsc', vm.sortAsc) 
+      var order = vm.sortAsc ? -1 : 1
+
+      function compareTUrowText(a, b) {
+        //console.log('compareTUrowText: a, b', a, b)
+        if(a[field.key] === "" || a[field.key] === null) return 1;
+        if(b[field.key] === "" || b[field.key] === null) return -1;
+        if(a[field.key] === b[field.key]) return 0;
+        return a[field.key] < b[field.key] ? 1 * order : -1 * order;
+      }
+
+      vm.itemsFilter.sort(compareTUrowText);
+
+      /*
       var status, data 
       if (objType == "TU") {
         status = state.currentDoc.status.tableUnit.sort
@@ -143,12 +164,6 @@ export default {
         return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
       }
 
-      function compareTUrowText(a, b) {
-        if(a[field] === "" || a[field] === null) return 1;
-        if(b[field] === "" || b[field] === null) return -1;
-        if(a[field] === b[field]) return 0;
-        return a[field] < b[field] ? -1 * order : 1 * order;
-      }
       
       if (fieldType == 'widget') {
         data.sort(compareTUrowWidget);
@@ -163,18 +178,36 @@ export default {
           value.rowOrder = index + 1
         })
       }
+      */    
+
+
+
     },
+  },
+
+  watch: {
+    itemsFilter: {
+      handler(){
+        var vm = this
+        if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
+          //vm.sortItemsFilter(vm.fields[2])
+          vm.isInited = true
+        }
+      },
+      immediate: true,
+    }
+
   },
 
   mounted: function () {
     const vm = this
-    this.$nextTick(function () {
-      vm.itemsFilter = vm.items
+    vm.$root.$on('sort-table', event => {
+      vm.sortItemsFilter(event)
     })
-    console.log('items:', vm.items)
-    console.log('itemsFilter:', vm.itemsFilter)
- 
-    console.log('formatter:', vm.fields[0].formatter(100, 'deviceType'))
+    vm.$root.$on('switch-sort-order', () => {
+      vm.$emit('update:sortAsc', !vm.sortAsc)
+    })
+
   },
 
   created: function () {

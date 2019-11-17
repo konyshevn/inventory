@@ -1,5 +1,5 @@
 <template>
-  <th>
+  <th @click="sortTable">
     <slot></slot>
     <span>
     </span>
@@ -20,15 +20,8 @@ export default {
   },
 
   props: {
-    fieldType: {
-      type: String,
-      default: null,
-    },
-    sortField: {
-      type: String,
-      default: null,
-    },
-    objType: {
+    field: {
+      type: Object,
       default: null,
     },  
   },
@@ -48,7 +41,12 @@ export default {
       'sortObjList',
     ]),
 
-    
+    sortTable: function() {
+      const vm = this
+      vm.$root.$emit('sort-table', vm.field)
+      vm.$root.$emit('switch-sort-order')
+    },
+
 
 
   },

@@ -6,12 +6,15 @@
     </b-container>
     <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
     <smart-table
-      :items="status.items"
+      sort-by="deviceType"
+      :sort-asc.sync="sortAsc"
+      :items="GETcatlg('device')"
       :fields="[
         {key: 'deviceType', label: 'Тип',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'nomenclature', label: 'Наименование'
+        {key: 'nomenclature', label: 'Наименование',
+        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
         {key: 'serial_num', label: 'Серийный номер'},
         {key: 'inv_num', label: 'Инвентарный номер'},
@@ -56,6 +59,7 @@ export default {
         modal: null,
         items: [],
         itemsFilter: [],
+        sortAsc: true,
       },
     }
   },
@@ -104,11 +108,11 @@ export default {
     ]),
   },
   
-  async mounted () {
+  mounted: function () {
     const vm = this
     vm.status.modal = vm.modal
     if (vm.modal) {vm.status.selected = ''}
-    await this.FETCHcatlg(['device']);
+    this.FETCHcatlg(['device']);
     vm.status.itemsFilter = vm.GETcatlg('device');
     vm.status.items = vm.GETcatlg('device');
   },
