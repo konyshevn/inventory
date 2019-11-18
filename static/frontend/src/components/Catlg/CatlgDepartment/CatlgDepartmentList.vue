@@ -15,7 +15,7 @@
       </thead>
       <tbody>
         <tr v-for="item in GETcatlg(status.catlgType)" :key="item.id" 
-        @dblclick="clickRow(item.id, $event)"
+        @dblclick="clickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}"
         >

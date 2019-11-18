@@ -4,9 +4,11 @@
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
-    <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
     <smart-table
-      sort-by="deviceType"
+      :selected-plural="modal ? false : true"
+      :selected.sync="status.selected"
+      :dblclick-row="clickRow"
+      :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="GETcatlg('device')"
       :fields="[
@@ -60,6 +62,7 @@ export default {
         items: [],
         itemsFilter: [],
         sortAsc: true,
+        sortBy: 'deviceType',
       },
     }
   },
@@ -111,7 +114,6 @@ export default {
   mounted: function () {
     const vm = this
     vm.status.modal = vm.modal
-    if (vm.modal) {vm.status.selected = ''}
     this.FETCHcatlg(['device']);
     vm.status.itemsFilter = vm.GETcatlg('device');
     vm.status.items = vm.GETcatlg('device');

@@ -23,11 +23,13 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEdit)
 library.add(faSearch)
 library.add(faCheckSquare)
 library.add(faCheck)
+library.add(faTimes)
 
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

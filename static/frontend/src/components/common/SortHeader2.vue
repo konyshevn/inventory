@@ -1,7 +1,7 @@
 <template>
   <th @click="sortTable">
     <slot></slot>
-    <span>
+    <span class="arrow" v-if="sortBy == field.key" :class="sortAsc ? 'asc' : 'dsc'">
     </span>
   </th>
 </template>
@@ -23,6 +23,14 @@ export default {
     field: {
       type: Object,
       default: null,
+    },
+    sortBy: {
+      type: String,
+      default: null,
+    },
+    sortAsc: {
+      type: Boolean,
+      default: true,
     },  
   },
 
@@ -44,7 +52,6 @@ export default {
     sortTable: function() {
       const vm = this
       vm.$root.$emit('sort-table', vm.field)
-      vm.$root.$emit('switch-sort-order')
     },
 
 

@@ -1,16 +1,31 @@
 <template>
   <div>
+
+    <b-input-group class="mt-3">
+    <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
+    <b-input-group-append>
+      <b-button variant="light" @click="searchText=''"><font-awesome-icon icon="times"/></b-button>
+    </b-input-group-append>
+    </b-input-group>
+
     <table class="table table-bordered">
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
-          <sort-header v-for="field in fields" :key="field.key" :field="field">
+          <sort-header v-for="field in fields" :key="field.key" 
+          :field="field" 
+          :sort-by="sortBy" 
+          :sort-asc="sortAsc"
+          >
             {{field.label}}
           </sort-header>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in itemsFilter" :key="item.id">
+        <tr v-for="item in itemsFilter" :key="item.id"
+        @dblclick="dblclickRow(item.id)"
+        @click="selectRow(item.id, $event)"
+        >
           <td>
             <b-form-checkbox
             v-model="selected"
@@ -52,7 +67,6 @@ export default {
     return {
       itemsFilter: this.items,
       searchText: '',
-      selected: [],
       isInited: false,
     }
   },
@@ -62,6 +76,14 @@ export default {
     fields: Array,
     sortBy: String,
     sortAsc: {
+      type: Boolean,
+      default: true,
+    },
+    dblclickRow: {
+      type: Function
+    },
+    selected: Array,
+    selectedPlural: {
       type: Boolean,
       default: true,
     },
@@ -86,20 +108,6 @@ export default {
       return value
     },
 
-    itemValue: function (item, field) {
-      const vm = this
-      var value
-      if ('formatter' in field){
-        value = field.formatter(item[field.key], field.key)
-      } else {
-        value = item[field.key]
-      }
-      if (value == undefined) {
-        value = ''
-      }
-      return value
-    },
-
     tableSearch: function() {
       const vm = this
       var findItem
@@ -118,12 +126,17 @@ export default {
       vm.itemsFilter = itemsFilter
     },
 
-    sortItemsFilter: function(field) {
+    async sortItemsFilter (field, changeOrder=true) {
       const vm = this 
-      console.log('sortItemsFilter: field', field) 
-      console.log('sortItemsFilter: sortAsc', vm.sortAsc) 
-      var order = vm.sortAsc ? -1 : 1
+      console.log('sortItemsFilter: field', field)
+      if (changeOrder && (vm.sortBy == field.key)) {
+        await vm.$emit('update:sortAsc', !vm.sortAsc)
+      } else if (vm.sortBy != field.key) {
+        await vm.$emit('update:sortAsc', true)
+      }
 
+      var order = vm.sortAsc ? -1 : 1
+      
       function compareText(a, b) {
         if(a[field.key] === "" || a[field.key] === null) return 1;
         if(b[field.key] === "" || b[field.key] === null) return -1;
@@ -148,28 +161,8 @@ export default {
         vm.itemsFilter.sort(compareText);
       }
 
+      vm.$emit('update:sortBy', field.key)
       /*
-      var status, data 
-      if (objType == "TU") {
-        status = state.currentDoc.status.tableUnit.sort
-        data = state.currentDoc.data.table_unit
-      } else if (objType == "docs") {
-        status = state.docs.status.sort
-        data = state.docs.data
-      } else if ('catlg' in objType) {
-        status = state.catlgs[objType.catlg].status.sort
-        data = state.catlgs[objType.catlg].data
-      }
-
-      if (status.field != field) {
-        status.order = -1
-      }
-      if (changeOrder) {
-        status.order *= -1
-      }
-      status.field = field
-      status.fieldType = fieldType
-      var order = status.order
 
       function compareTUrowWidget(a, b) {
         if (!a[field]) return 1;
@@ -187,38 +180,49 @@ export default {
         return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
       }
 
-      
-      if (fieldType == 'widget') {
-        data.sort(compareTUrowWidget);
-      } else if (fieldType == 'number') {
-        data.sort(compareTUrowNumber);
-      } else if (fieldType == 'text') {
-        data.sort(compareTUrowText);
-      }
-
       if (objType == "TU") {
         data.map(function(value, index){
           value.rowOrder = index + 1
         })
       }
       */    
+    },
 
-
-
+    selectRow: function (id, event) {
+      const vm = this
+      var result
+      var selectedLocal = vm.selected
+      if (event.srcElement.className == 'custom-control-label') { return }
+      if (vm.selectedPlural) {
+        let idIndex = selectedLocal.indexOf(id)
+        result = (idIndex >= 0) ? selectedLocal.splice(idIndex, 1) : selectedLocal.push(id)
+      } else {
+        result = (selectedLocal == id) ? null : [id]
+      }
+      vm.$emit('update:selected', result)
     },
   },
 
   watch: {
     itemsFilter: {
       handler(){
-        var vm = this
+        const vm = this
         if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
-          vm.sortItemsFilter(vm.sortByField)
+          vm.sortItemsFilter(vm.sortByField, false)
           vm.isInited = true
         }
       },
       immediate: true,
-    }
+    },
+    searchText: {
+      handler(){
+        const vm = this
+        if (vm.searchText == '') {
+          vm.itemsFilter = vm.items
+          vm.sortItemsFilter(vm.sortByField, false)
+        }
+      }
+    },
 
   },
 
@@ -227,10 +231,6 @@ export default {
     vm.$root.$on('sort-table', event => {
       vm.sortItemsFilter(event)
     })
-    vm.$root.$on('switch-sort-order', () => {
-      vm.$emit('update:sortAsc', !vm.sortAsc)
-    })
-
   },
 
   created: function () {
