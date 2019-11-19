@@ -8,7 +8,7 @@
     </b-input-group-append>
     </b-input-group>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered list">
       <thead>
         <tr>
           <th><font-awesome-icon icon="check-square"/></th>
@@ -25,7 +25,7 @@
         <tr v-for="item in itemsFilter" :key="item.id"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
-        >
+        :class="{'row-selected': isRowSelected(item.id)}">
           <td>
             <b-form-checkbox
             v-model="selectedLocal"
@@ -219,6 +219,14 @@ export default {
       }
       vm.$emit('update:selected', vm.selectedLocal)
     },
+
+    isRowSelected: function (id) {
+      const vm = this
+      let result = false
+      let idIndex = vm.selectedLocal.indexOf(id)
+      result = (idIndex >= 0) ? true : false
+      return result
+    },
   },
 
   watch: {
@@ -260,6 +268,15 @@ export default {
 
 <style scoped>
 
+.row-selected {
+background-color: #f2f2f2;
+color: #000000;
+font-weight: bold;
+}
 
+.list tbody tr:hover {
+background-color: #f2f2f2;
+color: #000000
+}
 
 </style>
