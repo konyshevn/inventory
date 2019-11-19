@@ -41,7 +41,8 @@ export default {
   methods: {
     handleOk: function () {
       const vm = this
-      EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: vm.selectedItemId})
+      let id = (Array.isArray(vm.selectedItemId)) ? vm.selectedItemId[0] : vm.selectedItemId
+      EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: id})
     },
 
   },

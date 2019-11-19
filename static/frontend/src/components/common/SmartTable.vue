@@ -28,8 +28,9 @@
         >
           <td>
             <b-form-checkbox
-            v-model="selected"
+            v-model="selectedLocal"
             :value="item.id"
+            @input="onInputCheckbox"
             class="row-checkbox">
             </b-form-checkbox>
           </td>
@@ -68,6 +69,7 @@ export default {
       itemsFilter: this.items,
       searchText: '',
       isInited: false,
+      selectedLocal: [],
     }
   },
 
@@ -82,7 +84,13 @@ export default {
     dblclickRow: {
       type: Function
     },
-    selected: Array,
+    onInputCheckbox: {
+      type: Function
+    },
+    selected: {
+      type: Array,
+      default: [],
+    },
     selectedPlural: {
       type: Boolean,
       default: true,
@@ -191,15 +199,25 @@ export default {
     selectRow: function (id, event) {
       const vm = this
       var result
-      var selectedLocal = vm.selected
+      //var selectedLocal = vm.selected
       if (event.srcElement.className == 'custom-control-label') { return }
       if (vm.selectedPlural) {
-        let idIndex = selectedLocal.indexOf(id)
-        result = (idIndex >= 0) ? selectedLocal.splice(idIndex, 1) : selectedLocal.push(id)
+        let idIndex = vm.selectedLocal.indexOf(id)
+        if (idIndex >= 0) {
+          vm.selectedLocal.splice(idIndex, 1)
+        } else {
+          vm.selectedLocal.push(id)
+        }
+        //result = (idIndex >= 0) ? vm.selectedLocal.splice(idIndex, 1) : vm.selectedLocal.push(id)
       } else {
-        result = (selectedLocal == id) ? null : [id]
+        if (vm.selectedLocal == id) {
+          vm.selectedLocal = []
+        } else {
+          vm.selectedLocal = [id]
+        }
+        //result = (vm.selectedLocal == id) ? null : [id]
       }
-      vm.$emit('update:selected', result)
+      vm.$emit('update:selected', vm.selectedLocal)
     },
   },
 

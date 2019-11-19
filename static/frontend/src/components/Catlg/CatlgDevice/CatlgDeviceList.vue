@@ -8,6 +8,7 @@
       :selected-plural="modal ? false : true"
       :selected.sync="status.selected"
       :dblclick-row="clickRow"
+      :on-input-checkbox="selectedInput"
       :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="GETcatlg('device')"
