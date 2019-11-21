@@ -20,7 +20,6 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
-    <br>
     <router-view></router-view>
     <status-msg></status-msg>
   </div>

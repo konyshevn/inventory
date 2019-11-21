@@ -1,10 +1,12 @@
 <template>
   <div class = "catlg-device-list container">
+    <div class="fixed-header">
     <h2 v-if="!modal" align="left">{{catlgTitle(status.catlgType, 'plural')}}</h2>
     <b-container class="text-left">
       <catlg-list-control-panel :status="status"></catlg-list-control-panel>
     </b-container>
-    <smart-table
+  </div>
+    <smart-table 
       :selected-plural="modal ? false : true"
       :selected.sync="status.selected"
       :dblclick-row="clickRow"
@@ -171,6 +173,14 @@ padding-top: 0.25rem !important;
 padding-bottom: 0.25rem !important;
 }
 
+.fixed-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 55px;
+  z-index: 10;
+  background: white;
+  padding-top: 10px;
+}
 
 
 </style>

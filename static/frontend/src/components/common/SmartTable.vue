@@ -1,13 +1,13 @@
 <template>
   <div>
-
+    <div class="search-input">
     <b-input-group class="mt-3">
     <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
     <b-input-group-append>
       <b-button variant="light" @click="searchText=''"><font-awesome-icon icon="times"/></b-button>
     </b-input-group-append>
     </b-input-group>
-
+</div>
     <table class="table table-bordered list">
       <thead>
         <tr>
@@ -277,6 +277,10 @@ font-weight: bold;
 .list tbody tr:hover {
 background-color: #f2f2f2;
 color: #000000
+}
+
+.list th, .list td {
+padding: 0.25rem !important;
 }
 
 </style>
