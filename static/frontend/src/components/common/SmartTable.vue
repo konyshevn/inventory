@@ -1,32 +1,33 @@
 <template>
   <div>
     <div class="search-input">
-    <b-input-group class="mt-3">
-    <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
-    <b-input-group-append>
-      <b-button variant="light" @click="searchText=''"><font-awesome-icon icon="times"/></b-button>
-    </b-input-group-append>
-    </b-input-group>
-</div>
+      <b-input-group class="mt-3">
+      <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
+      <b-input-group-append>
+        <b-button variant="light" @click="searchText=''"><font-awesome-icon icon="times"/></b-button>
+      </b-input-group-append>
+      </b-input-group>
+    </div>
     <table class="table table-bordered list">
       <thead>
         <tr>
-          <th><font-awesome-icon icon="check-square"/></th>
+          <th style="width: 5%"><font-awesome-icon icon="check-square"/></th>
           <sort-header v-for="field in fields" :key="field.key" 
           :field="field" 
           :sort-by="sortBy" 
           :sort-asc="sortAsc"
+          :style="tableColWidth(field)"
           >
             {{field.label}}
           </sort-header>
         </tr>
       </thead>
-      <tbody>
+      <tbody :style="tablePaddStyle">
         <tr v-for="item in itemsFilter" :key="item.id"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
-          <td>
+          <td style="width: 5%">
             <b-form-checkbox
             v-model="selectedLocal"
             :value="item.id"
@@ -34,7 +35,7 @@
             class="row-checkbox">
             </b-form-checkbox>
           </td>
-          <td v-for="field in fields" :key="field.key">
+          <td v-for="field in fields" :key="field.key" :style="tableColWidth(field)">
             <span v-if="('formatter' in field)">{{formatterValue(item, field)}}</span>
             <span v-else>{{item[field.key]}}</span>
           </td>
@@ -95,6 +96,9 @@ export default {
       type: Boolean,
       default: true,
     },
+    tablePadd: {
+      type: Number,
+      default: 200,}
   },
 
   computed: {
@@ -102,9 +106,24 @@ export default {
       const vm = this
       return _.find(vm.fields, {key: vm.sortBy})
     },
+
+    tablePaddStyle: function () {
+      const vm = this
+      let style = {
+        height: `calc(100vh  - ${vm.tablePadd}px)`,
+      }
+      return style
+    },
+
   },
   
   methods: {
+
+    tableColWidth: function (field){
+      const vm = this
+      let style = {width: field.width}
+      return style
+    },
 
     formatterValue: function(item, field) {
       let value
@@ -267,6 +286,10 @@ export default {
 </script>
 
 <style scoped>
+.search-input {
+  width: 300px;
+  float: right;
+}
 
 .row-selected {
 background-color: #f2f2f2;
@@ -282,5 +305,26 @@ color: #000000
 .list th, .list td {
 padding: 0.25rem !important;
 }
+
+.list tbody {
+  display:block;
+  overflow-y:scroll;
+  min-width: 1000px;
+  width: 100%;
+}
+
+.list tbody tr {
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+
+.list thead tr {
+  display:table;
+  width: calc( 100% - 1em ) !important;
+  cursor: pointer;
+}
+
+
 
 </style>
