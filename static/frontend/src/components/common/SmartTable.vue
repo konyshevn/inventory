@@ -113,8 +113,9 @@ export default {
 
     tablePaddStyle: function () {
       const vm = this
+      let padd = vm.selectAll ? vm.tablePadd : vm.tablePadd + 100
       let style = {
-        height: `calc(100vh  - ${vm.tablePadd}px)`,
+        height: `calc(100vh  - ${padd}px)`,
       }
       return style
     },
