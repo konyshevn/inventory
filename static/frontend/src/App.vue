@@ -56,4 +56,8 @@ color: #000000;
 font-weight: bold;
 }
 
+body {
+  line-height:1;
+}
+
 </style>

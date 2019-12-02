@@ -7,8 +7,9 @@
       </b-container>
     </div>
     <smart-table 
-      :table-padd="260"
+      :table-padd="250"
       :selected-plural="modal ? false : true"
+      :selectAll="modal ? false : true"
       :selected.sync="status.selected"
       :dblclick-row="CatlgClickRow"
       :on-input-checkbox="CatlgSelectedInput"
@@ -35,7 +36,6 @@
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import SortHeader from '@/components/common/SortHeader.vue'
 import SmartTable from '@/components/common/SmartTable.vue'
 
 import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
@@ -49,7 +49,6 @@ export default {
   name: 'CatlgDeviceList',
   
   components: {
-    SortHeader,
     CatlgListControlPanel,
     SmartTable,
   },

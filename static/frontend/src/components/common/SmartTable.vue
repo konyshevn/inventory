@@ -11,7 +11,7 @@
     <table class="table table-bordered list">
       <thead>
         <tr>
-          <th style="width: 5%"><font-awesome-icon icon="check-square"/></th>
+          <th style="width: 5%" @click="selectAllRows"><font-awesome-icon icon="check-square"/></th>
           <sort-header v-for="field in fields" :key="field.key" 
           :field="field" 
           :sort-by="sortBy" 
@@ -93,6 +93,10 @@ export default {
       default: [],
     },
     selectedPlural: {
+      type: Boolean,
+      default: true,
+    },
+    selectAll: {
       type: Boolean,
       default: true,
     },
@@ -239,6 +243,21 @@ export default {
       vm.$emit('update:selected', vm.selectedLocal)
     },
 
+    selectAllRows: function () {
+      const vm = this
+      if (!(vm.selectAll)) {return}
+      if (vm.selectedLocal >= 0) {
+        vm.selectedLocal = []
+        vm.itemsFilter.forEach(function(item){
+          vm.selectedLocal.push(item.id)
+        })
+      } else {
+        vm.selectedLocal = []
+      }
+      vm.$emit('update:selected', vm.selectedLocal)
+
+    },
+
     isRowSelected: function (id) {
       const vm = this
       let result = false
@@ -303,7 +322,8 @@ color: #000000
 }
 
 .list th, .list td {
-padding: 0.25rem !important;
+  padding: 0.25rem !important;
+  vertical-align: middle;
 }
 
 .list tbody {
