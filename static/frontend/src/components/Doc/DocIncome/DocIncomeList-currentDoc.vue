@@ -6,30 +6,44 @@
     <b-container class="text-left">
       <doc-list-control-panel :status="status"></doc-list-control-panel>
     </b-container>
+    <table class="table table-bordered doc-list" id="doc-list">
+      <thead>
+        <tr>
+          <th @click="selectAllRows(GETdocs)"><font-awesome-icon icon="check-square"/></th>
+          <sort-header obj-type="docs" field-type="text" sort-field="doc_date">Дата</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="doc_num">Номер</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="active">Проведен</sort-header>
+          <sort-header obj-type="docs" field-type="widget" sort-field="department">Подразделение</sort-header>
+          <sort-header obj-type="docs" field-type="widget" sort-field="stock">Склад</sort-header>
+          <sort-header obj-type="docs" field-type="text" sort-field="comment">Комментарий</sort-header>
+        </tr>
+      </thead>
+      <tbody>
+      <tr v-for="doc in GETdocs" :key="doc.id" 
+      @dblclick="clickRow(doc.id, $event)" 
+      @click="selectRow(doc.id, $event)"
+      :class="{'row-selected': isRowSelected(doc.id)}">
+        <td>
+          <b-form-checkbox
+          v-model="status.selected"
+          :value="doc.id"
+          button-variant="danger"
+          >
+          </b-form-checkbox>
+        </td>
+        <td>{{doc.doc_date | formatDate}}</td>
+        <td>{{doc.doc_num}}</td>
+        <td>
+          <span v-if="doc.active"><font-awesome-icon icon="check"/></span>
+          <span v-else></span>
+        </td>
+        <td><span>{{GETcatlgItemLabel('department', doc.department)}}</span></td>
+        <td><span>{{GETcatlgItemLabel('stock', doc.stock)}}</span></td>
+        <td>{{doc.comment}}</td>
+      </tr>
+      </tbody>
+    </table>
 
-     <smart-table 
-      :table-padd="250"
-      :selected-plural="true"
-      :selectAll="true"
-      :selected.sync="status.selected"
-      :dblclick-row="DocClickRow"
-      :on-input-checkbox="DocSelectedInput"
-      :sort-by.sync="status.sortBy"
-      :sort-asc.sync="status.sortAsc"
-      :items="GETdocs(status.docType)"
-      :fields="[
-        {key: 'doc_date', label: 'Дата', type: 'text', width: '14%',
-        },
-        {key: 'doc_num', label: 'Номер', type: 'text', width: '10%',
-        },
-        {key: 'active', label: 'Проведен', type: 'text', width: '8%',},
-        {key: 'department', label: 'Подразделение', type: 'text', width: '20%',},
-        {key: 'stock', label: 'Склад', type: 'text', width: '15%',},
-        {key: 'comment', label: ' Комментарий', type: 'text', width: '15%',},
-      ]"
-    >
-      
-    </smart-table>
   </div>
 </template>
 
@@ -44,7 +58,6 @@ import moment from 'moment';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import DocListControlPanel from '@/components/Doc/common/ControlPanel/DocListControlPanel.vue'
 import SortHeader from '@/components/common/SortHeader.vue'
-import SmartTable from '@/components/common/SmartTable.vue'
 
 Vue.filter('formatDate', function(value) {
   if (value) {
@@ -58,7 +71,6 @@ export default {
   components: {
     DocListControlPanel,
     SortHeader,
-    SmartTable,
   },
   mixins:[DocCommon],
   props: {
@@ -68,18 +80,9 @@ export default {
       status: {
         selected: [],
         docType: 'docincome',
-        sortBy: 'doc_date',
-        sortAsc: true,
       },
     }
   },
-  computed: {
-    ...mapGetters([
-      'GETdocs',
-      'GETcatlgItemLabel',
-    ])
-  },
-
   methods: {
 
     ...mapActions([
@@ -92,10 +95,10 @@ export default {
 
   },
 
-  async mounted () {
+  mounted: function () {
     const vm = this
-    await this.FETCHdocs(vm.status.docType);
-    console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
+    this.FETCHdocs(vm.status.docType);
+    
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {
         event.preventDefault();
@@ -107,6 +110,12 @@ export default {
 
   },
 
+  computed: {
+    ...mapGetters([
+      'GETdocs',
+      'GETcatlgItemLabel',
+    ])
+  },
 }
 
 

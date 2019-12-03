@@ -67,7 +67,7 @@ export default {
   
   data () {
     return {
-      itemsFilter: this.items,
+      itemsFilter: [],
       searchText: '',
       isInited: false,
       selectedLocal: [],
@@ -269,10 +269,21 @@ export default {
   },
 
   watch: {
-    itemsFilter: {
+    /*itemsFilter: {
       handler(){
         const vm = this
         if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
+          vm.sortItemsFilter(vm.sortByField, false)
+          vm.isInited = true
+        }
+      },
+      immediate: true,
+    },*/
+    items: {
+      handler(){
+        const vm = this
+        if ((vm.items.length > 0) && !(vm.isInited)) {
+          vm.itemsFilter = vm.items
           vm.sortItemsFilter(vm.sortByField, false)
           vm.isInited = true
         }
@@ -286,13 +297,15 @@ export default {
           vm.itemsFilter = vm.items
           vm.sortItemsFilter(vm.sortByField, false)
         }
-      }
+      },
+
     },
 
   },
 
   mounted: function () {
     const vm = this
+    let a=1
     vm.$root.$on('sort-table', event => {
       vm.sortItemsFilter(event)
     })

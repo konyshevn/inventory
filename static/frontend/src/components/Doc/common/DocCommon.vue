@@ -155,10 +155,21 @@ export default {
       }
     },
 
-    clickRow: function (id) {
+    DocClickRow: function (id) {
       const vm = this
       console.log(id);
       this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
+    },
+
+    DocSelectedInput: function (id, event) {
+      const vm = this
+      if (event.srcElement.className == 'custom-control-label') { return }
+      if (!vm.modal) {
+        let idIndex = vm.status.selected.indexOf(id)
+        let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
+      } else {
+        vm.status.selected = (vm.status.selected == id) ? null : id
+      }
     },
     
  },

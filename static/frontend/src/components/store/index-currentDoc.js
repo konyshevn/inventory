@@ -23,27 +23,6 @@ export const store = new Vuex.Store({
     widgetIsValid: [],
     
     docs: {
-      docincome: {
-        data: [],
-        status: {
-          sort: {field: "doc_date", sortAsc: true},
-        }
-      },
-      docmove: {
-        data: [],
-        status: {
-          sort: {field: "doc_date", sortAsc: true},
-        }
-      },
-     docwriteoff: {
-        data: [],
-        status: {
-          sort: {field: "doc_date", sortAsc: true},
-        }
-      },
-    },
-/*    
-    docs: {
       data: [],
       filtered: [],
       status: {
@@ -51,7 +30,6 @@ export const store = new Vuex.Store({
         selected: [],
       }
     },
-*/
     catlgs: {
       department: {
         data: [],
@@ -97,7 +75,6 @@ export const store = new Vuex.Store({
       },
     },
   },
-
   getters: {
     currentDoc: state => {
       return state.currentDoc.data
@@ -115,36 +92,21 @@ export const store = new Vuex.Store({
       return state.currentDoc.status.tableUnit[key]
     },
 
-    GETsortStatus: state => objType => {
-      var status
-      if (objType == "TU") {
-        status = state.currentDoc.status.tableUnit.sort
-      } else if (objType == "docs") {
-        status = state.docs.status.sort
-      } else if ('catlg' in objType) {
-        status = state.catlgs[objType.catlg].status.sort
-      }
-      return status
-    },
-
-//---------------------------Document---------------------------
-    GETdocItem: state => (docType, id) => {
-      let docItem = _.find(state.docs[docType]['data'], {id: Number(id)})
-      return docItem
-    },
-
-    GETdocs: state => docType => {
-      return state.docs[docType]['data']
-    },
-
-
-//---------------------------Catalog---------------------------
     catlgExist: state => catlgType => {
       if (catlgType in state.catlgs) {
         return true
       } else {
         return false
       }
+    },
+
+    widgetsIsValid: state => parent => {
+      let result = true
+      let widgets = _.filter(state.widgetIsValid, {parent: parent})
+      widgets.forEach(function(item){
+        result = result && item.isValid
+      })
+      return result
     },
 
     GETcatlgItem: state => (catlgType, id) => {
@@ -170,18 +132,24 @@ export const store = new Vuex.Store({
       return catlg
     },
 
-//---------------------------Widget---------------------------
-    widgetsIsValid: state => parent => {
-      let result = true
-      let widgets = _.filter(state.widgetIsValid, {parent: parent})
-      widgets.forEach(function(item){
-        result = result && item.isValid
-      })
-      return result
+    GETdocs: state => {
+      return state.docs.data
     },
 
-  },
+    GETsortStatus: state => objType => {
+      var status
+      if (objType == "TU") {
+        status = state.currentDoc.status.tableUnit.sort
+      } else if (objType == "docs") {
+        status = state.docs.status.sort
+      } else if ('catlg' in objType) {
+        status = state.catlgs[objType.catlg].status.sort
+      }
+      return status
+    }
 
+
+  },
   mutations: {
     SETcurrentDoc: (state, data) => {
       state.currentDoc.data = data
@@ -210,6 +178,20 @@ export const store = new Vuex.Store({
     },
 
 
+    SETwidgetState: (state, [parent, uid, isValid]) => {
+      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
+      if (uidIndex >= 0) {
+        state.widgetIsValid.splice(uidIndex, 1)
+      }
+      state.widgetIsValid.push({parent: parent, uid: uid, isValid: isValid})
+    },
+
+    DELwidgetState: (state, uid) => {
+      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
+      if (uidIndex >= 0) {
+        state.widgetIsValid.splice(uidIndex, 1)
+      }
+    },
 
 
     UPDcurrentDocTU: (state, [index, key, value]) => {
@@ -261,6 +243,22 @@ export const store = new Vuex.Store({
 
     SETdocs: (state, data) => {
       state.docs.data = data
+    },
+
+    SETcatlgItem: (state, [catlgType, item]) => {
+      var catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: item.id})
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'][catlgItemIndex] = item
+      } else {
+        state.catlgs[catlgType]['data'].push(item)
+      }
+    },
+
+    SETcatlgItemLabel: (state, [catlgType, id, label]) => {
+      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'][catlgItemIndex]['label'] = label
+      }
     },
 
 
@@ -325,6 +323,13 @@ export const store = new Vuex.Store({
       }
     },
 
+    DELcatlgItem: (state, [catlgType, id]) => {
+      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
+      if (catlgItemIndex >= 0) {
+        state.catlgs[catlgType]['data'].splice(catlgItemIndex, 1)
+      }
+    },
+
     currentDocTUclearNullId: (state) => {
       state.currentDoc.data.table_unit.forEach(function(item){
         if (String(item.id).indexOf("null_") == 0) {
@@ -333,94 +338,17 @@ export const store = new Vuex.Store({
       })
     },
 
-//---------------------------Document---------------------------
-    SETdocs: (state, [docType, data]) => {
-      state.docs[docType]['data'] = data
-    },
-
-    SETdocItem: (state, [docType, item]) => {
-      var docItemIndex = _.findIndex(state.docs[docType]['data'], {id: item.id})
-      if (docItemIndex >= 0) {
-        state.docs[docType]['data'][docItemIndex] = item
-      } else {
-        state.docs[docType]['data'].push(item)
-      }
-    },
-
-    DELdocItem: (state, [docType, id]) => {
-      let docItemIndex = _.findIndex(state.docs[docType]['data'], {id: id})
-      if (docItemIndex >= 0) {
-        state.docs[docType]['data'].splice(docItemIndex, 1)
-      }
-    },
-//---------------------------Catalog---------------------------
-    SETcatlgItem: (state, [catlgType, item]) => {
-      var catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: item.id})
-      if (catlgItemIndex >= 0) {
-        state.catlgs[catlgType]['data'][catlgItemIndex] = item
-      } else {
-        state.catlgs[catlgType]['data'].push(item)
-      }
-    },
-
-    SETcatlgItemLabel: (state, [catlgType, id, label]) => {
-      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
-      if (catlgItemIndex >= 0) {
-        state.catlgs[catlgType]['data'][catlgItemIndex]['label'] = label
-      }
-    },
-
-    DELcatlgItem: (state, [catlgType, id]) => {
-      let catlgItemIndex = _.findIndex(state.catlgs[catlgType]['data'], {id: id})
-      if (catlgItemIndex >= 0) {
-        state.catlgs[catlgType]['data'].splice(catlgItemIndex, 1)
-      }
-    },
-
-
-//---------------------------Widget---------------------------
-    SETwidgetState: (state, [parent, uid, isValid]) => {
-      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
-      if (uidIndex >= 0) {
-        state.widgetIsValid.splice(uidIndex, 1)
-      }
-      state.widgetIsValid.push({parent: parent, uid: uid, isValid: isValid})
-    },
-
-    DELwidgetState: (state, uid) => {
-      let uidIndex = _.findIndex(state.widgetIsValid, {uid: uid})
-      if (uidIndex >= 0) {
-        state.widgetIsValid.splice(uidIndex, 1)
-      }
-    },
-  
   },
 
   actions: {
-
-    DELcurrentDoc: async ({getters}) => {
-      var response = null
-      try{
-        response = await HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
-      } catch(error) {
-        response = error['response']
-      } 
-      return response
-
-    },
-
-
-
-
-
-//---------------------------Document---------------------------
-    PUTdoc: async ({dispatch, getters}, [docType, item]) => {
+    PUTcurrentDoc: async ({dispatch, getters}) => {
       var response = null
       try {
-        var currentDoc = item
+        var currentDoc = getters.currentDoc
         if (currentDoc.doc_num == "") {
           currentDoc.doc_num = null
         }
+
         currentDoc.table_unit.forEach(function(item){
           if (String(item.id).indexOf("null_") == 0) {
             item.id = null
@@ -428,55 +356,21 @@ export const store = new Vuex.Store({
         })
 
         if (currentDoc.id == null) {
-          response = await HTTP.post(docType + '/', currentDoc)
+          response = await HTTP.post(getters.currentDocStatus.docType + '/', currentDoc)
         } else {
-          response = await HTTP.put(docType + '/' + currentDoc.id + '/', currentDoc)
+          response = await HTTP.put(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/', currentDoc)
         }
 
         if (response.status >= 200 && response.status < 300) {
-          item = response.data
-          //dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
+          dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
         }
       } catch(error) {
         response = error['response']
       } 
       return response
+
     },
 
-    DELdoc: async ({dispatch}, [docType, id]) => {
-      var response = null
-      try {
-        response = await HTTP.delete(docType + '/' + id + '/')
-        if (response.status == 204) {
-          commit('DELdocItem', [docType, id])
-        }
-      } catch (error) {
-        response = error['response']
-      }
-      return response
-    },
-
-    FETCHdocs: async ({commit, dispatch, getters}, docType) => {
-      let response = await HTTP.get(docType + '/')
-      let DocsReady = response.data
-      await dispatch('FETCHdependentCatlg', DocsReady)
-      commit('SETdocs', [docType, DocsReady])
-    },
-
-    FETCHdocItem: async ({commit, dispatch, getters}, [docType, id]) => {
-      let response = await HTTP.get(docType + '/' + id + '/')
-      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
-
-      for (let key in response.data){
-        if ((getters.catlgExist(key)) && (response.data[key])) {
-          await dispatch('FETCHcatlgItem', [key, response.data[key]])
-        }
-      }
-    },
-
-
-
-//---------------------------Catalog---------------------------
     PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
       var response = null
       try {
@@ -501,6 +395,30 @@ export const store = new Vuex.Store({
       return response
     },
 
+    DELcurrentDoc: async ({getters}) => {
+      var response = null
+      try{
+        response = await HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+
+    },
+
+    DELdoc: async ({dispatch}, [docType, id]) => {
+      var response = null
+      try {
+        response = await HTTP.delete(docType + '/' + id + '/')
+        if (response.status == 204) {
+          dispatch('FETCHdocs', docType)
+        }
+      } catch (error) {
+        response = error['response']
+      }
+      return response
+    },
+
     DELcatlg: async ({commit}, [catlgType, id]) => {
       var response = null
       try{
@@ -512,6 +430,49 @@ export const store = new Vuex.Store({
         response = error['response']
       } 
       return response
+    },
+
+    FETCHcurrentDoc: async ({commit, dispatch, getters}, [docType, id]) => {
+      let response = await HTTP.get(docType + '/' + id + '/')
+      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
+
+      for (let key in response.data){
+        if ((getters.catlgExist(key)) && (response.data[key])) {
+          await dispatch('FETCHcatlgItem', [key, response.data[key]])
+        }
+      }
+      commit('SETcurrentDoc', response.data)
+      commit('SETcurrentDocType', docType)
+    },
+
+    FETCHdocs: async ({commit, dispatch, getters}, docType) => {
+      /*
+      let sortStatus = getters.GETsortStatus('docs')
+      function compareTUrowText(a, b) {
+        if(a[sortStatus.field] === "" || a[sortStatus.field] === null) return 1;
+        if(b[sortStatus.field] === "" || b[sortStatus.field] === null) return -1;
+        if(a[sortStatus.field] === b[sortStatus.field]) return 0;
+        return a[sortStatus.field] < b[sortStatus.field] ? -1 * sortStatus.order : 1 * sortStatus.order;
+      }
+      */
+      let response = await HTTP.get(docType + '/')
+      let DocsReady = response.data
+      //DocsReady.sort(compareTUrowText)
+      commit('SETdocs', DocsReady)
+      await dispatch('FETCHdependentCatlg', DocsReady)
+      let sortStatus = getters.GETsortStatus('docs')
+      commit('sortObjList', ['docs', sortStatus.field, sortStatus.fieldType, false])
+    },
+
+    FETCHwidgetInitCatlg: async ({dispatch}, [tableUnit, fieldsMap]) => {
+      for (var fieldTableUnit in fieldsMap) {
+        var catlgType  = fieldsMap[fieldTableUnit]
+        var catlgToLoad = _.uniq(_.map(tableUnit, _.property(fieldTableUnit)))
+        catlgToLoad = catlgToLoad.filter(function (el) {
+            return el != null;
+          });
+         await dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
+      }
     },
 
     FETCHcatlgItem: async ({commit, dispatch}, [catlgType, id]) => {
@@ -601,18 +562,8 @@ export const store = new Vuex.Store({
       commit('SETcatlgItemLabel', [catlgType, id, label])
     },
 
-//---------------------------Widget---------------------------
-    FETCHwidgetInitCatlg: async ({dispatch}, [tableUnit, fieldsMap]) => {
-      for (var fieldTableUnit in fieldsMap) {
-        var catlgType  = fieldsMap[fieldTableUnit]
-        var catlgToLoad = _.uniq(_.map(tableUnit, _.property(fieldTableUnit)))
-        catlgToLoad = catlgToLoad.filter(function (el) {
-            return el != null;
-          });
-         await dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
-      }
-    },
- 
+
+  
   },
 
 });
