@@ -23,8 +23,12 @@
         {key: 'doc_num', label: 'Номер', type: 'text', width: '10%',
         },
         {key: 'active', label: 'Проведен', type: 'text', width: '8%',},
-        {key: 'department', label: 'Подразделение', type: 'text', width: '20%',},
-        {key: 'stock', label: 'Склад', type: 'text', width: '15%',},
+        {key: 'department', label: 'Подразделение', type: 'text', width: '20%',
+        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        },
+        {key: 'stock', label: 'Склад', type: 'text', width: '15%',
+        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        },
         {key: 'comment', label: ' Комментарий', type: 'text', width: '15%',},
       ]"
     >
