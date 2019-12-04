@@ -60,6 +60,10 @@ export default {
       type: String,
       default: null,
     },
+    settings: {
+      type: Object,
+      default: null,
+    }
   },
 
   data () {

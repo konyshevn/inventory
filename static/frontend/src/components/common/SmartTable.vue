@@ -41,6 +41,23 @@
               <span v-if="item.active"><font-awesome-icon icon="check"/></span>
               <span v-else></span>
             </span>
+            <catlg-widget v-else-if="field.type == 'widget'" 
+            :widgetType="field.widgetSettings.type"
+            :required="('required' in field.widgetSettings) ? field.widgetSettings.required : null"
+            :model.sync="item[field.key]"
+            >
+            </catlg-widget>
+            <b-form-input v-else-if="field.type == 'input-number'" 
+            v-model="item[field.key]" 
+            type="number" 
+            number
+            >
+            </b-form-input>
+            <b-form-input v-else-if="field.type == 'input-text'"
+            v-model="item[field.key]"
+            type="text">
+            </b-form-input>
+
             <span v-else>{{item[field.key]}}</span>
           </td>
         </tr>
@@ -55,6 +72,7 @@ import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SortHeader from '@/components/common/SortHeader2.vue'
 import {EventBus} from '@/components/common/event-bus.js'
 var _ = require('lodash');
+//import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
@@ -65,6 +83,8 @@ export default {
   
   components: {
     SortHeader,
+    CatlgWidget: () => import('@/components/Catlg/common/Widget/CatlgWidget.vue'),
+
   },
 
   mixins: [],
@@ -81,16 +101,21 @@ export default {
   props: {
     items: Array,
     fields: Array,
-    sortBy: String,
+    sortBy: {
+      type: String,
+      default: '',
+    },
     sortAsc: {
       type: Boolean,
       default: true,
     },
     dblclickRow: {
-      type: Function
+      type: Function,
+      default: () => {return},
     },
     onInputCheckbox: {
-      type: Function
+      type: Function,
+      default: () => {return},
     },
     selected: {
       type: Array,
@@ -106,10 +131,19 @@ export default {
     },
     tablePadd: {
       type: Number,
-      default: 200,}
+      default: 200,
+    },
+    selectRowClick: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   computed: {
+    ...mapGetters([
+      'GETcatlgItemLabel',
+    ]),
+
     sortByField: function() {
       const vm = this
       return _.find(vm.fields, {key: vm.sortBy})
@@ -127,7 +161,6 @@ export default {
   },
   
   methods: {
-
     tableColWidth: function (field){
       const vm = this
       let style = {width: field.width}
@@ -163,6 +196,8 @@ export default {
             }
             if (('formatter' in field) && formatterSearch) {
               itemValue = vm.formatterValue(item, field)
+            } else if (field.type == 'widget') {
+              itemValue = vm.GETcatlgItemLabel(field.widgetSettings.type, item[key])
             } else {
               itemValue = item[key]
             }
@@ -208,42 +243,42 @@ export default {
         return aFormatter < bFormatter ? 1 * order : -1 * order;
       }
 
+      function compareWidget(a, b) {
+        if (!a[field.key]) return 1;
+        if (!b[field.key]) return -1;
+        var aLabel = vm.GETcatlgItemLabel(field.widgetSettings.type, a[field.key])
+        var bLabel = vm.GETcatlgItemLabel(field.widgetSettings.type, b[field.key])
+        return aLabel < bLabel ? 1 * order : -1 * order;
+      }
+
+      function compareNumber(a, b) {
+        return Number(a[field.key]) < Number(b[field.key]) ? 1 * order : -1 * order;
+      }
+
       if (('formatter' in field) && formatterSort) {
         vm.itemsFilter.sort(compareFormatter);
-      } else if (field.type == 'text' || field.type == 'boolean') {
+      } else if (field.type == 'text' || field.type == 'boolean' || field.type == 'input-text') {
         vm.itemsFilter.sort(compareText);
+      } else if (field.type == 'number' || field.type == 'input-number') {
+        vm.itemsFilter.sort(compareNumber);
+      } else if (field.type == 'widget') {
+        vm.itemsFilter.sort(compareWidget);
       }
 
-      vm.$emit('update:sortBy', field.key)
       /*
-
-      function compareTUrowWidget(a, b) {
-        if (!a[field]) return 1;
-        if (!b[field]) return -1;
-
-        
-        let catlgItemA = _.find(state.catlgs[field]['data'], {id: a[field]})
-        let catlgItemB = _.find(state.catlgs[field]['data'], {id: b[field]})
-        var aLabel = catlgItemA.label
-        var bLabel = catlgItemB.label
-        return aLabel < bLabel ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowNumber(a, b) {
-        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
-      }
-
       if (objType == "TU") {
         data.map(function(value, index){
           value.rowOrder = index + 1
         })
       }
       */    
+      vm.$emit('update:sortBy', field.key)
     },
 
     selectRow: function (id, event) {
       const vm = this
       var result
+      if (!(vm.selectRowClick)) {return}
       //var selectedLocal = vm.selected
       if (event.srcElement.className == 'custom-control-label') { return }
       if (vm.selectedPlural) {
@@ -310,13 +345,15 @@ export default {
         const vm = this
         if ((vm.items.length > 0) && !(vm.isInited)) {
           vm.itemsFilter = vm.items
-          vm.sortItemsFilter(vm.sortByField, false)
+          if (vm.sortBy != '') {
+            vm.sortItemsFilter(vm.sortByField, false)
+          }
           vm.isInited = true
         }
         vm.tableSearch()
 
       },
-      immediate: true,
+      //immediate: true,
     },
     
     searchText: {

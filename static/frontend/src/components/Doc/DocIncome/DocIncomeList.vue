@@ -8,7 +8,7 @@
     </b-container>
 
      <smart-table 
-      :table-padd="250"
+      :table-padd="230"
       :selected-plural="true"
       :selectAll="true"
       :selected.sync="status.selected"

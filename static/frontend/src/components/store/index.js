@@ -474,6 +474,7 @@ export const store = new Vuex.Store({
           await dispatch('FETCHcatlgItem', [key, response.data[key]])
         }
       }
+      commit('SETdocItem', [docType, response.data])
     },
 
 

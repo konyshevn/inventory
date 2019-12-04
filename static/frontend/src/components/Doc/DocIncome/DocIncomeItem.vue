@@ -2,7 +2,7 @@
   <div class="doc-income-item container">
     <div class="container">
     <header>
-      <h2>{{docTitle(docType)}}</h2>
+      <h2>{{docTitle(status.docType)}}</h2>
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
@@ -14,17 +14,17 @@
             <label>Номер:</label> 
           </b-col>
           <b-col sm="2">
-            <b-form-input v-model="doc_num" type="number" number></b-form-input>
+            <b-form-input v-model="item.doc_num" type="number" number></b-form-input>
           </b-col>
           <b-col sm="1">
             <label>Дата:</label> 
           </b-col>
           <b-col sm="3">
-            <datetime-widget v-if="doc_date" :model.sync="doc_date"></datetime-widget>
+            <datetime-widget v-if="item.doc_date" :model.sync="item.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="2" align="center">
-            <b-button v-if="active" disabled variant="success">Проведен</b-button>
-            <b-button v-if="!active" disabled variant="light">Не проведен</b-button>
+            <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
+            <b-button v-if="!item.active" disabled variant="light">Не проведен</b-button>
           </b-col>
         </b-row>
 
@@ -33,7 +33,7 @@
             <label>Подразделение:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="department" :required="uid" :model.sync="department"></catlg-widget>
+            <catlg-widget widget-type="department" :required="uid" :model.sync="item.department"></catlg-widget>
             
           </b-col> 
         </b-row>
@@ -43,7 +43,7 @@
             <label>Склад:</label>
           </b-col> 
           <b-col sm="5">
-            <catlg-widget widget-type="stock" :model.sync="stock"></catlg-widget>
+            <catlg-widget widget-type="stock" :model.sync="item.stock"></catlg-widget>
           </b-col> 
         </b-row>
 
@@ -52,7 +52,7 @@
             <label>Комментарий:</label>
           </b-col>
           <b-col sm="8" align-h="start"> 
-            <b-form-input v-model="comment" type="text" maxlength="70"></b-form-input>
+            <b-form-input v-model="item.comment" type="text" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
       </b-container>
@@ -61,22 +61,30 @@
       </b-container>
     </div>
 
-    <div >
-      <table class="table table-bordered table_unit">
-        <thead >
-          <tr >
-            <th><font-awesome-icon icon="check-square"/></th>
-            <sort-header obj-type="TU" field-type="widget" sort-field="device">Устройство</sort-header>
-            <sort-header obj-type="TU" field-type="widget" sort-field="person">Сотрудник</sort-header>
-            <sort-header obj-type="TU" field-type="number" sort-field="qty">Количество</sort-header>
-            <sort-header obj-type="TU" field-type="text" sort-field="comment">Комментарий</sort-header>
-          </tr>
-        </thead>
-        <tbody>
-          <table-unit-item v-for="(rec, index) in currentDoc.table_unit" :index="index" :key="rec.id" :parent="uid">
-          </table-unit-item>
-        </tbody>
-      </table>
+    <div>
+      <smart-table 
+      :table-padd="400"
+      :selected-plural="true"
+      :selectAll="true"
+      :selectRowClick="false"
+      :selected.sync="status.tableUnit.selected"
+      :sort-by.sync="status.tableUnit.sortBy"
+      :sort-asc.sync="status.tableUnit.sortAsc"
+      :items="item.table_unit"
+      :fields="[
+        {key: 'device', label: 'Устройство', type: 'widget', width: '35%',
+        widgetSettings: {required: uid, type: 'device'}
+        },
+        {key: 'person', label: 'Сотрудник', type: 'widget', width: '25%',
+        widgetSettings: {type: 'person'}
+        },
+        {key: 'qty', label: 'Количество', type: 'input-number', width: '15%',},
+        {key: 'comment', label: ' Комментарий', type: 'input-text', width: '20%',},
+      ]"
+    >
+      
+    </smart-table>
+
   </div>
 
   </div>
@@ -94,8 +102,7 @@ import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
 import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
-import SortHeader from '@/components/common/SortHeader.vue'
-import TableUnitItem from '@/components/Doc/DocIncome/TableUnitItem.vue'
+import SmartTable from '@/components/common/SmartTable.vue'
 
 
 function mapTwoWay (key, getter, mutation) {
@@ -116,8 +123,7 @@ export default {
     DatetimeWidget,
     DocItemControlPanel,
     TableUnitControlPanel,
-    TableUnitItem,
-    SortHeader,
+    SmartTable,
   },
 
   mixins: [CatlgCommon, DocCommon],
@@ -128,48 +134,45 @@ export default {
     
   data () {
     return {
-      docChanged: false,
-      docType: 'docincome',
+      status: {
+        docType: 'docincome',
+        docChanged: false,
+        tableUnit: {
+          sortBy: "", 
+          sortAsc: true,
+          selected: [],
+        },
+      },
+      item: {},
     }       
   },
 
   methods: {
     ...mapMutations([
-      'UPDcurrentDoc',
-      'UPDcurrentDocTU',
-      'DELcurrentDoc',
-      'INITcurrentDoc',
     ]),
 
     ...mapActions([
-      'FETCHcurrentDoc'
+      'FETCHdocItem',
     ])
   },
 
   computed: {
-    doc_num: mapTwoWay('doc_num', 'currentDoc', 'UPDcurrentDoc'),
-    doc_date: mapTwoWay('doc_date', 'currentDoc', 'UPDcurrentDoc'),
-    department: mapTwoWay('department', 'currentDoc', 'UPDcurrentDoc'),
-    stock: mapTwoWay('stock', 'currentDoc', 'UPDcurrentDoc'),
-    comment: mapTwoWay('comment', 'currentDoc', 'UPDcurrentDoc'),
-    active: mapTwoWay('active', 'currentDoc', 'UPDcurrentDoc'),
-
     ...mapGetters([
-      'currentDoc',
-      'currentDocTU',
       'widgetsIsValid',
+      'GETdocItem',
 
     ])
   },
 
  
-  mounted: function () {
+  async mounted () {
     const vm = this
     if (vm.id == "new") {
-      vm.DELcurrentDoc()
-      vm.INITcurrentDoc(vm.docType)
+      //vm.DELcurrentDoc()
+      //vm.INITcurrentDoc(vm.docType)
     } else {
-      vm.FETCHcurrentDoc([vm.docType, vm.id])
+      await vm.FETCHdocItem([vm.status.docType, vm.id])
+      vm.item = vm.GETdocItem(vm.status.docType, vm.id)
     }
   },
 
@@ -177,7 +180,7 @@ export default {
   }, 
 
   beforeDestroy: function() {
-    this.DELcurrentDoc()
+    //this.DELcurrentDoc()
   },
 
 }

@@ -4,10 +4,7 @@
       <b-row align-v="end" class="mb-2">
         <b-col align="left">
           <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
-          <b-button variant="light" size="sm" @click="delDocs(docType, status.selected)">Удалить</b-button>
-        </b-col>
-        <b-col sm="4">
-          <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
+          <b-button variant="light" size="sm" @click="delDocs(status.docType, status.selected)">Удалить</b-button>
         </b-col>
       </b-row>
     </b-container>
