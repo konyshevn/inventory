@@ -37,6 +37,10 @@
           </td>
           <td v-for="field in fields" :key="field.key" :style="tableColWidth(field)">
             <span v-if="('formatter' in field)">{{formatterValue(item, field)}}</span>
+            <span v-else-if="field.type == 'boolean'"> 
+              <span v-if="item.active"><font-awesome-icon icon="check"/></span>
+              <span v-else></span>
+            </span>
             <span v-else>{{item[field.key]}}</span>
           </td>
         </tr>
@@ -67,7 +71,7 @@ export default {
   
   data () {
     return {
-      itemsFilter: [],
+      itemsFilter: this.items,
       searchText: '',
       isInited: false,
       selectedLocal: [],
@@ -144,13 +148,25 @@ export default {
       const vm = this
       var findItem
       var itemsFilter
+      var formatterSearch, field, itemValue
       if (vm.searchText.length <= 0) {
         itemsFilter = vm.items
       } else {
         itemsFilter = _.filter(vm.items, function(item){
           findItem = false
           for (let key in item) {
-            if (String(item[key]).toLowerCase().indexOf(vm.searchText.toLowerCase()) >= 0) {findItem = true}
+            if (_.findIndex(vm.fields, {key: key}) < 0) {continue}
+            formatterSearch = true
+            field = _.find(vm.fields, {key: key})
+            if ('formatterSearch' in field){
+              formatterSearch = field['formatterSearch']
+            }
+            if (('formatter' in field) && formatterSearch) {
+              itemValue = vm.formatterValue(item, field)
+            } else {
+              itemValue = item[key]
+            }
+            if (String(itemValue).toLowerCase().indexOf(vm.searchText.toLowerCase()) >= 0) {findItem = true}
           }
           return findItem
         })
@@ -165,6 +181,11 @@ export default {
         await vm.$emit('update:sortAsc', !vm.sortAsc)
       } else if (vm.sortBy != field.key) {
         await vm.$emit('update:sortAsc', true)
+      }
+
+      let formatterSort = true
+      if ('formatterSort' in field) {
+        formatterSort = field.formatterSort
       }
 
       var order = vm.sortAsc ? -1 : 1
@@ -187,9 +208,9 @@ export default {
         return aFormatter < bFormatter ? 1 * order : -1 * order;
       }
 
-      if ('formatter' in field) {
+      if (('formatter' in field) && formatterSort) {
         vm.itemsFilter.sort(compareFormatter);
-      } else if (field.type == 'text') {
+      } else if (field.type == 'text' || field.type == 'boolean') {
         vm.itemsFilter.sort(compareText);
       }
 
@@ -269,7 +290,9 @@ export default {
   },
 
   watch: {
-    /*itemsFilter: {
+    
+    /*
+    itemsFilter: {
       handler(){
         const vm = this
         if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
@@ -278,7 +301,10 @@ export default {
         }
       },
       immediate: true,
-    },*/
+    },
+    */
+    
+    
     items: {
       handler(){
         const vm = this
@@ -287,9 +313,12 @@ export default {
           vm.sortItemsFilter(vm.sortByField, false)
           vm.isInited = true
         }
+        vm.tableSearch()
+
       },
       immediate: true,
     },
+    
     searchText: {
       handler(){
         const vm = this

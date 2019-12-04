@@ -154,9 +154,11 @@ export const store = new Vuex.Store({
 
     GETcatlgItemLabel: state => (catlgType, id) => {
       let catlgItem = _.find(state.catlgs[catlgType]['data'], {id: id})
+      let label = ''
       if (catlgItem != null){
-        return catlgItem.label
-      }
+        label = catlgItem.label
+      } 
+      return label
     },
 
     GETcatlg: state => catlgType => {

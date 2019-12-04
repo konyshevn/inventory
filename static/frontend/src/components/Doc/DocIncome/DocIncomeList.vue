@@ -18,18 +18,20 @@
       :sort-asc.sync="status.sortAsc"
       :items="GETdocs(status.docType)"
       :fields="[
-        {key: 'doc_date', label: 'Дата', type: 'text', width: '14%',
+        {key: 'doc_date', label: 'Дата', type: 'text', width: '15%',
+        formatter: (value) => {return formatDate(value)},
+        formatterSort: false,
         },
         {key: 'doc_num', label: 'Номер', type: 'text', width: '10%',
         },
-        {key: 'active', label: 'Проведен', type: 'text', width: '8%',},
-        {key: 'department', label: 'Подразделение', type: 'text', width: '20%',
+        {key: 'active', label: 'Проведен', type: 'boolean', width: '10%',},
+        {key: 'department', label: 'Подразделение', type: 'text', width: '25%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
         {key: 'stock', label: 'Склад', type: 'text', width: '15%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'comment', label: ' Комментарий', type: 'text', width: '15%',},
+        {key: 'comment', label: ' Комментарий', type: 'text', width: '20%',},
       ]"
     >
       
@@ -73,7 +75,7 @@ export default {
         selected: [],
         docType: 'docincome',
         sortBy: 'doc_date',
-        sortAsc: true,
+        sortAsc: false,
       },
     }
   },

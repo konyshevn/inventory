@@ -7,6 +7,7 @@
 <script>
 /* eslint-disable no-console */
 import {aliases} from '@/components/common/aliases.js';
+import moment from 'moment';
 
 
 export default {
@@ -113,6 +114,10 @@ export default {
       }
       return errorMsg
     },
+
+    formatDate: function(value) {
+      return moment(String(value)).format('DD.MM.YYYY HH:mm:ss')
+    }
 
   },
 
