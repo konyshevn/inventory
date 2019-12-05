@@ -8,8 +8,8 @@ export function docincome() {
   this.table_unit = [
     {
       id: /*null*/ `null_f${(+new Date).toString(16)}`,
-      device: '',
-      person: '',
+      device: null,
+      person: null,
       qty: '1',
       comment: '',
       DELETE: false,

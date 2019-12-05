@@ -24,6 +24,7 @@
       </thead>
       <tbody :style="tablePaddStyle">
         <tr v-for="item in itemsFilter" :key="item.id"
+        v-if="!(('DELETE' in item) && (item.DELETE))"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
@@ -278,7 +279,7 @@ export default {
     selectRow: function (id, event) {
       const vm = this
       var result
-      if (!(vm.selectRowClick)) {return}
+      if (!(vm.selectRowClick)) {vm.$emit('update:selected', vm.selectedLocal)}
       //var selectedLocal = vm.selected
       if (event.srcElement.className == 'custom-control-label') { return }
       if (vm.selectedPlural) {

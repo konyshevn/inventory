@@ -57,7 +57,7 @@
         </b-row>
       </b-container>
       <b-container class="text-left" >
-        <table-unit-control-panel></table-unit-control-panel>
+        <table-unit-control-panel :item.sync="item" :status.sync="status"></table-unit-control-panel>
       </b-container>
     </div>
 
