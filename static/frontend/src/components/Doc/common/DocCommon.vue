@@ -39,6 +39,7 @@ export default {
 
   methods: {
     ...mapActions([
+      'PUTdoc',
       'PUTcurrentDoc',
       'DELcurrentDoc',
       'DELdoc',
@@ -48,71 +49,81 @@ export default {
     ]),
 
 
-    async regWriteDocItem (parent) {
+    async regWriteDocItem (status, item) {
       var vm = this;
-      var itemStatus = vm.currentDoc.active
-      var isNewDoc = vm.currentDoc.id
       let response = {}
       let errors = []
+      let itemLocal = _.cloneDeep(item)
+      itemLocal.active = true
 
-      await vm.UPDcurrentDoc(['active', true])
-      if (!vm.widgetsIsValid(parent)) {
+      if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
-        response = await vm.PUTcurrentDoc()
+        response = await vm.PUTdoc([status.docType, itemLocal])
       }
 
-      if (response.status == 200 || response.status == 201) {
-        if (!(isNewDoc)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
-        } 
+      if (response.status >= 200 && response.status < 300) {
+        if (item.id) {
+          vm.$emit('update:item', response.data)
+        } else {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+        }
+ 
       } else {
-        await vm.UPDcurrentDoc(['active', itemStatus])
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
 
     },
 
-    async regDelDocItem (parent) {
+    async regDelDocItem (status, item) {
       var vm = this;
-      var itemStatus = vm.currentDoc.active
       var response = {}
       var errors = []
-      await vm.UPDcurrentDoc(['active', false])
+      let itemLocal = _.cloneDeep(item)
+      itemLocal.active = false
       
-      if (!vm.widgetsIsValid(parent)) {
+      if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
-        response = await vm.PUTcurrentDoc()
+        response = await vm.PUTdoc([status.docType, itemLocal])
       }
 
-      if (!(response.status == 200 || response.status == 201)) {
-        await vm.UPDcurrentDoc(['active', itemStatus])
-        errors.push(`Ошибка отмены проведения: ${JSON.stringify(response.data)}`)
+      if (response.status >= 200 && response.status < 300) {
+        if (item.id) {
+          vm.$emit('update:item', response.data)
+        } else {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+        }
+
+      } else {
+        errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
     },
 
-    async saveDocItem (parent) {
+    async saveDocItem (status, item) {
       var vm = this;
-      var isNewDoc = vm.currentDoc.id
       var response = {}
       var errors = []
+      let itemLocal = _.cloneDeep(item)
 
-      if (!vm.widgetsIsValid(parent)) {
+
+      if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
-        response = await vm.PUTcurrentDoc()
+        response = await vm.PUTdoc([status.docType, itemLocal])
       }
 
-      if (response.status == 200 || response.status == 201) {
-        if (!(isNewDoc)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: vm.currentDocStatus.docType, id: response.data.id} })
-        } 
+      if (response.status >= 200 && response.status < 300) {
+        if (item.id) {
+          vm.$emit('update:item', response.data)
+        } else {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+        }
       } else {
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
@@ -120,16 +131,16 @@ export default {
 
     },
 
-    async delDocItem () {
+    async delDocItem (status, item) {
       var vm = this;
       var response = {}
       var errors = []
 
       var confirm = await vm.confirmMsg('Вы действительно хотите удалить документ?')
       if (confirm) {
-        response = await vm.DELcurrentDoc()
+        response = await vm.DELdoc([status.docType, item.id])
         if (response.status >= 200 && response.status < 300) {
-          vm.$router.push({ name: 'doc.list', params: {docType: vm.currentDocStatus.docType} })
+          vm.$router.push({ name: 'doc.list', params: {docType: status.docType} })
         } else {
           errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
           EventBus.$emit('openStatusMsg', errors)
@@ -160,6 +171,7 @@ export default {
       console.log(id);
       this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
     },
+
 
     DocSelectedInput: function (id, event) {
       const vm = this

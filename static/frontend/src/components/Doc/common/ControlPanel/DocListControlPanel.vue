@@ -4,7 +4,7 @@
       <b-row align-v="end" class="mb-2">
         <b-col align="left">
           <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
-          <b-button variant="light" size="sm" @click="delDocs(status.docType, status.selected)">Удалить</b-button>
+          <b-button variant="light" size="sm" @click="onDelDocs()">Удалить</b-button>
         </b-col>
       </b-row>
     </b-container>
@@ -18,6 +18,7 @@ import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
+var _ = require('lodash');
 
 
 export default {
@@ -32,31 +33,17 @@ export default {
 
   data () {
     return {
-      searchText: "",
     }
   },
+
   methods: {
-    tableSearch: function() {
-      var phrase = this.searchText;
-      console.log('phrase: ', phrase)
-      var table = document.getElementById('doc-list');
-      var regPhrase = new RegExp(phrase, 'i');
-      var flag = false;
-      for (var i = 1; i < table.rows.length; i++) {
-          flag = false;
-          for (var j = table.rows[i].cells.length - 1; j >= 1; j--) {
-              flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
-              if (flag) break;
-          }
-          if (flag) {
-              table.rows[i].style.display = "";
-          } else {
-              table.rows[i].style.display = "none";
-          }
-
-      }
+    onDelDocs: function() {
+      const vm = this
+      vm.delDocs(vm.status.docType, vm.status.selected)
+      let statusLocal = _.cloneDeep(vm.status)
+      statusLocal.selected = []
+      vm.$emit('update:status', statusLocal)
     },
-
 
   },
   computed: {

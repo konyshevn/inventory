@@ -32,7 +32,7 @@
             <b-form-checkbox
             v-model="selectedLocal"
             :value="item.id"
-            @input="onInputCheckbox"
+            
             class="row-checkbox">
             </b-form-checkbox>
           </td>
@@ -266,22 +266,25 @@ export default {
         vm.itemsFilter.sort(compareWidget);
       }
 
-      /*
-      if (objType == "TU") {
-        data.map(function(value, index){
+      
+      if ('rowOrder' in vm.itemsFilter[0]) {
+        vm.itemsFilter.map(function(value, index){
           value.rowOrder = index + 1
         })
       }
-      */    
+          
       vm.$emit('update:sortBy', field.key)
     },
 
     selectRow: function (id, event) {
       const vm = this
       var result
-      if (!(vm.selectRowClick)) {vm.$emit('update:selected', vm.selectedLocal)}
+      if (!(vm.selectRowClick)) {
+        vm.$emit('update:selected', vm.selectedLocal)
+        return
+      }
       //var selectedLocal = vm.selected
-      if (event.srcElement.className == 'custom-control-label') { return }
+      if ((event.srcElement.className == 'custom-control-label')) { return }
       if (vm.selectedPlural) {
         let idIndex = vm.selectedLocal.indexOf(id)
         if (idIndex >= 0) {
@@ -365,7 +368,13 @@ export default {
           vm.sortItemsFilter(vm.sortByField, false)
         }
       },
+    },
 
+    selected: {
+      handler(){
+        const vm = this
+        vm.selectedLocal = vm.selected
+      }
     },
 
   },

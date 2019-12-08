@@ -445,11 +445,11 @@ export const store = new Vuex.Store({
       return response
     },
 
-    DELdoc: async ({dispatch}, [docType, id]) => {
+    DELdoc: async ({dispatch, commit}, [docType, id]) => {
       var response = null
       try {
         response = await HTTP.delete(docType + '/' + id + '/')
-        if (response.status == 204) {
+        if (response.status >= 200 && response.status < 300) {
           commit('DELdocItem', [docType, id])
         }
       } catch (error) {

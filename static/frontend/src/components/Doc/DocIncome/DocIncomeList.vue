@@ -4,7 +4,7 @@
       <h2>{{docTitle(status.docType, 'plural')}}</h2>
     </header>
     <b-container class="text-left">
-      <doc-list-control-panel :status="status"></doc-list-control-panel>
+      <doc-list-control-panel :status.sync="status"></doc-list-control-panel>
     </b-container>
 
      <smart-table 

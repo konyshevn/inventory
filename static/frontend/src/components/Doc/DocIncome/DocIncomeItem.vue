@@ -6,7 +6,7 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
-        <doc-item-control-panel :parent="uid"></doc-item-control-panel>
+        <doc-item-control-panel :status.sync="status" :item.sync="item"></doc-item-control-panel>
         <p></p>
 
         <b-row align-v="end" class="mb-2">
@@ -103,6 +103,7 @@ import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue'
 import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
+import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
 function mapTwoWay (key, getter, mutation) {
@@ -137,6 +138,7 @@ export default {
       status: {
         docType: 'docincome',
         docChanged: false,
+        uid: null,
         tableUnit: {
           sortBy: "", 
           sortAsc: true,
@@ -167,7 +169,9 @@ export default {
  
   async mounted () {
     const vm = this
+    vm.status.uid = vm.uid
     if (vm.id == "new") {
+      vm.item = new DocConstructor[vm.status.docType]
       //vm.DELcurrentDoc()
       //vm.INITcurrentDoc(vm.docType)
     } else {
