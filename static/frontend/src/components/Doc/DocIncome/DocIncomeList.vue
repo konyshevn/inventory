@@ -8,12 +8,11 @@
     </b-container>
 
      <smart-table 
-      :table-padd="230"
+      :table-padd="200"
       :selected-plural="true"
       :selectAll="true"
       :selected.sync="status.selected"
       :dblclick-row="DocClickRow"
-      :on-input-checkbox="DocSelectedInput"
       :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="GETdocs(status.docType)"

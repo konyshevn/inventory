@@ -1,7 +1,7 @@
 <template>
-  <th v-on:click="sortObjList([objType, sortField, fieldType])">
+  <th @click="sortTable">
     <slot></slot>
-    <span class="arrow" v-if="GETsortStatus(objType).field == sortField" :class="GETsortStatus(objType).order > 0 ? 'asc' : 'dsc'">
+    <span class="arrow" v-if="sortBy == field.key" :class="sortAsc ? 'asc' : 'dsc'">
     </span>
   </th>
 </template>
@@ -20,16 +20,17 @@ export default {
   },
 
   props: {
-    fieldType: {
+    field: {
+      type: Object,
+      default: null,
+    },
+    sortBy: {
       type: String,
       default: null,
     },
-    sortField: {
-      type: String,
-      default: null,
-    },
-    objType: {
-      default: null,
+    sortAsc: {
+      type: Boolean,
+      default: true,
     },  
   },
 
@@ -47,6 +48,13 @@ export default {
     ...mapMutations([
       'sortObjList',
     ]),
+
+    sortTable: function() {
+      const vm = this
+      vm.$root.$emit('sort-table', vm.field)
+    },
+
+
 
   },
   mounted: function () {

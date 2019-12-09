@@ -7,12 +7,11 @@
       </b-container>
     </div>
     <smart-table 
-      :table-padd="250"
+      :table-padd="220"
       :selected-plural="modal ? false : true"
       :selectAll="modal ? false : true"
       :selected.sync="status.selected"
       :dblclick-row="CatlgClickRow"
-      :on-input-checkbox="CatlgSelectedInput"
       :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="GETcatlg(status.catlgType)"

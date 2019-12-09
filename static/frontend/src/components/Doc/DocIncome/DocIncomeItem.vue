@@ -7,8 +7,6 @@
     </header>
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item"></doc-item-control-panel>
-        <p></p>
-
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
             <label>Номер:</label> 

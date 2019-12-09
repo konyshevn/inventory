@@ -32,8 +32,9 @@
             <b-form-checkbox
             v-model="selectedLocal"
             :value="item.id"
-            
-            class="row-checkbox">
+            class="row-checkbox"
+            style="width: 48px;"
+            >
             </b-form-checkbox>
           </td>
           <td v-for="field in fields" :key="field.key" :style="tableColWidth(field)">
@@ -70,7 +71,7 @@
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import SortHeader from '@/components/common/SortHeader2.vue'
+import SortHeader from '@/components/common/SortHeader.vue'
 import {EventBus} from '@/components/common/event-bus.js'
 var _ = require('lodash');
 //import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
@@ -111,10 +112,6 @@ export default {
       default: true,
     },
     dblclickRow: {
-      type: Function,
-      default: () => {return},
-    },
-    onInputCheckbox: {
       type: Function,
       default: () => {return},
     },
