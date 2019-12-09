@@ -56,6 +56,10 @@ color: #000000;
 font-weight: bold;
 }
 
+.form-control {
+  height: 2em !important;
+}
+
 body {
   line-height:1;
 }

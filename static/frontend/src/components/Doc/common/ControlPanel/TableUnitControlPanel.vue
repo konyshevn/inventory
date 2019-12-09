@@ -3,7 +3,6 @@
     <b-button-group align="left">
       <b-button variant="light" size="sm" @click="addTUrow">Добавить строку</b-button>
       <b-button variant="light" size="sm" @click="delTUrow">Удалить строку</b-button>
-      
     </b-button-group>
   </div>
 </template>

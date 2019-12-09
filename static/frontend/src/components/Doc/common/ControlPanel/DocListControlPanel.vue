@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container class="text-right" >
-      <b-row align-v="end" class="mb-2">
+      <b-row align-v="end">
         <b-col align="left">
           <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
           <b-button variant="light" size="sm" @click="onDelDocs()">Удалить</b-button>

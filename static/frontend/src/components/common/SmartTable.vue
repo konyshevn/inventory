@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="search-input">
-      <b-input-group class="mt-3">
+      <b-input-group>
       <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
       <b-input-group-append>
-        <b-button variant="light" @click="searchText=''"><font-awesome-icon icon="times"/></b-button>
+        <b-button variant="light" @click="searchText=''" class="search-button"><font-awesome-icon icon="times"/></b-button>
       </b-input-group-append>
       </b-input-group>
     </div>
@@ -435,6 +435,9 @@ color: #000000
   cursor: pointer;
 }
 
+.search-button {
+  line-height: 1em;
+}
 
 
 </style>
