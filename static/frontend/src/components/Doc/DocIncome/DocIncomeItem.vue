@@ -63,8 +63,8 @@
       <smart-table 
       :table-padd="400"
       :selected-plural="true"
-      :selectAll="true"
-      :selectRowClick="false"
+      :select-all="true"
+      :select-row-click="false"
       :selected.sync="status.tableUnit.selected"
       :sort-by.sync="status.tableUnit.sortBy"
       :sort-asc.sync="status.tableUnit.sortAsc"

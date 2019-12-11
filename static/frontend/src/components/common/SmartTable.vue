@@ -23,8 +23,7 @@
         </tr>
       </thead>
       <tbody :style="tablePaddStyle">
-        <tr v-for="item in itemsFilter" :key="item.id"
-        v-if="!(('DELETE' in item) && (item.DELETE))"
+        <tr v-for="item in itemsFilterActive" :key="item.id"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
@@ -34,6 +33,7 @@
             :value="item.id"
             class="row-checkbox"
             style="width: 48px;"
+            @input="onInputCheckbox"
             >
             </b-form-checkbox>
           </td>
@@ -70,15 +70,10 @@
 
 <script>
 /* eslint-disable no-console */
-import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SortHeader from '@/components/common/SortHeader.vue'
-import {EventBus} from '@/components/common/event-bus.js'
 var _ = require('lodash');
-//import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 
 import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
-
 
 export default {
   name: 'SmartTable',
@@ -112,6 +107,10 @@ export default {
       default: true,
     },
     dblclickRow: {
+      type: Function,
+      default: () => {return},
+    },
+    onInputCheckbox: {
       type: Function,
       default: () => {return},
     },
@@ -156,11 +155,19 @@ export default {
       return style
     },
 
+    itemsFilterActive: function () {
+      const vm = this
+      let result = []
+      if (vm.itemsFilter) {
+        result = vm.itemsFilter.filter(item => !(('DELETE' in item) && (item.DELETE)))
+      }
+      return result
+    },
+
   },
   
   methods: {
     tableColWidth: function (field){
-      const vm = this
       let style = {width: field.width}
       return style
     },
@@ -275,9 +282,8 @@ export default {
 
     selectRow: function (id, event) {
       const vm = this
-      var result
       if (!(vm.selectRowClick)) {
-        vm.$emit('update:selected', vm.selectedLocal)
+        //vm.$emit('update:selected', vm.selectedLocal)
         return
       }
       //var selectedLocal = vm.selected
@@ -298,7 +304,7 @@ export default {
         }
         //result = (vm.selectedLocal == id) ? null : [id]
       }
-      vm.$emit('update:selected', vm.selectedLocal)
+      //vm.$emit('update:selected', vm.selectedLocal)
     },
 
     selectAllRows: function () {
@@ -312,7 +318,7 @@ export default {
       } else {
         vm.selectedLocal = []
       }
-      vm.$emit('update:selected', vm.selectedLocal)
+      //vm.$emit('update:selected', vm.selectedLocal)
 
     },
 
@@ -340,7 +346,13 @@ export default {
     },
     */
     
-    
+    selectedLocal: {
+      handler(){
+        const vm = this
+        vm.$emit('update:selected', vm.selectedLocal)
+      }
+    },
+
     items: {
       handler(){
         const vm = this
@@ -378,7 +390,6 @@ export default {
 
   mounted: function () {
     const vm = this
-    let a=1
     vm.$root.$on('sort-table', event => {
       vm.sortItemsFilter(event)
     })

@@ -12,6 +12,7 @@
       :selectAll="modal ? false : true"
       :selected.sync="status.selected"
       :dblclick-row="CatlgClickRow"
+      :on-input-checkbox="CatlgSelectedInput"
       :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="GETcatlg(status.catlgType)"
@@ -36,10 +37,9 @@
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
-
 import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
-import {EventBus} from '@/components/common/event-bus.js'
-var _ = require('lodash');
+//import {EventBus} from '@/components/common/event-bus.js'
+//var _ = require('lodash');
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 
