@@ -8,7 +8,7 @@
     </div>
     <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid"></catlg-item-control-panel>
     <div>
-      <b-table-simple small class="table-borderless" style="width: 500px">
+      <b-table-simple small class="table-borderless" style="width: 500px;">
         <b-tr>
           <b-td>
             Тип
@@ -80,7 +80,7 @@ export default {
   },
 
   props: {
-    id: Number,
+    id: String,
   },
   
   mixins: [CatlgCommon,],

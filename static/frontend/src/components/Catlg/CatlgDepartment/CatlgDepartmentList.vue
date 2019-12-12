@@ -7,7 +7,7 @@
       </b-container>
     </div>
     <smart-table 
-      :table-padd="220"
+      :table-padd="200"
       :min-width="400"
       :max-width="500"
       :selected-plural="modal ? false : true"
