@@ -8,6 +8,8 @@
     </div>
     <smart-table 
       :table-padd="220"
+      :min-width="950"
+      :max-width="1100"
       :selected-plural="modal ? false : true"
       :selectAll="modal ? false : true"
       :selected.sync="status.selected"

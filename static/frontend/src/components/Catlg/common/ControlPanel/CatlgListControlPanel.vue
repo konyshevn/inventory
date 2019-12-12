@@ -3,7 +3,7 @@
     <b-container class="text-right" >
       <b-row align-v="end">
         <b-col align="left">
-          <b-button variant="light" size="sm" @click="editCatlgItemModal(vm.status.catlgType, 'new', `catlg-item-modal-${status.catlgType}-list`)">Добавить</b-button>
+          <b-button variant="light" size="sm" @click="editCatlgItemModal(status.catlgType, 'new', `catlg-item-modal-${status.catlgType}-list`)">Добавить</b-button>
           <b-button variant="light" size="sm" @click="onDelCatlgs()">Удалить</b-button>
           <b-button variant="light" size="sm" @click="editCatlgItemModal(status.catlgType, status.selected, `catlg-item-modal-${status.catlgType}-list`)">Редактировать</b-button>
         </b-col>

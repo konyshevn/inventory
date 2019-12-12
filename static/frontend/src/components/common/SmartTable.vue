@@ -8,7 +8,7 @@
       </b-input-group-append>
       </b-input-group>
     </div>
-    <table class="table table-bordered list">
+    <table class="table table-bordered list" :style="tableWidth">
       <thead>
         <tr>
           <th style="width: 5%" @click="selectAllRows"><font-awesome-icon icon="check-square"/></th>
@@ -28,14 +28,14 @@
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
           <td style="width: 5%">
-            <b-form-checkbox
+            <input type="checkbox" 
+            :id="item.id" 
             v-model="selectedLocal"
             :value="item.id"
             class="row-checkbox"
-            style="width: 48px;"
             @input="onInputCheckbox"
             >
-            </b-form-checkbox>
+
           </td>
           <td v-for="field in fields" :key="field.key" :style="tableColWidth(field)">
             <span v-if="('formatter' in field)">{{formatterValue(item, field)}}</span>
@@ -116,7 +116,7 @@ export default {
     },
     selected: {
       type: Array,
-      default: [],
+      default: () => {return []},
     },
     selectedPlural: {
       type: Boolean,
@@ -129,6 +129,14 @@ export default {
     tablePadd: {
       type: Number,
       default: 200,
+    },
+    minWidth: {
+      type: Number,
+      default: 1000,
+    },
+    maxWidth: {
+      type: Number,
+      default: 1200,
     },
     selectRowClick: {
       type: Boolean,
@@ -151,6 +159,15 @@ export default {
       let padd = vm.selectAll ? vm.tablePadd : vm.tablePadd + 100
       let style = {
         height: `calc(100vh  - ${padd}px)`,
+      }
+      return style
+    },
+
+    tableWidth: function () {
+      const vm = this
+      let style = {
+        maxWidth: `${vm.maxWidth}px`,
+        minWidth: `${vm.minWidth}px`,
       }
       return style
     },
@@ -216,7 +233,6 @@ export default {
 
     async sortItemsFilter (field, changeOrder=true) {
       const vm = this 
-      console.log('sortItemsFilter: field', field)
       if (changeOrder && (vm.sortBy == field.key)) {
         await vm.$emit('update:sortAsc', !vm.sortAsc)
       } else if (vm.sortBy != field.key) {
@@ -405,7 +421,11 @@ export default {
 <style scoped>
 .search-input {
   width: 300px;
-  float: right;
+}
+
+.row-checkbox {
+  width: 16px; 
+  height: 16px;
 }
 
 .row-selected {
@@ -427,7 +447,6 @@ color: #000000
 .list tbody {
   display:block;
   overflow-y:scroll;
-  min-width: 1000px;
   width: 100%;
 }
 

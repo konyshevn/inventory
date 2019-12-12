@@ -154,7 +154,6 @@ export default {
           vm.isValid = false
         }
         if (vm.required != null) {
-          console.log('CatlgWidget: watch required', vm.required)
           vm.SETwidgetState([vm.required, vm._uid, vm.isValid])
         }
       },
