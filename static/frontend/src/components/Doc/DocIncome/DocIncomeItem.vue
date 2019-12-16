@@ -104,16 +104,7 @@ import SmartTable from '@/components/common/SmartTable.vue'
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
-function mapTwoWay (key, getter, mutation) {
-  return {
-    get () {
-      return this.$store.getters[getter][key]
-    },
-    set (value) {
-      this.$store.commit(mutation, [key, value])
-    }
-  }
-}
+
 
 export default {
   name: 'DocIncomeItem',

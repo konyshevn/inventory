@@ -9,7 +9,7 @@
     <smart-table 
       :table-padd="220"
       :min-width="950"
-      :max-width="1100"
+      :max-width="1200"
       :selected-plural="modal ? false : true"
       :selectAll="modal ? false : true"
       :selected.sync="status.selected"

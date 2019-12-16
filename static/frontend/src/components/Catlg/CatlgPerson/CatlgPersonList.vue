@@ -1,58 +1,46 @@
 <template>
-  <div class = "catlg-person-list container">
-    <h2 v-if="!modal" align="left">{{catlgTitle(status.catlgType, 'plural')}}</h2>
-    <b-container class="text-left">
-      <catlg-list-control-panel :status="status"></catlg-list-control-panel>
-    </b-container>
-    <table class="table table-bordered catlg-list" :id="`catlg-list-${status.catlgType}`">
-      <thead>
-        <tr>
-          <th @click="selectAllRows(GETcatlg(status.catlgType))"><font-awesome-icon icon="check-square"/></th>
-          <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="surname">
-            Фамилия
-          </sort-header>
-          <sort-header :obj-type="{catlg: status.catlgType}" field-type="text" sort-field="name">
-            Имя
-          </sort-header>
-          <sort-header :obj-type="{catlg: status.catlgType}" field-type="widget" sort-field="department">
-            Подразделение
-          </sort-header>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in GETcatlg(status.catlgType)" :key="item.id" 
-        @dblclick="clickRow(item.id, $event)"
-        @click="selectRow(item.id, $event)"
-        :class="{'row-selected': isRowSelected(item.id)}">
-          <td>
-            <b-form-checkbox
-            v-model="status.selected"
-            :value="item.id"
-            @input="selectedInput">
-            </b-form-checkbox>
-          </td>
-          <td>
-            {{item.surname}}
-          </td>
-          <td>
-            {{item.name}}
-          </td>
-          <td>
-            {{GETcatlgItemLabel('department', item.department)}}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class = "catlg-device-list container">
+    <div class="fixed-header2">
+      <h2 v-if="!modal" align="left">{{catlgTitle(status.catlgType, 'plural')}}</h2>
+      <b-container class="text-left">
+        <catlg-list-control-panel :status.sync="status"></catlg-list-control-panel>
+      </b-container>
+    </div>
+    <smart-table 
+      :table-padd="200"
+      :min-width="800"
+      :max-width="900"
+      :selected-plural="modal ? false : true"
+      :selectAll="modal ? false : true"
+      :selected.sync="status.selected"
+      :dblclick-row="CatlgClickRow"
+      :on-input-checkbox="CatlgSelectedInput"
+      :sort-by.sync="status.sortBy"
+      :sort-asc.sync="status.sortAsc"
+      :items="GETcatlg(status.catlgType)"
+      :fields="[
+        {key: 'surname', label: 'Фамилия', type: 'text', width: '30%',
+        },
+        {key: 'name', label: 'Имя', type: 'text', width: '20%',
+        },
+        {key: 'department', label: 'Подразделение', type: 'text', width: '45%',
+        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        },
+
+      ]"
+    >
+      
+    </smart-table>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import SortHeader from '@/components/common/SortHeader.vue'
+import SmartTable from '@/components/common/SmartTable.vue'
 import CatlgListControlPanel from '@/components/Catlg/common/ControlPanel/CatlgListControlPanel.vue'
-import {EventBus} from '@/components/common/event-bus.js'
-
+//import {EventBus} from '@/components/common/event-bus.js'
+//var _ = require('lodash');
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 
@@ -61,8 +49,8 @@ export default {
   name: 'CatlgPersonList',
   
   components: {
-    SortHeader,
     CatlgListControlPanel,
+    SmartTable,
   },
 
   mixins: [CatlgCommon],
@@ -73,6 +61,8 @@ export default {
         selected: [],
         catlgType: 'person',
         modal: null,
+        sortAsc: true,
+        sortBy: 'surname',
       },
     }
   },
@@ -86,23 +76,18 @@ export default {
       'FETCHcatlg',
     ]),
 
-    selectedInput: function (value) {
-      const vm = this
-      if (vm.modal) {
-        EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: value, handleOk: false})
-      }
-    },
   },
+
   computed: {
     ...mapGetters([
       'GETcatlg',
       'GETcatlgItemLabel',
     ]),
   },
+  
   mounted: function () {
     const vm = this
     vm.status.modal = vm.modal
-    if (vm.modal) {vm.status.selected = null}
     this.FETCHcatlg([vm.status.catlgType]);
   },
 
@@ -114,44 +99,15 @@ export default {
 </script>
 
 <style scoped>
-.catlg-list td:nth-child(1), .catlg-list th:nth-child(1) {
-  width: 5%;
-}
-.catlg-list td:nth-child(2), .catlg-list th:nth-child(2) {
-  width: 40%;
-}
-.catlg-list td:nth-child(3), .catlg-list th:nth-child(3) {
-  width: 20%;
-}
-.catlg-list td:nth-child(4), .catlg-list th:nth-child(4) {
-  width: 35%;
-}
-
-.catlg-list {
-  max-width: 900px;
-  min-width: 700px;
-
-}
-
-.catlg-list tbody{
-  display:block;
-  overflow:auto;
-  height: calc(100vh  - 220px);
-}
-.catlg-list thead tr {
-  display: table;
-  width: calc( 100% - 1em ) !important;
-  cursor: pointer;
-}
-
-.catlg-list tbody tr:hover {
-background-color: #f2f2f2;
-color: #000000
-}
 
 
-.catlg-list th, .catlg-list td {
-padding: 0.25rem !important;
+.fixed-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 55px;
+  z-index: 10;
+  background: white;
+  padding-top: 10px;
 }
 
 

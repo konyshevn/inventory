@@ -9,6 +9,16 @@
 import {aliases} from '@/components/common/aliases.js';
 import moment from 'moment';
 
+function mapTwoWay (key, getter, mutation) {
+  return {
+    get () {
+      return this.$store.getters[getter][key]
+    },
+    set (value) {
+      this.$store.commit(mutation, [key, value])
+    }
+  }
+}
 
 export default {
   name: 'Common',

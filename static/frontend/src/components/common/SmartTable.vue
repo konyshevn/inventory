@@ -421,6 +421,7 @@ export default {
 <style scoped>
 .search-input {
   width: 300px;
+  /*margin-left: auto;*/
 }
 
 .row-checkbox {

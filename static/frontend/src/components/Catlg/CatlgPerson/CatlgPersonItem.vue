@@ -6,11 +6,11 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
     </div>
-    <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid"></catlg-item-control-panel>
-    <div>
-      <b-table-simple small class="table-borderless" style="width: 500px">
+    <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid" style="padding-top: 20px"></catlg-item-control-panel>
+    <div style="padding-top: 20px">
+      <b-table-simple small class="table-borderless" style="width: 500px" fixed>
         <b-tr>
-          <b-td>
+          <b-td class="align-middle" style="width: 30%">
             Фамилия
           </b-td>
           <b-td >
@@ -19,7 +19,7 @@
         </b-tr>
 
         <b-tr>
-          <b-td>
+          <b-td class="align-middle">
             Имя
           </b-td>
           <b-td>
@@ -28,7 +28,7 @@
         </b-tr>
         
         <b-tr>
-          <b-td>
+          <b-td class="align-middle">
             Подразделение
           </b-td>
           <b-td>
@@ -66,7 +66,7 @@ export default {
   },
   
   props: {
-    id: Number,
+    id: String,
   },
   
   mixins: [CatlgCommon,],
