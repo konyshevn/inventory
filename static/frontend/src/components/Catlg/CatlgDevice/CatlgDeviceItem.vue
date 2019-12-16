@@ -9,50 +9,50 @@
     <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid" style="padding-top: 20px"></catlg-item-control-panel>
     <div style="padding-top: 20px">
       <b-table-simple small class="table-borderless" style="width: 500px;">
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Тип
-          </b-td>
-          <b-td >
+          </td>
+          <td >
             <catlg-widget widget-type="deviceType" :model.sync="item.deviceType" :required="uid"></catlg-widget>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
 
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Наименование
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <catlg-widget widget-type="nomenclature" :model.sync="item.nomenclature" :required="uid"></catlg-widget>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
         
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Серийный номер
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <b-form-input v-model="item.serial_num" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
         
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Инвентарный номер
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <b-form-input v-model="item.inv_num" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
         
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Комментарий
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <b-form-input v-model="item.comment" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
       </b-table-simple>
     </div>
   </div>

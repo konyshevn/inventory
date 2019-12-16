@@ -9,14 +9,14 @@
     <catlg-item-control-panel :item="item" :catlgType="catlgType" style="padding-top: 20px"></catlg-item-control-panel>
     <div style="padding-top: 20px">
       <b-table-simple small class="table-borderless" style="width: 500px">
-        <b-tr>
-          <b-td class="align-middle" style="width: 40%">
+        <tr>
+          <td class="align-middle" style="width: 40%">
             Наименование
-          </b-td>
-          <b-td >
+          </td>
+          <td >
             <b-form-input v-model="item.label" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
       </b-table-simple>
     </div>
 
@@ -26,13 +26,11 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
-import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
 
 
@@ -40,7 +38,6 @@ import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.j
 export default {
   name: 'CatlgDeviceTypeItem',
   components: {
-    CatlgWidget,
     CatlgItemControlPanel,
   },
   

@@ -15,7 +15,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 var Inputmask = require('inputmask');
 import moment from 'moment';
 
@@ -64,7 +63,6 @@ export default {
 
   mounted: function () {
     var vm = this
-    var now = moment();
     var selector = document.getElementById("datetime-widget");
     var im = new Inputmask({
       "onincomplete": function(){

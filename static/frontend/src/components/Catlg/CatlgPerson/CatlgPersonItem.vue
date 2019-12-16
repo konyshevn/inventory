@@ -9,32 +9,32 @@
     <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid" style="padding-top: 20px"></catlg-item-control-panel>
     <div style="padding-top: 20px">
       <b-table-simple small class="table-borderless" style="width: 500px" fixed>
-        <b-tr>
-          <b-td class="align-middle" style="width: 30%">
+        <tr>
+          <td class="align-middle" style="width: 30%">
             Фамилия
-          </b-td>
-          <b-td >
+          </td>
+          <td >
             <b-form-input v-model="item.surname" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
 
-        <b-tr>
-          <b-td class="align-middle">
+        <tr>
+          <td class="align-middle">
             Имя
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <b-form-input v-model="item.name" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
         
-        <b-tr>
-          <b-td class="align-middle">
+        <tr>
+          <td class="align-middle">
             Подразделение
-          </b-td>
-          <b-td>
+          </td>
+          <td>
             <catlg-widget widget-type="department" :model.sync="item.department" :required="uid"></catlg-widget>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
                
       </b-table-simple>
     </div>
@@ -45,14 +45,12 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
-import SortHeader from '@/components/common/SortHeader.vue'
 import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
 
 
@@ -61,7 +59,6 @@ export default {
   name: 'CatlgPersonItem',
   components: {
     CatlgWidget,
-    SortHeader,
     CatlgItemControlPanel,
   },
   

@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
-import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
+//import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 export const store = new Vuex.Store({
   state: {
@@ -99,34 +99,6 @@ export const store = new Vuex.Store({
   },
 
   getters: {
-    currentDoc: state => {
-      return state.currentDoc.data
-    },
-
-    currentDocTU: state => {
-      return state.currentDoc.data.table_unit
-    },
-
-    currentDocStatus: state => {
-      return state.currentDoc.status
-    },
-
-    currentDocStatusTableUnit: state => key => {
-      return state.currentDoc.status.tableUnit[key]
-    },
-
-    GETsortStatus: state => objType => {
-      var status
-      if (objType == "TU") {
-        status = state.currentDoc.status.tableUnit.sort
-      } else if (objType == "docs") {
-        status = state.docs.status.sort
-      } else if ('catlg' in objType) {
-        status = state.catlgs[objType.catlg].status.sort
-      }
-      return status
-    },
-
 //---------------------------Document---------------------------
     GETdocItem: state => (docType, id) => {
       let docItem = _.find(state.docs[docType]['data'], {id: Number(id)})
@@ -185,156 +157,6 @@ export const store = new Vuex.Store({
   },
 
   mutations: {
-    SETcurrentDoc: (state, data) => {
-      state.currentDoc.data = data
-    },
-
-    DELcurrentDoc: (state) => {
-      state.currentDoc.data = {}
-      state.currentDoc.status = {
-        docType: String,
-        tableUnit: {
-          sort: {field: "", fieldType: "", order: -1},
-          selected: []
-        },
-        loading: true,
-      }
-    },
-
-    INITcurrentDoc: (state, docType) => {
-      let newDoc = new DocConstructor[docType]
-      Vue.set(state.currentDoc.status, 'docType', docType)
-      Vue.set(state.currentDoc, 'data', newDoc)
-    },
-
-    SETcurrentDocType: (state, data) => {
-      state.currentDoc.status.docType = data
-    },
-
-
-
-
-    UPDcurrentDocTU: (state, [index, key, value]) => {
-      state.currentDoc.data.table_unit[index][key] = value
-    },
-
-    DELcurrentDocTUrow: (state) => {
-      let rowToDelete = state.currentDoc.status.tableUnit.selected
-      state.currentDoc.data.table_unit.forEach(function(item){
-        if ((rowToDelete.indexOf(item.id) >= 0) || (rowToDelete.indexOf(String(item.id)) >= 0)) {
-          item.DELETE = true
-        } 
-      })
-      state.currentDoc.status.tableUnit.selected = []
-    },
-    
-    ADDcurrentDocTUrow: (state) => {
-      let newDoc = new DocConstructor[state.currentDoc.status.docType]
-      state.currentDoc.data.table_unit.push(newDoc.table_unit[0])
-    },
-
-    UPDcurrentDoc: (state, [key, value]) => {
-      if (value instanceof Event) {
-        state.currentDoc.data[key] = value.data
-      } else {
-        state.currentDoc.data[key] = value
-      }
-    },
-
-    UPDcurrentDocTableUnitSelected: (state, event) => {
-      if (event.target.checked) {
-        state.currentDoc.status.tableUnit.selected.push(event.target.value)
-      } else {
-        state.currentDoc.status.tableUnit.selected = state.currentDoc.status.tableUnit.selected.filter(item => {
-          return item != event.target.value
-        })
-      }
-    },
-
-    UPDdocsSelected: (state, event) => {
-      if (event.target.checked) {
-        state.docs.status.selected.push(event.target.value)
-      } else {
-        state.docs.status.selected = state.docs.status.selected.filter(item => {
-          return item != event.target.value
-        })
-      }
-    },
-
-    SETdocs: (state, data) => {
-      state.docs.data = data
-    },
-
-
-    sortObjList: (state, [objType, field, fieldType, changeOrder = true]) => {
-      var status, data 
-      if (objType == "TU") {
-        status = state.currentDoc.status.tableUnit.sort
-        data = state.currentDoc.data.table_unit
-      } else if (objType == "docs") {
-        status = state.docs.status.sort
-        data = state.docs.data
-      } else if ('catlg' in objType) {
-        status = state.catlgs[objType.catlg].status.sort
-        data = state.catlgs[objType.catlg].data
-      }
-
-      if (status.field != field) {
-        status.order = -1
-      }
-      if (changeOrder) {
-        status.order *= -1
-      }
-      status.field = field
-      status.fieldType = fieldType
-      var order = status.order
-
-      function compareTUrowWidget(a, b) {
-        if (!a[field]) return 1;
-        if (!b[field]) return -1;
-
-        
-        let catlgItemA = _.find(state.catlgs[field]['data'], {id: a[field]})
-        let catlgItemB = _.find(state.catlgs[field]['data'], {id: b[field]})
-        var aLabel = catlgItemA.label
-        var bLabel = catlgItemB.label
-        return aLabel < bLabel ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowNumber(a, b) {
-        return Number(a[field]) < Number(b[field]) ? -1 * order : 1 * order;
-      }
-
-      function compareTUrowText(a, b) {
-        if(a[field] === "" || a[field] === null) return 1;
-        if(b[field] === "" || b[field] === null) return -1;
-        if(a[field] === b[field]) return 0;
-        return a[field] < b[field] ? -1 * order : 1 * order;
-      }
-      
-      if (fieldType == 'widget') {
-        data.sort(compareTUrowWidget);
-      } else if (fieldType == 'number') {
-        data.sort(compareTUrowNumber);
-      } else if (fieldType == 'text') {
-        data.sort(compareTUrowText);
-      }
-
-      if (objType == "TU") {
-        data.map(function(value, index){
-          value.rowOrder = index + 1
-        })
-      }
-    },
-
-    currentDocTUclearNullId: (state) => {
-      state.currentDoc.data.table_unit.forEach(function(item){
-        if (String(item.id).indexOf("null_") == 0) {
-          item.id = null
-        }
-      })
-    },
-
 //---------------------------Document---------------------------
     SETdocs: (state, [docType, data]) => {
       state.docs[docType]['data'] = data
@@ -399,24 +221,8 @@ export const store = new Vuex.Store({
   },
 
   actions: {
-
-    DELcurrentDoc: async ({getters}) => {
-      var response = null
-      try{
-        response = await HTTP.delete(getters.currentDocStatus.docType + '/' + getters.currentDoc.id + '/')
-      } catch(error) {
-        response = error['response']
-      } 
-      return response
-
-    },
-
-
-
-
-
 //---------------------------Document---------------------------
-    PUTdoc: async ({dispatch, getters}, [docType, item]) => {
+    PUTdoc: async ([docType, item]) => {
       var response = null
       try {
         var currentDoc = item
@@ -445,7 +251,7 @@ export const store = new Vuex.Store({
       return response
     },
 
-    DELdoc: async ({dispatch, commit}, [docType, id]) => {
+    DELdoc: async ({commit}, [docType, id]) => {
       var response = null
       try {
         response = await HTTP.delete(docType + '/' + id + '/')
@@ -458,7 +264,7 @@ export const store = new Vuex.Store({
       return response
     },
 
-    FETCHdocs: async ({commit, dispatch, getters}, docType) => {
+    FETCHdocs: async ({commit, dispatch}, docType) => {
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
       await dispatch('FETCHdependentCatlg', DocsReady)

@@ -12,7 +12,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import {EventBus} from '@/components/common/event-bus.js'
 
 export default {

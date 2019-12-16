@@ -11,7 +11,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import { mapGetters } from 'vuex';
 

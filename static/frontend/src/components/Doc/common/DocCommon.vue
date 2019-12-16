@@ -9,6 +9,7 @@ import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
 import {EventBus} from '@/components/common/event-bus.js'
 import Common from '@/components/common/Common.vue';
+var _ = require('lodash');
 
 
 async function asyncForEach(array, callback) {
@@ -178,7 +179,12 @@ export default {
       if (event.srcElement.className == 'custom-control-label') { return }
       if (!vm.modal) {
         let idIndex = vm.status.selected.indexOf(id)
-        let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
+        if (idIndex >= 0) {
+          vm.status.selected.splice(idIndex, 1)
+        } else {
+          vm.status.selected.push(id)
+        }
+        //let result = (idIndex >= 0) ? vm.status.selected.splice(idIndex, 1) : vm.status.selected.push(id)
       } else {
         vm.status.selected = (vm.status.selected == id) ? null : id
       }

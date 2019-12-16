@@ -9,7 +9,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import { mapGetters } from 'vuex';
 
@@ -20,7 +19,10 @@ export default {
   mixins: [CatlgCommon],
   props: {
     item: {},
-    catlgType: '',
+    catlgType: {
+      type: String,
+      default: '',
+    },
     parent: null,
   },
 

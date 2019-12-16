@@ -8,13 +8,11 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
 import CatlgPersonList from '@/components/Catlg/CatlgPerson/CatlgPersonList.vue';
 import CatlgDepartmentList from '@/components/Catlg/CatlgDepartment/CatlgDepartmentList.vue';
 
 import {aliases} from '@/components/common/aliases.js';
-
 
 export default {
   name: 'CatlgList',

@@ -9,7 +9,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 var _ = require('lodash');

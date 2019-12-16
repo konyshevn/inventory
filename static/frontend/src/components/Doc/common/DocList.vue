@@ -7,7 +7,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue';
 import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue';
 import {aliases} from '@/components/common/aliases.js';
 

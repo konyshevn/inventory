@@ -48,7 +48,6 @@ import { mapMutations } from 'vuex';
 import moment from 'moment';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import DocListControlPanel from '@/components/Doc/common/ControlPanel/DocListControlPanel.vue'
-import SortHeader from '@/components/common/SortHeader.vue'
 import SmartTable from '@/components/common/SmartTable.vue'
 
 Vue.filter('formatDate', function(value) {
@@ -62,12 +61,14 @@ export default {
   name: 'DocIncomeList',
   components: {
     DocListControlPanel,
-    SortHeader,
     SmartTable,
   },
+
   mixins:[DocCommon],
+  
   props: {
   },
+  
   data () {
     return {
       status: {

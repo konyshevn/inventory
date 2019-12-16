@@ -8,11 +8,6 @@
 
 <script>
 /* eslint-disable no-console */
-import Vue from 'vue'
-
-import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
 
 export default {
   name: 'SortHeader',
@@ -40,23 +35,15 @@ export default {
   },
   
   computed: {
-    ...mapGetters([
-      'GETsortStatus',
-    ]),
   },
-  methods: {
-    ...mapMutations([
-      'sortObjList',
-    ]),
 
+  methods: {
     sortTable: function() {
       const vm = this
       vm.$root.$emit('sort-table', vm.field)
     },
-
-
-
   },
+  
   mounted: function () {
   },
 

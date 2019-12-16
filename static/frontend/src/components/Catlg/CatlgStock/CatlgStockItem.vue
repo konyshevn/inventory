@@ -9,14 +9,14 @@
     <catlg-item-control-panel :item="item" :catlgType="catlgType" style="padding-top: 20px"></catlg-item-control-panel>
     <div style="padding-top: 20px">
       <b-table-simple small class="table-borderless" style="width: 500px">
-        <b-tr>
-          <b-td class="align-middle" style="width: 30%">
+        <tr>
+          <td class="align-middle" style="width: 30%">
             Наименование
-          </b-td>
-          <b-td >
+          </td>
+          <td>
             <b-form-input v-model="item.label" type="text"></b-form-input>
-          </b-td>
-        </b-tr>
+          </td>
+        </tr>
       </b-table-simple>
     </div>
 
