@@ -113,10 +113,11 @@ export default {
       }
     },
 
-    CatlgSelectedInput: function (value) {
+    CatlgSelectedInput: function (event) {
       const vm = this
       if (vm.modal) {
-        EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: value, handleOk: false})
+        // console.log('CatlgSelectedInput: event', event)
+        EventBus.$emit('modalItemSelected', {modalId: vm.modal, id: Number(event.target.value), handleOk: false})
       }
     },
 

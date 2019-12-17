@@ -42,6 +42,7 @@ export default {
     handleOk: function () {
       const vm = this
       let id = (Array.isArray(vm.selectedItemId)) ? vm.selectedItemId[0] : vm.selectedItemId
+      // console.log('handleOk: id, vm.modalId', id, vm.modalId)
       EventBus.$emit('catlgWidgetSetModel', {modalId: vm.modalId, id: id})
     },
 
@@ -60,6 +61,7 @@ export default {
   created: function () {
     var vm = this
     EventBus.$on('modalItemSelected', event => {
+      // console.log('on-modalItemSelected, event', event)
       if (event.modalId == vm.modalId) {
         vm.selectedItemId = event.id
         if (event.handleOk) { 

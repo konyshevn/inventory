@@ -366,6 +366,10 @@ export default {
       handler(){
         const vm = this
         vm.$emit('update:selected', vm.selectedLocal)
+        if (!(vm.selectedPlural)) {
+          let event = {target: {value: vm.selectedLocal[0]}}
+          vm.onInputCheckbox(event)
+        }
       }
     },
 
