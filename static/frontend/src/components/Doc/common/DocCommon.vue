@@ -35,7 +35,12 @@ export default {
       'currentDoc',
       'currentDocStatus',
       'widgetsIsValid',
-    ])
+    ]),
+
+    docChanged: function () {
+      const vm = this
+      return !_.isEqual(vm.item, vm.itemInit);
+    },
   },
 
   methods: {
@@ -185,6 +190,7 @@ export default {
         vm.status.selected = (vm.status.selected == id) ? null : id
       }
     },
+
     
  },
 

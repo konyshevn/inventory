@@ -104,8 +104,6 @@ import SmartTable from '@/components/common/SmartTable.vue'
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
-
-
 export default {
   name: 'DocWriteoffItem',
   components: {
@@ -126,7 +124,6 @@ export default {
     return {
       status: {
         docType: 'docwriteoff',
-        docChanged: false,
         uid: null,
         tableUnit: {
           sortBy: "", 
@@ -135,6 +132,7 @@ export default {
         },
       },
       item: {},
+      itemInit: {},
     }       
   },
 
@@ -151,11 +149,9 @@ export default {
     ...mapGetters([
       'widgetsIsValid',
       'GETdocItem',
-
-    ])
+    ]),
   },
 
- 
   async mounted () {
     const vm = this
     vm.status.uid = vm.uid
@@ -166,6 +162,7 @@ export default {
     } else {
       await vm.FETCHdocItem([vm.status.docType, vm.id])
       vm.item = vm.GETdocItem(vm.status.docType, vm.id)
+      //vm.itemInit = _.cloneDeep(vm.item)
     }
   },
 

@@ -9,6 +9,7 @@
 /* eslint-disable no-console */
 import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue';
 import DocWriteoffList from '@/components/Doc/DocWriteoff/DocWriteoffList.vue';
+import DocMoveList from '@/components/Doc/DocMove/DocMoveList.vue';
 import {aliases} from '@/components/common/aliases.js';
 
 
@@ -17,6 +18,7 @@ export default {
   components: {
     DocIncomeList,
     DocWriteoffList,
+    DocMoveList,
 
   },
   props: {
