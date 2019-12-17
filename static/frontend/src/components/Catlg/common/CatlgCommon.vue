@@ -77,14 +77,16 @@ export default {
 			var vm = this
       var isNewCatlg = item.id
       var errors = []
-      let response = {}
+      var response = {}
       if (!vm.widgetsIsValid(parent)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
         response = await vm.PUTcatlg([catlgType, item])
+        // console.log('saveCatlgItem: response', response)
       }
 
+      // console.log('saveCatlgItem: response', response)
       if (response.status == 200 || response.status == 201) {
         if (!(isNewCatlg)) {
           item.id = response.data.id

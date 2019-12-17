@@ -2,7 +2,7 @@
   <div style="position:relative;display:block">
     <div style="float:left;width:100%">
       <cool-select 
-      v-model="model" 
+      v-model="modelLocal" 
       :items="items"
       item-value="id"
       item-text="label"
@@ -80,7 +80,7 @@ export default {
       isValid: false,
       isInited: false,
       currentItem: Number,
-
+      modelLocal: this.model,
     }
   },
 
@@ -143,6 +143,7 @@ export default {
     model: {
       handler(){
         var vm = this
+        vm.modelLocal = vm.model
         if (vm.model){
           vm.isValid = true
           if (!vm.isInited){
@@ -158,7 +159,14 @@ export default {
         }
       },
       immediate: true,
-    }
+    },
+
+    modelLocal: {
+      handler(){
+        const vm = this
+        vm.$emit('update:model', vm.modelLocal)
+      },
+    },
 
   },
 

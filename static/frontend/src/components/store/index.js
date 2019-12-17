@@ -5,7 +5,7 @@ Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
 //import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
-
+/* eslint-disable no-console */
 export const store = new Vuex.Store({
   state: {
     currentDoc: {
@@ -286,7 +286,7 @@ export const store = new Vuex.Store({
 
 
 //---------------------------Catalog---------------------------
-    PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
+    PUTcatlg: async({commit, dispatch}, [catlgType, item]) => {
       var response = null
       try {
         if (item.id == null) {
@@ -294,14 +294,15 @@ export const store = new Vuex.Store({
         } else {
           response = await HTTP.put(catlgType + '/' + item.id + '/', item)
         }
+        // console.log('PUTcatlg: response', response)
         if (response.status >= 200 && response.status < 300) {
           item = response.data
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
             dispatch('SETcatlgLabel', [catlgType, item.id])
           }
-          let sortStatus = getters.GETsortStatus({catlg: catlgType})
-          commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
+          // let sortStatus = getters.GETsortStatus({catlg: catlgType})
+          // commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
         }
 
       } catch(error) {
