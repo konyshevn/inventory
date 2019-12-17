@@ -116,7 +116,9 @@ export default {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
+        console.log('saveDocItem: status, itemLocal', status, itemLocal)
         response = await vm.PUTdoc([status.docType, itemLocal])
+        console.log('saveDocItem: after PUTdoc')
       }
 
       if (response.status >= 200 && response.status < 300) {

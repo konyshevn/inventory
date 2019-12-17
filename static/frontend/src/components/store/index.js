@@ -222,7 +222,7 @@ export const store = new Vuex.Store({
 
   actions: {
 //---------------------------Document---------------------------
-    PUTdoc: async ([docType, item]) => {
+    PUTdoc: async (context, [docType, item]) => {
       var response = null
       try {
         var currentDoc = item
