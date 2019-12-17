@@ -107,7 +107,7 @@ import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
 export default {
-  name: 'DocIncomeItem',
+  name: 'DocWriteoffItem',
   components: {
     CatlgWidget,
     DatetimeWidget,
@@ -125,7 +125,7 @@ export default {
   data () {
     return {
       status: {
-        docType: 'docincome',
+        docType: 'docwriteoff',
         docChanged: false,
         uid: null,
         tableUnit: {
@@ -184,52 +184,6 @@ export default {
 </script>
 
 <style >
-
-
-.table_unit td:nth-child(1), .table_unit th:nth-child(1) {
-  width: 5%;
-}
-.table_unit td:nth-child(2), .table_unit th:nth-child(2) {
-  width: 35%;
-}
-.table_unit td:nth-child(3), .table_unit th:nth-child(3) {
-  width: 25%;
-}
-.table_unit td:nth-child(4), .table_unit th:nth-child(4) {
-  width: 15%;
-}
-.table_unit td:nth-child(5), .table_unit th:nth-child(5) {
-  width: 20%;
-}
-
-.table_unit {
-  display: inline-grid;
-  grid-template-areas: 
-  "head-fixed" 
-  "body-scrollable";
-}
-
-.table_unit thead {
-  grid-area: head-fixed;
-  /* fallback */
-  width: 100%;
-  /* minus scroll bar width */
-  width: calc( 100% - 1em ) !important;/* scrollbar is average 1em/16px width, remove it from thead width */
-  cursor: pointer;
-}
-
-.table_unit tbody {
-  grid-area: body-scrollable;
-  overflow-y: scroll;
-  height: calc(90vh  - 350px);
-}
-
-
-.table_unit thead, .table_unit tbody tr {
-    display:table;
-    table-layout:fixed;/* even columns width , fix width of table too*/
-}
-
 
 
 </style>

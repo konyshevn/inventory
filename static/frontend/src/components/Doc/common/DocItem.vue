@@ -8,6 +8,8 @@
 <script>
 /* eslint-disable no-console */
 import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue';
+import DocWriteoffItem from '@/components/Doc/DocWriteoff/DocWriteoffItem.vue';
+
 import {aliases} from '@/components/common/aliases.js';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 
@@ -16,6 +18,7 @@ export default {
   name: 'DocItem',
   components: {
     DocIncomeItem,
+    DocWriteoffItem,
     CatlgWidgetModal,
 
   },

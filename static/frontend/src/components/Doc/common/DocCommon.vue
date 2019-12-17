@@ -65,9 +65,8 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
+        vm.$emit('update:item', response.data)
+        if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
         }
  
@@ -93,12 +92,10 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
+        vm.$emit('update:item', response.data)
+        if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
         }
-
       } else {
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
@@ -111,7 +108,6 @@ export default {
       var errors = []
       let itemLocal = _.cloneDeep(item)
 
-
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
@@ -122,9 +118,8 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
+        vm.$emit('update:item', response.data)
+        if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
         }
       } else {
@@ -171,7 +166,6 @@ export default {
 
     DocClickRow: function (id) {
       const vm = this
-      console.log(id);
       this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
     },
 

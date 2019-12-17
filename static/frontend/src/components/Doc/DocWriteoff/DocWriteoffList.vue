@@ -58,7 +58,7 @@ Vue.filter('formatDate', function(value) {
 
 
 export default {
-  name: 'DocIncomeList',
+  name: 'DocWriteoffList',
   components: {
     DocListControlPanel,
     SmartTable,
@@ -73,7 +73,7 @@ export default {
     return {
       status: {
         selected: [],
-        docType: 'docincome',
+        docType: 'docwriteoff',
         sortBy: 'doc_date',
         sortAsc: false,
       },
@@ -101,7 +101,7 @@ export default {
   async mounted () {
     const vm = this
     await this.FETCHdocs(vm.status.docType);
-    console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
+    // console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {
         event.preventDefault();
