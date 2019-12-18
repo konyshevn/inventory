@@ -39,3 +39,26 @@ export function docwriteoff() {
   ]
   this.comment = ''
 } 
+
+export function docmove() {
+  this.id = null
+  this.doc_date = (new Date).toISOString()
+  this.doc_num = null
+  this.active = false
+  this.department_from = null
+  this.department_to = null
+  this.stock_from = null
+  this.stock_to = null
+  this.table_unit = [
+    {
+      id: /*null*/ `null_f${(+new Date).toString(16)}`,
+      device: null,
+      person_from: null,
+      person_to: null,
+      qty: '1',
+      comment: '',
+      DELETE: false,
+    },
+  ]
+  this.comment = ''
+} 

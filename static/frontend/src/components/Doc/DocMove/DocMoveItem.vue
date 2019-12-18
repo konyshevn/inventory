@@ -1,5 +1,5 @@
 <template>
-  <div class="doc-income-item container">
+  <div class="container">
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>
@@ -26,30 +26,41 @@
           </b-col>
         </b-row>
 
-        <b-row align-v="end" class="mb-2">
-          <b-col sm="2" align-h="start">
-            <label>Подразделение:</label>
+        <b-row align-v="middle" class="mb-2">
+          <b-col sm="2" align-h="start" >
+            <label>Подразделение отправитель:</label>
           </b-col> 
-          <b-col sm="5">
-            <catlg-widget widget-type="department" :required="uid" :model.sync="item.department"></catlg-widget>
-            
+          <b-col sm="4">
+            <catlg-widget widget-type="department" :required="uid" :model.sync="item.department_from"></catlg-widget>
+          </b-col> 
+          <b-col sm="2" align-h="start">
+            <label>Подразделение получатель:</label>
+          </b-col> 
+          <b-col sm="4">
+            <catlg-widget widget-type="department" :required="uid" :model.sync="item.department_to"></catlg-widget>
           </b-col> 
         </b-row>
 
         <b-row align-v="end" class="mb-2">
           <b-col sm="2" align-h="start">
-            <label>Склад:</label>
+            <label>Склад отправитель:</label>
           </b-col> 
-          <b-col sm="5">
-            <catlg-widget widget-type="stock" :model.sync="item.stock"></catlg-widget>
+          <b-col sm="4">
+            <catlg-widget widget-type="stock" :model.sync="item.stock_from"></catlg-widget>
+          </b-col>
+          <b-col sm="2" align-h="start">
+            <label>Склад получатель:</label>
           </b-col> 
+          <b-col sm="4">
+            <catlg-widget widget-type="stock" :model.sync="item.stock_to"></catlg-widget>
+          </b-col>  
         </b-row>
 
         <b-row align-v="end" class="mb-2">
           <b-col sm="2" align-h="start">
             <label>Комментарий:</label>
           </b-col>
-          <b-col sm="8" align-h="start"> 
+          <b-col sm="10" align-h="start"> 
             <b-form-input v-model="item.comment" type="text" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
@@ -70,14 +81,17 @@
       :sort-asc.sync="status.tableUnit.sortAsc"
       :items="item.table_unit"
       :fields="[
-        {key: 'device', label: 'Устройство', type: 'widget', width: '35%',
+        {key: 'device', label: 'Устройство', type: 'widget', width: '25%',
         widgetSettings: {required: uid, type: 'device'}
         },
-        {key: 'person', label: 'Сотрудник', type: 'widget', width: '25%',
+        {key: 'person_from', label: 'Сотрудник отправитель', type: 'widget', width: '20%',
+        widgetSettings: {type: 'person'}
+        },
+        {key: 'person_to', label: 'Сотрудник получатель', type: 'widget', width: '20%',
         widgetSettings: {type: 'person'}
         },
         {key: 'qty', label: 'Количество', type: 'input-number', width: '15%',},
-        {key: 'comment', label: ' Комментарий', type: 'input-text', width: '20%',},
+        {key: 'comment', label: ' Комментарий', type: 'input-text', width: '15%',},
       ]"
     >
       
@@ -105,7 +119,7 @@ import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
 export default {
-  name: 'DocWriteoffItem',
+  name: 'DocMoveItem',
   components: {
     CatlgWidget,
     DatetimeWidget,
@@ -123,7 +137,7 @@ export default {
   data () {
     return {
       status: {
-        docType: 'docwriteoff',
+        docType: 'docmove',
         uid: null,
         tableUnit: {
           sortBy: "", 
