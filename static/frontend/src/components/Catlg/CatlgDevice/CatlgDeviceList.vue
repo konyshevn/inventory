@@ -2,7 +2,7 @@
   <div class = "catlg-device-list container">
     <div class="fixed-header2">
       <h2 v-if="!modal" align="left">{{catlgTitle(status.catlgType, 'plural')}}</h2>
-      <b-container class="text-left">
+      <b-container class="text-left control-panel">
         <catlg-list-control-panel :status.sync="status"></catlg-list-control-panel>
       </b-container>
     </div>

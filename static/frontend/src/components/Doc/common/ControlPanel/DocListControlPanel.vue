@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-container class="text-right" >
+    <b-container class="text-right" style="margin-left: 0px; padding-left: 0px">
       <b-row align-v="end">
-        <b-col align="left">
+        <b-col align="left" >
           <b-button variant="light" size="sm" :to="{path: 'new'}" append>Добавить</b-button>
           <b-button variant="light" size="sm" @click="onDelDocs()">Удалить</b-button>
         </b-col>

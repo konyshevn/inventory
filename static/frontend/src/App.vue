@@ -66,4 +66,7 @@ body {
   line-height:1;
 }
 
+.control-panel {
+  padding-left: 0px;
+}
 </style>

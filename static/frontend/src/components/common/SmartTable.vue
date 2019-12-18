@@ -136,7 +136,7 @@ export default {
     },
     maxWidth: {
       type: Number,
-      default: 1200,
+      default: 1400,
     },
     selectRowClick: {
       type: Boolean,

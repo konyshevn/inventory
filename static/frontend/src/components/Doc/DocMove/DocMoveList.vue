@@ -1,14 +1,16 @@
 <template>
-  <div class="doc-income-list container">
+  <div class="container">
     <header>
       <h2>{{docTitle(status.docType, 'plural')}}</h2>
     </header>
-    <b-container class="text-left">
-      <doc-list-control-panel :status.sync="status"></doc-list-control-panel>
+    <b-container class="text-left control-panel">
+      <doc-list-control-panel :status.sync="status" ></doc-list-control-panel>
     </b-container>
 
      <smart-table 
       :table-padd="200"
+      :min-width="1100"
+      :max-width="1500"
       :selected-plural="true"
       :selectAll="true"
       :selected.sync="status.selected"
@@ -21,22 +23,22 @@
         formatter: (value) => {return formatDate(value)},
         formatterSort: false,
         },
-        {key: 'doc_num', label: 'Номер', type: 'text', width: '10%',
+        {key: 'doc_num', label: 'Номер', type: 'text', width: '6%',
         },
         {key: 'active', label: 'Проведен', type: 'boolean', width: '10%',},
         {key: 'department_from', label: 'Подразделение отправитель', type: 'text', width: '15%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        formatter: (value, key) => {return GETcatlgItemLabel('department', value)}
         },
         {key: 'department_to', label: 'Подразделение получатель', type: 'text', width: '15%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        formatter: (value, key) => {return GETcatlgItemLabel('department', value)}
         },
-        {key: 'stock_from', label: 'Склад отправитель', type: 'text', width: '10%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        {key: 'stock_from', label: 'Склад отправитель', type: 'text', width: '12%',
+        formatter: (value, key) => {return GETcatlgItemLabel('stock', value)}
         },
-        {key: 'stock_to', label: 'Склад получатель', type: 'text', width: '10%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+        {key: 'stock_to', label: 'Склад получатель', type: 'text', width: '12%',
+        formatter: (value, key) => {return GETcatlgItemLabel('stock', value)}
         },
-        {key: 'comment', label: ' Комментарий', type: 'text', width: '15%',},
+        {key: 'comment', label: ' Комментарий', type: 'text', width: '10%',},
       ]"
     >
       
@@ -125,5 +127,8 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  max-width: 1300px !important;
+}
 
 </style>

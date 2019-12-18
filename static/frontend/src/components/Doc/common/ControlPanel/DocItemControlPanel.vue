@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button-group align="left">
+    <b-button-group align="left" >
       <b-button type="submit" variant="light" size="sm" @click="regWriteDocItem(status, item)">Провести</b-button>
       <b-button type="submit" variant="light" size="sm" @click="regDelDocItem(status, item)">Отмена проведения</b-button>
       <b-button type="submit" variant="light" size="sm" @click="saveDocItem(status, item)">Сохранить</b-button>

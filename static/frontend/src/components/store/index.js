@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
+import {aliases} from '@/components/common/aliases.js';
+
 //import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 /* eslint-disable no-console */
 export const store = new Vuex.Store({
@@ -267,19 +269,26 @@ export const store = new Vuex.Store({
     FETCHdocs: async ({commit, dispatch}, docType) => {
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
-      await dispatch('FETCHdependentCatlg', DocsReady)
+
+      // console.log('FETCHdocs: aliases', aliases.docAlias[docType]['fieldsMap'])
+      await dispatch('FETCHdependentCatlg', [DocsReady, aliases.docAlias[docType]['fieldsMap']])
       commit('SETdocs', [docType, DocsReady])
     },
 
-    FETCHdocItem: async ({commit, dispatch, getters}, [docType, id]) => {
+    FETCHdocItem: async ({commit, dispatch}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
-      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
+      /*
+      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], aliases.docAlias[docType].fieldsMap])
 
       for (let key in response.data){
         if ((getters.catlgExist(key)) && (response.data[key])) {
           await dispatch('FETCHcatlgItem', [key, response.data[key]])
         }
       }
+      */
+      await dispatch('FETCHdependentCatlg', [[response.data], aliases.docAlias[docType].fieldsMap])
+      await dispatch('FETCHdependentCatlg', [response.data.table_unit, aliases.docAlias[docType].fieldsMap.tableUnit])
+
       commit('SETdocItem', [docType, response.data])
     },
 
@@ -336,7 +345,7 @@ export const store = new Vuex.Store({
           catlgItemFetch = response.data   
         }
           
-        await dispatch('FETCHdependentCatlg', catlgItemFetch)
+        await dispatch('FETCHdependentCatlg', [catlgItemFetch, aliases.catlgAlias[catlgType]['fieldsMap']])
 
         catlgItemFetch.forEach(function(item){
           commit('SETcatlgItem', [catlgType, item])
@@ -360,7 +369,7 @@ export const store = new Vuex.Store({
         }
         var catlgItemFetch = response.data
 
-        await dispatch('FETCHdependentCatlg', catlgItemFetch)      
+        await dispatch('FETCHdependentCatlg', [catlgItemFetch, aliases.catlgAlias[catlgType]['fieldsMap']])      
         catlgItemFetch.forEach(function(item){
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
@@ -375,10 +384,18 @@ export const store = new Vuex.Store({
       return response
     },
 
-    FETCHdependentCatlg: async ({dispatch, getters}, items) => {
-      for (var key in items[0]){
+    FETCHdependentCatlg: async ({dispatch, getters}, [items, fieldsMap]) => {
+      let key
+      // console.log('FETCHdependentCatlg: items', items)
+      // console.log('FETCHdependentCatlg: fieldsMap', fieldsMap)
+      for (var itemKey in items[0]){
+        if (fieldsMap && (itemKey in fieldsMap)) {
+          key = fieldsMap[itemKey]
+        } else {
+          key = itemKey
+        }
         if (getters.catlgExist(key)) {
-          var catlgToLoad = _.uniq(_.map(items, _.property(key)))
+          var catlgToLoad = _.uniq(_.map(items, _.property(itemKey)))
           catlgToLoad = catlgToLoad.filter(function (el) {
             return el != null;
           });

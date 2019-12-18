@@ -3,7 +3,7 @@
     <header>
       <h2>{{docTitle(status.docType, 'plural')}}</h2>
     </header>
-    <b-container class="text-left">
+    <b-container class="text-left control-panel">
       <doc-list-control-panel :status.sync="status"></doc-list-control-panel>
     </b-container>
 
