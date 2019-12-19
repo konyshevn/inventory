@@ -1,5 +1,5 @@
 <template>
-  <div class="doc-income-item container">
+  <div class="container">
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>
@@ -17,7 +17,7 @@
           <b-col sm="1">
             <label>Дата:</label> 
           </b-col>
-          <b-col sm="3">
+          <b-col sm="2">
             <datetime-widget v-if="item.doc_date" :model.sync="item.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="2" align="center">
@@ -27,12 +27,11 @@
         </b-row>
 
         <b-row align-v="end" class="mb-2">
-          <b-col sm="2" align-h="start">
+          <b-col sm="2" align-h="start" >
             <label>Подразделение:</label>
           </b-col> 
-          <b-col sm="5">
+          <b-col sm="4">
             <catlg-widget widget-type="department" :required="uid" :model.sync="item.department"></catlg-widget>
-            
           </b-col> 
         </b-row>
 
@@ -40,16 +39,16 @@
           <b-col sm="2" align-h="start">
             <label>Склад:</label>
           </b-col> 
-          <b-col sm="5">
+          <b-col sm="4">
             <catlg-widget widget-type="stock" :model.sync="item.stock"></catlg-widget>
-          </b-col> 
+          </b-col>
         </b-row>
 
         <b-row align-v="end" class="mb-2">
           <b-col sm="2" align-h="start">
             <label>Комментарий:</label>
           </b-col>
-          <b-col sm="7" align-h="start"> 
+          <b-col sm="6" align-h="start"> 
             <b-form-input v-model="item.comment" type="text" maxlength="70"></b-form-input>
           </b-col>
         </b-row>
@@ -70,14 +69,21 @@
       :sort-asc.sync="status.tableUnit.sortAsc"
       :items="item.table_unit"
       :fields="[
-        {key: 'device', label: 'Устройство', type: 'widget', width: '35%',
+        {key: 'device', label: 'Устройство', type: 'widget', width: '20%',
         widgetSettings: {required: uid, type: 'device'}
         },
-        {key: 'person', label: 'Сотрудник', type: 'widget', width: '25%',
+        {key: 'person_accountg', label: 'Сотрудник (учет)', type: 'widget', width: '15%',
         widgetSettings: {type: 'person'}
         },
-        {key: 'qty', label: 'Количество', type: 'input-number', width: '15%',},
-        {key: 'comment', label: ' Комментарий', type: 'input-text', width: '20%',},
+        {key: 'qty_accountg', label: 'Количество (учет)', type: 'input-number', width: '10%',},
+        {key: 'person_fact', label: 'Сотрудник (факт)', type: 'widget', width: '15%',
+        widgetSettings: {type: 'person'}
+        },
+        {key: 'qty_fact', label: 'Количество (факт)', type: 'input-number', width: '10%',},
+        {key: 'stock_fact', label: 'Склад (факт)', type: 'widget', width: '15%',
+        widgetSettings: {type: 'stock'}
+        },
+        {key: 'comment', label: ' Комментарий', type: 'input-text', width: '10%',},
       ]"
     >
       
@@ -105,7 +111,7 @@ import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 
 
 export default {
-  name: 'DocWriteoffItem',
+  name: 'DocInventoryItem',
   components: {
     CatlgWidget,
     DatetimeWidget,
@@ -123,7 +129,7 @@ export default {
   data () {
     return {
       status: {
-        docType: 'docwriteoff',
+        docType: 'docinventory',
         uid: null,
         tableUnit: {
           sortBy: "", 
@@ -180,8 +186,10 @@ export default {
 
 </script>
 
-<style >
-
+<style scoped="">
+.container {
+  max-width: 1300px !important;
+}
 
 </style>
 

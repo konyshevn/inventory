@@ -524,7 +524,7 @@ class DocWriteoff(Document):
 
 class DocWriteoffTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
@@ -576,7 +576,7 @@ class DocMove(Document):
 
 class DocMoveTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocMove, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
     person_from = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_from')
     person_to = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_to')
     qty = models.PositiveIntegerField(default=1)
@@ -731,7 +731,7 @@ class DocInventory(Document):
 
 class DocInventoryTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
 
     person_accountg = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_accountg')
     qty_accountg = models.PositiveIntegerField(default=1)

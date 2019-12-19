@@ -35,6 +35,19 @@ export const aliases = {
                     },
                   },
     },
+
+    docinventory: {item: 'DocInventoryItem', list: 'DocInventoryList', titleSingular: 'Инвентаризация', titlePlural: 'Инвентаризации',
+                  fieldsMap: {
+                    department: 'department',
+                    stock: 'stock',
+                    tableUnit: {
+                      device: 'device',
+                      person_accountg: 'person',
+                      person_fact: 'person',
+                      stock_fact: 'stock',
+                    },
+                  },
+    },
   },
   
   catlgAlias: {

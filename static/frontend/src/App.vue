@@ -7,7 +7,8 @@
         <b-nav-item-dropdown text="Документы" right>
           <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docincome'}}">Оприходование</b-dropdown-item>
           <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docwriteoff'}}">Списание</b-dropdown-item>
-           <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docmove'}}">Перемещение</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docmove'}}">Перемещение</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docinventory'}}">Инвентаризация</b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown text="Справочники" right>

@@ -10,6 +10,7 @@
 import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue';
 import DocWriteoffItem from '@/components/Doc/DocWriteoff/DocWriteoffItem.vue';
 import DocMoveItem from '@/components/Doc/DocMove/DocMoveItem.vue';
+import DocInventoryItem from '@/components/Doc/DocInventory/DocInventoryItem.vue';
 
 import {aliases} from '@/components/common/aliases.js';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
@@ -21,6 +22,7 @@ export default {
     DocIncomeItem,
     DocWriteoffItem,
     DocMoveItem,
+    DocInventoryItem,
     CatlgWidgetModal,
 
   },

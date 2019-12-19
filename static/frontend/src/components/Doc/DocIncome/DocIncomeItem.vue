@@ -49,7 +49,7 @@
           <b-col sm="2" align-h="start">
             <label>Комментарий:</label>
           </b-col>
-          <b-col sm="8" align-h="start"> 
+          <b-col sm="7" align-h="start"> 
             <b-form-input v-model="item.comment" type="text" maxlength="70"></b-form-input>
           </b-col>
         </b-row>

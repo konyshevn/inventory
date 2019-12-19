@@ -43,6 +43,12 @@ export const store = new Vuex.Store({
           sort: {field: "doc_date", sortAsc: true},
         }
       },
+      docinventory: {
+        data: [],
+        status: {
+          sort: {field: "doc_date", sortAsc: true},
+        }
+      },
     },
 /*    
     docs: {
