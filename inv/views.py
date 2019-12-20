@@ -7,6 +7,7 @@ import time, datetime
 from inv.config import *
 import csv
 
+
 from inv.models import *
 from inv.forms import *
 import json
@@ -20,6 +21,7 @@ from rest_framework import viewsets, status
 from . import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
 
 class DocumentViewSet(viewsets.ViewSet):
     def destroy(self, request, pk, format=None):
@@ -50,6 +52,24 @@ class DocumentViewSet(viewsets.ViewSet):
         }
         labels_json = json.dumps(labels)
         return HttpResponse(labels_json)
+
+    @action(detail=True, url_path='get_follower')
+    def get_follower(self, request, pk=None):
+        doc_leader = self.serializer_class.Meta.model.objects.get(id=pk)
+        followers = doc_leader.get_follower
+        followers_id = []
+        for doc in followers:
+            doc_contenttype = ContentType.objects.get_for_model(doc._meta.model)
+            followers_id.append({'docId': doc.id, 'docType': doc_contenttype.model})
+        return HttpResponse(json.dumps(followers_id))
+
+    @action(detail=True, url_path='get_leader')
+    def get_leader(self, request, pk=None):
+        doc_current = self.serializer_class.Meta.model.objects.get(id=pk)
+        doc_leader = doc_current.get_leader
+        doc_leader_contenttype = ContentType.objects.get_for_model(doc_leader._meta.model)
+        leader_id = {'docId': doc_leader.id, 'docType': doc_leader_contenttype.model}
+        return HttpResponse(json.dumps(leader_id))
 
 
 class CatalogViewSet(viewsets.ViewSet):
