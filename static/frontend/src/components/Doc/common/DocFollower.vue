@@ -4,7 +4,8 @@
   <b-list-group>
     <b-list-group-item v-if="leader"
     class="doc-item-title"
-    :to="{name: 'doc.item', params: {docType: leader.docType, id: leader.docId}}">
+    :to="{name: 'doc.item', params: {docType: leader.docType, id: leader.docId}}"
+    target="_blank">
         {{docItemTitle(leader.docType, leader.docId)}}
     </b-list-group-item>
 
