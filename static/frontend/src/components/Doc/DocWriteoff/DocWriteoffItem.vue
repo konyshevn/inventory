@@ -24,6 +24,10 @@
             <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
             <b-button v-if="!item.active" disabled variant="light">Не проведен</b-button>
           </b-col>
+          <b-col sm="1" align="center">
+            <b-button v-b-modal.doc-follower variant="info">Иерархия</b-button>
+          </b-col>
+
         </b-row>
 
         <b-row align-v="end" class="mb-2">

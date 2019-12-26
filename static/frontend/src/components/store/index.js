@@ -6,6 +6,12 @@ import {HTTP} from '../../http-common'
 var _ = require('lodash');
 import {aliases} from '@/components/common/aliases.js';
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
 //import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 /* eslint-disable no-console */
 export const store = new Vuex.Store({
@@ -298,6 +304,23 @@ export const store = new Vuex.Store({
       commit('SETdocItem', [docType, response.data])
     },
 
+
+    docFollower: async ({dispatch}, [docType, id]) => {
+      let response = await HTTP.get(docType + '/' + id + '/get_follower/')
+      let followers = response.data
+      asyncForEach(followers, async function(follower){
+        await dispatch('FETCHdocItem', [follower.docType, follower.docId])
+      })
+      return followers
+    },
+
+    docLeader: async ({dispatch}, [docType, id]) => {
+      let response = await HTTP.get(docType + '/' + id + '/get_leader/')
+      // console.log('docLeader: response', response)
+      let leader = response.data
+      await dispatch('FETCHdocItem', [leader.docType, leader.docId])
+      return leader
+    },
 
 
 //---------------------------Catalog---------------------------

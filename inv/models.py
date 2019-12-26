@@ -588,6 +588,7 @@ class DocIncome(Document):
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocIncomeTableUnit')
     _REG_LIST = ['RegDeviceStock']
+    _FOLLOWER_TYPES = [DocWriteoff]
     _TABLE_UNIT_EXIST = True
     _REG_DOC_ATTR_MAP = {
         'RegDeviceStock': {

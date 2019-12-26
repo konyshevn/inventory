@@ -1,6 +1,7 @@
 <template>
   <div>
     <component :is="docAlias[docType]['item']" :id="id"></component>
+    <doc-follower :docType="docType" :docId="id"></doc-follower>
   </div>
 </template>
 
@@ -14,6 +15,7 @@ import DocInventoryItem from '@/components/Doc/DocInventory/DocInventoryItem.vue
 
 import {aliases} from '@/components/common/aliases.js';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
+import DocFollower from '@/components/Doc/common/DocFollower.vue';
 
 
 export default {
@@ -24,6 +26,7 @@ export default {
     DocMoveItem,
     DocInventoryItem,
     CatlgWidgetModal,
+    DocFollower,
 
   },
   props: {

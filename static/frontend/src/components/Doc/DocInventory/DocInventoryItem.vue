@@ -24,6 +24,9 @@
             <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
             <b-button v-if="!item.active" disabled variant="light">Не проведен</b-button>
           </b-col>
+          <b-col sm="1" align="center">
+            <b-button v-b-modal.doc-follower variant="info">Иерархия</b-button>
+          </b-col>
         </b-row>
 
         <b-row align-v="end" class="mb-2">
@@ -85,12 +88,10 @@
         },
         {key: 'comment', label: ' Комментарий', type: 'input-text', width: '10%',},
       ]"
-    >
-      
-    </smart-table>
+      >
+      </smart-table>
 
   </div>
-
   </div>
 </template>
 
@@ -163,8 +164,6 @@ export default {
     vm.status.uid = vm.uid
     if (vm.id == "new") {
       vm.item = new DocConstructor[vm.status.docType]
-      //vm.DELcurrentDoc()
-      //vm.INITcurrentDoc(vm.docType)
     } else {
       await vm.FETCHdocItem([vm.status.docType, vm.id])
       vm.item = vm.GETdocItem(vm.status.docType, vm.id)

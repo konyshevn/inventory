@@ -24,6 +24,10 @@
             <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
             <b-button v-if="!item.active" disabled variant="light">Не проведен</b-button>
           </b-col>
+          <b-col sm="1" align="center">
+            <b-button v-b-modal.doc-follower variant="info">Иерархия</b-button>
+          </b-col>
+
         </b-row>
 
         <b-row align-v="end" class="mb-2">
@@ -84,7 +88,6 @@
     </smart-table>
 
   </div>
-
   </div>
 </template>
 
@@ -102,8 +105,6 @@ import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemCon
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
-
-
 
 
 export default {

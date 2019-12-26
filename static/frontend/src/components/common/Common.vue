@@ -6,6 +6,7 @@
 
 <script>
 /* eslint-disable no-console */
+import { mapGetters } from 'vuex';
 import {aliases} from '@/components/common/aliases.js';
 import moment from 'moment';
 
@@ -59,6 +60,17 @@ export default {
         title = aliases.docAlias[docType]['titlePlural']
       }
       return title
+    },
+
+    docItemTitle(docType, docId){
+      const vm = this
+      let item = vm.GETdocItem(docType, docId)
+      let title = `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}`
+      return title
+    },
+
+    dateFormat(date){
+      return moment(String(date)).format('DD.MM.YYYY HH:mm:ss')
     },
 
     selectRow: function (id, event) {
@@ -138,6 +150,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'GETdocItem',
+    ]),
+
     uid: function () {
       return String(this._uid)
     },
