@@ -22,6 +22,55 @@ from . import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+DOCUMENT = {
+    'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
+    'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
+    'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
+    'inventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
+
+}
+
+CATALOG = {
+    'device': {'model': Device, 'form': DeviceForm, 'order_by': 'nomenclature'},
+    'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'label'},
+    'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'label'},
+    'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
+    'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'label'},
+    'stock': {'model': Stock, 'form': StockForm, 'order_by': 'label'},
+}
+
+REGISTRY = {
+    'devicestock': {'model': RegDeviceStock, 'form': RegDeviceStockForm},
+}
+
+OPERATION_DESCR = {
+    'reg_write': 'Проведение документа',
+    'reg_delete': 'Отмена проведения документа',
+    'doc_write': 'Запись документа',
+    'catlg_write': 'Запись',
+}
+
+
+def get_doc_type(doc_name):
+    if doc_name in DOCUMENT:
+        return DOCUMENT[doc_name]
+    else:
+        return False
+
+
+def get_catlg_type(catlg_name):
+    if catlg_name in CATALOG:
+        return CATALOG[catlg_name]
+    else:
+        return False
+
+
+def get_reg_type(reg_name):
+    if reg_name in REGISTRY:
+        return REGISTRY[reg_name]
+    else:
+        return False
+
 
 class DocumentViewSet(viewsets.ViewSet):
     def destroy(self, request, pk, format=None):
@@ -70,6 +119,18 @@ class DocumentViewSet(viewsets.ViewSet):
         doc_leader_contenttype = ContentType.objects.get_for_model(doc_leader._meta.model)
         leader_id = {'docId': doc_leader.id, 'docType': doc_leader_contenttype.model}
         return HttpResponse(json.dumps(leader_id))
+
+    @action(detail=True, url_path='create_follower')
+    def create_follower(self, request, pk=None):
+        doc_follower_id = []
+        doc_current = self.serializer_class.Meta.model.objects.get(id=pk)
+        doc_follower_name = self.request.query_params.get('follower_type', None)
+        if doc_follower_name is not None:
+            follower_type = get_doc_type(doc_follower_name)
+            if follower_type:
+                follower_model = follower_type['model']
+                doc_follower_id = doc_current.follower_create(doc_follower_name=doc_follower_name, model_follower=follower_model)
+        return HttpResponse(json.dumps(doc_follower_id))
 
 
 class CatalogViewSet(viewsets.ViewSet):
@@ -171,34 +232,6 @@ class DeviceTypeViewSet(CatalogViewSet, viewsets.ModelViewSet):
 def home(request):
     return render(request, 'index.html')
 
-DOCUMENT = {
-    'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
-    'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
-    'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
-    'inventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
-
-}
-
-CATALOG = {
-    'device': {'model': Device, 'form': DeviceForm, 'order_by': 'nomenclature'},
-    'devicetype': {'model': DeviceType, 'form': DeviceTypeForm, 'order_by': 'label'},
-    'nomenclature': {'model': Nomenclature, 'form': NomenclatureForm, 'order_by': 'label'},
-    'person': {'model': Person, 'form': PersonForm, 'order_by': 'surname'},
-    'department': {'model': Department, 'form': DepartmentForm, 'order_by': 'label'},
-    'stock': {'model': Stock, 'form': StockForm, 'order_by': 'label'},
-}
-
-REGISTRY = {
-    'devicestock': {'model': RegDeviceStock, 'form': RegDeviceStockForm},
-}
-
-OPERATION_DESCR = {
-    'reg_write': 'Проведение документа',
-    'reg_delete': 'Отмена проведения документа',
-    'doc_write': 'Запись документа',
-    'catlg_write': 'Запись',
-}
-
 
 def selectize_ajax_query(request):
     cache = caches['selectize']
@@ -249,25 +282,6 @@ class DictDiffer(object):
         return set(o for o in self.intersect if self.past_dict[o] == self.current_dict[o])
 
 
-def get_doc_type(doc_name):
-    if doc_name in DOCUMENT:
-        return DOCUMENT[doc_name]
-    else:
-        return False
-
-
-def get_catlg_type(catlg_name):
-    if catlg_name in CATALOG:
-        return CATALOG[catlg_name]
-    else:
-        return False
-
-
-def get_reg_type(reg_name):
-    if reg_name in REGISTRY:
-        return REGISTRY[reg_name]
-    else:
-        return False
 
 
 def main(request):
