@@ -657,12 +657,12 @@ class DocInventory(Document):
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
         return table_unit
 
-    def follower_create(self, doc_follower_name, model_follower):
+    def follower_create(self, model_follower):
         table_unit = []
         doc_leader = self
         for rec in doc_leader.get_table_unit():
             qty_diff = rec.qty_fact - rec.qty_accountg
-            if (qty_diff > 0) & (doc_follower_name == 'income'):
+            if (qty_diff > 0) & (model_follower == DocIncome):
                 table_unit.append({
                     'device': rec.device,
                     'person': rec.person_fact,
@@ -670,7 +670,7 @@ class DocInventory(Document):
                     'comment': rec.comment,
                     'id': None,
                 })
-            elif (qty_diff < 0) & (doc_follower_name == 'writeoff'):
+            elif (qty_diff < 0) & (model_follower == DocWriteoff):
                 table_unit.append({
                     'device': rec.device,
                     'person': rec.person_accountg,
@@ -678,7 +678,7 @@ class DocInventory(Document):
                     'comment': rec.comment,
                     'id': None,
                 })
-            elif (qty_diff == 0) & (doc_follower_name == 'move') & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
+            elif (qty_diff == 0) & (model_follower == DocMove) & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
                 print('MOVE')
                 table_unit_rec = {
                     'device': rec.device,
@@ -697,7 +697,7 @@ class DocInventory(Document):
                 if not stock_to_flag:
                     table_unit.append({'stock_to': rec.stock_fact, 'table_unit': [table_unit_rec, ]})
 
-        if doc_follower_name == 'move':
+        if model_follower == DocMove:
             doc_follower_id = []
             for row in table_unit:
                 doc_attr = {

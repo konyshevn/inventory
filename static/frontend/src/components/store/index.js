@@ -322,6 +322,11 @@ export const store = new Vuex.Store({
       return leader
     },
 
+    CREATEdocFollower: async (context, [docType, id, followerType]) => {
+      let response = await HTTP.get(docType + '/' + id + '/create_follower/?follower_type=' + followerType)
+      return response.data
+    },
+
 
 //---------------------------Catalog---------------------------
     PUTcatlg: async({commit, dispatch}, [catlgType, item]) => {

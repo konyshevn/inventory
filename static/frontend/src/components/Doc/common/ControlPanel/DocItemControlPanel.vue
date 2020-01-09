@@ -5,6 +5,7 @@
       <b-button type="submit" variant="light" size="sm" @click="regDelDocItem(status, item)">Отмена проведения</b-button>
       <b-button type="submit" variant="light" size="sm" @click="saveDocItem(status, item)">Сохранить</b-button>
       <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delDocItem(status, item)">Удалить</b-button>
+      <slot></slot>
     </b-button-group>
   </div>
 </template>

@@ -6,7 +6,14 @@
       <b-badge v-if="false" variant="info">редактируется</b-badge> 
     </header>
       <b-container class="text-left" >
-        <doc-item-control-panel :status.sync="status" :item.sync="item"></doc-item-control-panel>
+        <doc-item-control-panel :status.sync="status" :item.sync="item">
+          <b-dropdown text="Создать на основании" right variant="light" size="sm">
+            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docincome'}}">Оприходование</b-dropdown-item>
+            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docwriteoff'}}">Списание</b-dropdown-item>
+            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docmove'}}">Перемещение</b-dropdown-item>
+          </b-dropdown>
+        </doc-item-control-panel>
+
         <b-row align-v="end" class="mb-2">
           <b-col sm="1"> 
             <label>Номер:</label> 

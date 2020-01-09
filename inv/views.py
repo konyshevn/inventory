@@ -27,6 +27,10 @@ DOCUMENT = {
     'writeoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'move': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
     'inventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
+    'docincome': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
+    'docwriteoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
+    'docmove': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
+    'docinventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
 
 }
 
@@ -124,12 +128,11 @@ class DocumentViewSet(viewsets.ViewSet):
     def create_follower(self, request, pk=None):
         doc_follower_id = []
         doc_current = self.serializer_class.Meta.model.objects.get(id=pk)
-        doc_follower_name = self.request.query_params.get('follower_type', None)
-        if doc_follower_name is not None:
-            follower_type = get_doc_type(doc_follower_name)
-            if follower_type:
-                follower_model = follower_type['model']
-                doc_follower_id = doc_current.follower_create(doc_follower_name=doc_follower_name, model_follower=follower_model)
+        follower_type = self.request.query_params.get('follower_type', None)
+        if follower_type is not None:
+            follower_model = get_doc_type(follower_type)['model']
+            if follower_model:
+                doc_follower_id = doc_current.follower_create(model_follower=follower_model)
         return HttpResponse(json.dumps(doc_follower_id))
 
 

@@ -49,6 +49,7 @@ export default {
       'PUTcurrentDoc',
       'DELcurrentDoc',
       'DELdoc',
+      'CREATEdocFollower',
     ]),
     ...mapMutations([
       'UPDcurrentDoc',
