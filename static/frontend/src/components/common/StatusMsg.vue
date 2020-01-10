@@ -3,7 +3,7 @@
     <b-modal id="status-msg" size="xl" scrollable title="Сообщения" ok-only>
       <b-list-group  class="text-left">
         <b-list-group-item v-for="(msg, index) in msgs" :key="index">
-          {{msg}}
+          <status-msg-item :msg="msg"></status-msg-item>
         </b-list-group-item>
       </b-list-group>
     </b-modal>
@@ -13,10 +13,12 @@
 <script>
 /* eslint-disable no-console */
 import {EventBus} from '@/components/common/event-bus.js'
+import StatusMsgItem from '@/components/common/StatusMsgItem.vue';
 
 export default {
   name: 'StatusMsg',
   components: {
+    StatusMsgItem,
   },
 
   props: {

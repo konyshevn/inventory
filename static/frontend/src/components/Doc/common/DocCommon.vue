@@ -50,6 +50,7 @@ export default {
       'DELcurrentDoc',
       'DELdoc',
       'CREATEdocFollower',
+      'FETCHdocItem',
     ]),
     ...mapMutations([
       'UPDcurrentDoc',
@@ -169,6 +170,24 @@ export default {
         }
       }
     },
+
+    async createDocFollower (docType, id, followerType) {
+      const vm = this
+      let msgs = ['Были созданы следующие документы, откройте их чтобы провести:']
+      let followers = await vm.CREATEdocFollower([docType, id, followerType])
+      if (followers.length > 0) {
+        await asyncForEach(followers, async function(follower){
+          await vm.FETCHdocItem([followerType, follower.id])
+          msgs.push([{
+            type: 'router-link',
+            settings: {name: 'doc.item', params: {docType: followerType, id: follower.id}},
+            data: vm.docItemTitle(followerType, follower.id),
+          }])
+        })
+      }
+      EventBus.$emit('openStatusMsg', msgs)
+    },
+    
 
     DocClickRow: function (id) {
       const vm = this

@@ -8,9 +8,15 @@
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item">
           <b-dropdown text="Создать на основании" right variant="light" size="sm">
-            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docincome'}}">Оприходование</b-dropdown-item>
-            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docwriteoff'}}">Списание</b-dropdown-item>
-            <b-dropdown-item :to="{name: 'doc.list', params: {docType: 'docmove'}}">Перемещение</b-dropdown-item>
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docincome')">
+              Оприходование
+            </b-dropdown-item>
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docwriteoff')">
+              Списание
+            </b-dropdown-item>
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docmove')">
+              Перемещение
+            </b-dropdown-item>
           </b-dropdown>
         </doc-item-control-panel>
 

@@ -145,7 +145,7 @@ export default {
 
     ...mapActions([
       'FETCHdocItem',
-    ])
+    ]),
   },
 
   computed: {
