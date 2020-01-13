@@ -1,8 +1,7 @@
 <template>
   <div align="left">
+    <vue-headful :title="catlgItemTitle(catlgType, id)"/>
     <component :is="catlgAlias[catlgType]['item']" :id="id"></component>
-
-
   </div>
 </template>
 
@@ -12,6 +11,7 @@
 import CatlgDeviceItem from '@/components/Catlg/CatlgDevice/CatlgDeviceItem.vue';
 import CatlgPersonItem from '@/components/Catlg/CatlgPerson/CatlgPersonItem.vue';
 import CatlgDepartmentItem from '@/components/Catlg/CatlgDepartment/CatlgDepartmentItem.vue';
+import Common from '@/components/common/Common.vue';
 
 import {aliases} from '@/components/common/aliases.js';
 
@@ -26,6 +26,8 @@ export default {
     CatlgDeviceTypeItem: () => import('@/components/Catlg/CatlgDeviceType/CatlgDeviceTypeItem.vue'),
     CatlgNomenclatureItem: () => import('@/components/Catlg/CatlgNomenclature/CatlgNomenclatureItem.vue'),
   },
+
+  mixins: [Common,],
 
   props: {
     id: null,

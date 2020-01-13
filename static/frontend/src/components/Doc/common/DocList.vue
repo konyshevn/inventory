@@ -11,6 +11,8 @@ import DocIncomeList from '@/components/Doc/DocIncome/DocIncomeList.vue';
 import DocWriteoffList from '@/components/Doc/DocWriteoff/DocWriteoffList.vue';
 import DocMoveList from '@/components/Doc/DocMove/DocMoveList.vue';
 import DocInventoryList from '@/components/Doc/DocInventory/DocInventoryList.vue';
+// import DocCommon from '@/components/Doc/common/DocCommon.vue';
+// import Common from '@/components/common/Common.vue';
 
 import {aliases} from '@/components/common/aliases.js';
 
@@ -22,6 +24,8 @@ export default {
     DocWriteoffList,
     DocMoveList,
     DocInventoryList,
+    // DocCommon,
+    // Common,
 
   },
   props: {

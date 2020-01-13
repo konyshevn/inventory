@@ -52,6 +52,12 @@ export default {
       return title
     },
 
+    catlgItemTitle(catlgType, catlgId){
+      const vm = this
+      let title = vm.GETcatlgItemLabel(catlgType, catlgId)
+      return title
+    },
+
     docTitle(docType, type='singular'){
       let title = 'unknown'
       if (type == 'singular'){
@@ -152,6 +158,7 @@ export default {
   computed: {
     ...mapGetters([
       'GETdocItem',
+      'GETcatlgItemLabel',
     ]),
 
     uid: function () {

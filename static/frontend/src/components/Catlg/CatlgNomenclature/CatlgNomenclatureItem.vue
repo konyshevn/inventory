@@ -1,5 +1,6 @@
 <template>
   <div class="catlg-nomenclature-item container" >
+    <vue-headful :title="catlgItemTitle(catlgType, item.id)"/>
     <div class="container">
     <header>
       <h2>{{catlgTitle(catlgType)}}</h2>

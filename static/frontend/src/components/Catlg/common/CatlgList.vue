@@ -1,5 +1,7 @@
 <template>
   <div style="text-align: center">
+    <vue-headful :title="catlgTitle(catlgType, 'plural')"/>
+
     <component :is="catlgAlias[catlgType]['list']" :modal="modal"></component>
     <catlg-item-modal parent="list" :catlgType="catlgType"></catlg-item-modal>
   </div>
@@ -11,6 +13,7 @@
 import CatlgDeviceList from '@/components/Catlg/CatlgDevice/CatlgDeviceList.vue';
 import CatlgPersonList from '@/components/Catlg/CatlgPerson/CatlgPersonList.vue';
 import CatlgDepartmentList from '@/components/Catlg/CatlgDepartment/CatlgDepartmentList.vue';
+import Common from '@/components/common/Common.vue';
 
 import {aliases} from '@/components/common/aliases.js';
 
@@ -24,9 +27,10 @@ export default {
     CatlgStockList: () => import('@/components/Catlg/CatlgStock/CatlgStockList.vue'),
     CatlgDeviceTypeList: () => import('@/components/Catlg/CatlgDeviceType/CatlgDeviceTypeList.vue'),
     CatlgNomenclatureList: () => import('@/components/Catlg/CatlgNomenclature/CatlgNomenclatureList.vue'),
-
-
   },
+
+  mixins: [Common,],
+  
   props: {
     id: Number,
     catlgType: String,

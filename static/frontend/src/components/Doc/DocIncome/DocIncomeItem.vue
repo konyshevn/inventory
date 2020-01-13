@@ -1,5 +1,6 @@
 <template>
   <div class="doc-income-item container">
+  <vue-headful :title="docItemTitle(status.docType, item.id)"/>
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>

@@ -34,6 +34,8 @@ library.add(faTimes)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+import vueHeadful from 'vue-headful';
+Vue.component('vue-headful', vueHeadful);
 
 Vue.use(VueRouter)
 Vue.config.devtools = true

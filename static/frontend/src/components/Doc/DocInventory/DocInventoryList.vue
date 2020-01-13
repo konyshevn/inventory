@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <vue-headful :title="docTitle(status.docType, 'plural')"/>
     <header>
       <h2>{{docTitle(status.docType, 'plural')}}</h2>
     </header>
