@@ -1,0 +1,17 @@
+API recieve from client
+filter_vals = {
+  device: [100,],
+  date_to: {gt: '23.12.2019 15:06:24', lt: '23.12.2019 15:06:24'},
+  department: [100,],
+  stock: [100,],
+  person: [100,],
+}
+
+API send to client
+filter_options = {
+  device:     {type: {catlg: 'device'}, list: true, period: false},
+  date_to:    {type: 'date', list: false, period: true},
+  department: {type: {catlg: 'department'}, list: true, period: false},
+  stock:      {type: {catlg: 'stock'}, list: true, period: false},
+  person:     {type: {catlg: 'person'}, list: true, period: false},
+}
