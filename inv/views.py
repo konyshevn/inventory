@@ -17,10 +17,12 @@ import operator
 from django.db.models import Q
 
 # DRF
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from . import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.views import APIView
+
 
 DOCUMENT = {
     'income': {'model': DocIncome, 'table_unit': DocIncomeTableUnit, 'form': DocIncomeForm, 'formset': DocIncomeTableUnitFormSet},
@@ -31,7 +33,6 @@ DOCUMENT = {
     'docwriteoff': {'model': DocWriteoff, 'table_unit': DocWriteoffTableUnit, 'form': DocWriteoffForm, 'formset': DocWriteoffTableUnitFormSet},
     'docmove': {'model': DocMove, 'table_unit': DocMoveTableUnit, 'form': DocMoveForm, 'formset': DocMoveTableUnitFormSet},
     'docinventory': {'model': DocInventory, 'table_unit': DocInventoryTableUnit, 'form': DocInventoryForm, 'formset': DocInventoryTableUnitFormSet},
-
 }
 
 CATALOG = {
@@ -175,6 +176,21 @@ class CatalogViewSet(viewsets.ViewSet):
             queryset = self.serializer_class.Meta.model.objects.all()
 
         return queryset
+
+
+class RepCurrentLocation(viewsets.ViewSet):
+    filter_options = {
+        'device': {'type': {'catlg': 'device'}, 'list': True, 'period': False},
+        'date_to': {'type': 'date', 'list': False, 'period': True},
+        'department': {'type': {'catlg': 'department'}, 'list': True, 'period': False},
+        'stock': {'type': {'catlg': 'stock'}, 'list': True, 'period': False},
+        'person': {'type': {'catlg': 'person'}, 'list': True, 'period': False},
+    }
+
+    def list(self, request):
+        filter_vals = request.query_params.get('filter_vals', None)
+        filter_vals_j = json.loads(filter_vals)
+        return Response([{'report': 'RepCurrentLocation', 'filter_vals': filter_vals_j}])
 
 
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):
