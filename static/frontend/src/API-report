@@ -1,11 +1,29 @@
 API recieve from client
 filter_vals = {
-  device: [100,],
-  date_to: {gt: '23.12.2019 15:06:24', lt: '23.12.2019 15:06:24'},
-  department: [100,],
-  stock: [100,],
-  person: [100,],
+  'device': [100,],
+  'date_to': {gt: '23.12.2019 15:06:24', lt: '23.12.2019 15:06:24'},
+  'department': [100,],
+  'stock': [100,],
+  'person': [100,],
 }
+
+{
+"filter_rep" : {
+  "device": [100],
+  "date_to": {"gt": "01.12.2000 00:00:00", "lt": "31.12.2019 23:59:59"},
+  "department": [100],
+  "stock": [100],
+  "personss": [100]
+}
+}
+
+{
+"filter_rep" : {
+  "date_to": "31.12.2019 23:59:59"
+}
+}
+
+
 
 API send to client
 filter_options = {

@@ -180,17 +180,84 @@ class CatalogViewSet(viewsets.ViewSet):
 
 class RepCurrentLocation(viewsets.ViewSet):
     filter_options = {
-        'device': {'type': {'catlg': 'device'}, 'list': True, 'period': False},
-        'date_to': {'type': 'date', 'list': False, 'period': True},
-        'department': {'type': {'catlg': 'department'}, 'list': True, 'period': False},
-        'stock': {'type': {'catlg': 'stock'}, 'list': True, 'period': False},
-        'person': {'type': {'catlg': 'person'}, 'list': True, 'period': False},
+        "device": {'type': {'catlg': 'device'}, 'list': True, 'period': False, 'required': False},
+        'date_to': {'type': 'date', 'list': False, 'period': False, 'required': False},
+        'department': {'type': {'catlg': 'department'}, 'list': True, 'period': False, 'required': False},
+        'stock': {'type': {'catlg': 'stock'}, 'list': True, 'period': False, 'required': False},
+        'person': {'type': {'catlg': 'person'}, 'list': True, 'period': False, 'required': False},
     }
 
+    def create(self, request):
+        filter_vals = {}
+        filter_options = self.filter_options
+        filter_req = request.data['filter_rep']
+
+        for option, params in filter_options.items():
+
+            if option in filter_req:
+                option_param = filter_options[option]
+
+                if option_param['list']:
+                    option_label = '%s__in' % option
+                elif option_param['period']:
+                    for k, v in filter_req[option].items():
+                        option_label = '%s__%s' % (option, k)
+                        filter_vals.update([(option_label, v)])
+                    continue
+                else:
+                    option_label = '%s' % option
+                filter_vals.update([(option_label, filter_req[option])])
+
+        location = []
+        filter_vals_diff = {}
+        if 'device' in filter_req and not filter_req['device'] == '' and not filter_req['device'] is None:
+            devices = Device.objects.filter(id__in=filter_req['device'])
+        else:
+            devices = Device.objects.all()
+
+        if 'date_to' in filter_req and not filter_req['date_to'] == '' and not filter_req['date_to'] is None:
+            date_to_obj = datetime.datetime.strptime(filter_req['date_to'], '%d.%m.%Y %H:%M:%S')
+            date_to = date_to_obj.date() + datetime.timedelta(days=1)
+
+        if 'department' in filter_req and not filter_req['department'] == '' and not filter_req['department'] is None:
+            filter_vals_diff['department'] = Department.objects.get(id_in=filter_req['department'])
+
+        if 'stock' in filter_req and not filter_req['stock'] == '' and not filter_req['stock'] is None:
+            filter_vals_diff['stock'] = Stock.objects.get(id_in=filter_req['stock'])
+
+        if 'person' in filter_req and not filter_req['person'] == '' and not filter_req['person'] is None:
+            filter_vals_diff['person'] = Person.objects.get(id_in=filter_req['person'])
+
+        for device in devices:
+            location_rec = RegDeviceStock.objects.current_location(device=device, date=date_to)
+            filter_diff = DictDiffer(location_rec, filter_vals_diff)
+            if len(filter_diff.changed()) == 0:
+                location_rec['department'] = str(location_rec['department'])
+
+                if location_rec['stock'] is None:
+                    location_rec['stock'] = ''
+                else:
+                    location_rec['stock'] = str(location_rec['stock'])
+
+                if location_rec['person'] is None:
+                    location_rec['person'] = ''
+                else:
+                    location_rec['person'] = str(location_rec['person'])
+                location_rec['device'] = str(device)
+                location.append(location_rec)
+        print(location)
+        return Response(location)
+
     def list(self, request):
-        filter_vals = request.query_params.get('filter_vals', None)
-        filter_vals_j = json.loads(filter_vals)
-        return Response([{'report': 'RepCurrentLocation', 'filter_vals': filter_vals_j}])
+        for option, params in self.filter_options.items():
+            values = self.request.query_params.get(option, None)
+            if values is not None:
+                if params['list']:
+                    values = [x for x in values.split(',')]
+                # print(values)
+
+        filter_options_j = self.filter_options
+        return Response([{'report': 'RepCurrentLocation', 'filter_vals': filter_options_j}])
 
 
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):

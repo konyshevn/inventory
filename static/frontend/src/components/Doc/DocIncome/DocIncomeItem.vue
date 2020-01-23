@@ -153,8 +153,21 @@ export default {
     ...mapGetters([
       'widgetsIsValid',
       'GETdocItem',
-
-    ])
+    ]),
+    // async item2() {
+    //   const vm = this
+    //   vm.status.uid = vm.uid
+    //   let item = {}
+    //   if (vm.id == "new") {
+    //     item = new DocConstructor[vm.status.docType]
+    //     //vm.DELcurrentDoc()
+    //     //vm.INITcurrentDoc(vm.docType)
+    //   } else {
+    //     await vm.FETCHdocItem([vm.status.docType, vm.id])
+    //     item = vm.GETdocItem(vm.status.docType, vm.id)
+    //   }
+    //   return item
+    // }
   },
 
  

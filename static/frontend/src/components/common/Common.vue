@@ -70,8 +70,13 @@ export default {
 
     docItemTitle(docType, docId){
       const vm = this
-      let item = vm.GETdocItem(docType, docId)
-      let title = `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}`
+      let title = ''
+      if (docId == 'new' || docId == undefined){
+        title = `${vm.docTitle(docType)} №`
+      } else {
+        let item = vm.GETdocItem(docType, docId)
+        title = `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}`
+      }
       return title
     },
 
