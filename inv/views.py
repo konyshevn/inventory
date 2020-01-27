@@ -187,26 +187,33 @@ class RepCurrentLocation(viewsets.ViewSet):
         'person': {'type': {'catlg': 'person'}, 'list': True, 'period': False, 'required': False},
     }
 
+    fields_options = {
+        'device': {'type': {'catlg': 'device'}},
+        'department': {'type': {'catlg': 'department'}},
+        'stock': {'type': {'catlg': 'stock'}},
+        'person': {'type': {'catlg': 'person'}},
+        'qty': {'type': 'number'},
+    }
+
     def create(self, request):
         filter_vals = {}
         filter_options = self.filter_options
-        filter_req = request.data['filter_rep']
+        filter_req = request.data['filter_req']
+        # for option, params in filter_options.items():
 
-        for option, params in filter_options.items():
+        #     if option in filter_req:
+        #         option_param = filter_options[option]
 
-            if option in filter_req:
-                option_param = filter_options[option]
-
-                if option_param['list']:
-                    option_label = '%s__in' % option
-                elif option_param['period']:
-                    for k, v in filter_req[option].items():
-                        option_label = '%s__%s' % (option, k)
-                        filter_vals.update([(option_label, v)])
-                    continue
-                else:
-                    option_label = '%s' % option
-                filter_vals.update([(option_label, filter_req[option])])
+        #         if option_param['list']:
+        #             option_label = '%s__in' % option
+        #         elif option_param['period']:
+        #             for k, v in filter_req[option].items():
+        #                 option_label = '%s__%s' % (option, k)
+        #                 filter_vals.update([(option_label, v)])
+        #             continue
+        #         else:
+        #             option_label = '%s' % option
+        #         filter_vals.update([(option_label, filter_req[option])])
 
         location = []
         filter_vals_diff = {}
@@ -232,32 +239,31 @@ class RepCurrentLocation(viewsets.ViewSet):
             location_rec = RegDeviceStock.objects.current_location(device=device, date=date_to)
             filter_diff = DictDiffer(location_rec, filter_vals_diff)
             if len(filter_diff.changed()) == 0:
-                location_rec['department'] = str(location_rec['department'])
 
-                if location_rec['stock'] is None:
+                if type(location_rec['department']) is not str and location_rec['department'] is not None:
+                    location_rec['department'] = location_rec['department'].pk
+                else:
+                    location_rec['department'] = ''
+
+                if type(location_rec['stock']) is not str and location_rec['stock'] is not None:
+                    location_rec['stock'] = location_rec['stock'].pk
+                else:
                     location_rec['stock'] = ''
-                else:
-                    location_rec['stock'] = str(location_rec['stock'])
 
-                if location_rec['person'] is None:
-                    location_rec['person'] = ''
+                if type(location_rec['person']) is not str and location_rec['person'] is not None:
+                    location_rec['person'] = location_rec['person'].pk
                 else:
-                    location_rec['person'] = str(location_rec['person'])
-                location_rec['device'] = str(device)
+                    location_rec['person'] = ''
+                location_rec['device'] = device.pk
                 location.append(location_rec)
-        print(location)
         return Response(location)
 
     def list(self, request):
-        for option, params in self.filter_options.items():
-            values = self.request.query_params.get(option, None)
-            if values is not None:
-                if params['list']:
-                    values = [x for x in values.split(',')]
-                # print(values)
-
-        filter_options_j = self.filter_options
-        return Response([{'report': 'RepCurrentLocation', 'filter_vals': filter_options_j}])
+        return Response([{
+            'report': 'RepCurrentLocation',
+            'filter_options': self.filter_options,
+            'fields_options': self.fields_options,
+        }])
 
 
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):

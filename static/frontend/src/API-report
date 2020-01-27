@@ -17,10 +17,10 @@ filter_vals = {
 }
 }
 
-{
-"filter_rep" : {
-  "date_to": "31.12.2019 23:59:59"
-}
+
+"filter_req" : {
+  "date_to": "31.12.2019 23:59:59",
+  "device": [1372, 1371]
 }
 
 
