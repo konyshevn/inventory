@@ -35,7 +35,7 @@ router.register('api/stock', inv.views.StockViewSet)
 router.register('api/person', inv.views.PersonViewSet)
 router.register('api/deviceType', inv.views.DeviceTypeViewSet)
 router.register('api/nomenclature', inv.views.NomenclatureViewSet)
-router.register('api/report/current_location', inv.views.RepCurrentLocation, base_name='current_location')
+router.register('api/report/RepCurrentLocation', inv.views.RepCurrentLocation, base_name='RepCurrentLocation')
 
 urlpatterns = [
     re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),

@@ -13,6 +13,8 @@ import DocList from '@/components/Doc/common/DocList.vue'
 import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
 import {store} from '@/components/store';
+import Report from '@/components/Report/RepCurrentLocation.vue'
+
 
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');
 //Vue.component('CatlgItem', Vue.extend(catlgItemPath))
@@ -84,6 +86,14 @@ const routes = [
       catlgType: String(route.params.catlgType),
     }),
     component: CatlgItem
+  },
+  { 
+    path: '/report/:reportName',
+    name: 'report',
+    props: (route) => ({
+      reportName: String(route.params.reportName),
+    }),
+    component: Report
   },
 
 ]

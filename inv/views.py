@@ -156,7 +156,7 @@ class CatalogViewSet(viewsets.ViewSet):
         # Get snippets for ids if they exist
         if ids is not None:
             # Convert parameter string to list of integers
-            ids = [int(x) for x in ids.split(',')]
+            ids = [int(x) for x in ids.split(',') if x != '']
             # Get objects for all parameter ids
             queryset = self.serializer_class.Meta.model.objects.filter(pk__in=ids)
 
@@ -198,6 +198,7 @@ class RepCurrentLocation(viewsets.ViewSet):
     def create(self, request):
         filter_vals = {}
         filter_options = self.filter_options
+        print('request: ', request.data)
         filter_req = request.data['filter_req']
         # for option, params in filter_options.items():
 

@@ -56,16 +56,7 @@ export const store = new Vuex.Store({
         }
       },
     },
-/*    
-    docs: {
-      data: [],
-      filtered: [],
-      status: {
-        sort: {field: "doc_date", fieldType: "text", order: -1},
-        selected: [],
-      }
-    },
-*/
+
     catlgs: {
       department: {
         data: [],
@@ -472,6 +463,39 @@ export const store = new Vuex.Store({
           });
          await dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
       }
+    },
+
+//---------------------------Report---------------------------
+    FETCHreportOptions: async (context, reportName) => {
+      var response = null
+      try {
+        response = await HTTP.get('/report/' + reportName + '/')
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHreport: async ({dispatch}, [reportName, filterReq]) => {
+      var response = null
+      var fieldsMap = {}
+      try {
+        response = await HTTP.post('/report/' + reportName + '/', {filter_req: filterReq})
+        let reportData = response.data
+        var reportOptions = await dispatch('FETCHreportOptions', reportName)
+        let fields_options = reportOptions.data.fields_options
+        
+        for (let field in fields_options) {
+          if (typeof fields_options[field]['type'] === 'object' && fields_options[field]['type'] !== null && 'catlg' in fields_options[field]['type']) {
+            fieldsMap[field] = fields_options[field]['type']['catlg']
+          } 
+        }
+        await dispatch('FETCHdependentCatlg', [reportData, fieldsMap])      
+
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
     },
  
   },
