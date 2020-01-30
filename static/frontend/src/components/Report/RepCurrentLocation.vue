@@ -9,19 +9,19 @@
       :sort-asc.sync="status.sortAsc"
       :items="reportData"
       :fields="[
-        {key: 'device', label: 'Устройство', type: 'text', width: '20%',
+        {key: 'device', label: 'Устройство', type: 'text', width: '40%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
         {key: 'department', label: 'Подразделение', type: 'text', width: '20%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'stock', label: 'Склад', type: 'text', width: '20%',
+        {key: 'stock', label: 'Склад', type: 'text', width: '10%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'person', label: 'Сотрудник', type: 'text', width: '20%',
+        {key: 'person', label: 'Сотрудник', type: 'text', width: '15%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'qty', label: 'Количество', type: 'number', width: '20%',
+        {key: 'qty', label: 'Количество', type: 'number', width: '10%',
         },
       ]"
     >
