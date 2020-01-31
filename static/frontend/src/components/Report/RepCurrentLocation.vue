@@ -2,6 +2,7 @@
   <div class="container">
     <vue-headful title="Отчет: Местоположение на дату"/>
     <smart-table 
+      disable-select
       :table-padd="200"
       :selected-plural="true"
       :selectAll="true"
@@ -12,7 +13,7 @@
         {key: 'device', label: 'Устройство', type: 'text', width: '40%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
-        {key: 'department', label: 'Подразделение', type: 'text', width: '20%',
+        {key: 'department', label: 'Подразделение', type: 'text', width: '25%',
         formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
         },
         {key: 'stock', label: 'Склад', type: 'text', width: '10%',

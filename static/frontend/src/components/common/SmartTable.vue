@@ -11,7 +11,9 @@
     <table class="table table-bordered list" :style="tableWidth">
       <thead>
         <tr>
-          <th style="width: 5%" @click="selectAllRows"><font-awesome-icon icon="check-square"/></th>
+          <th v-if="!disableSelect" style="width: 5%" @click="selectAllRows">
+            <font-awesome-icon icon="check-square"/>
+          </th>
           <sort-header v-for="field in fields" :key="field.key" 
           :field="field" 
           :sort-by="sortBy" 
@@ -27,7 +29,7 @@
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
-          <td style="width: 5%">
+          <td v-if="!disableSelect" style="width: 5%">
             <input type="checkbox" 
             :id="item.id" 
             v-model="selectedLocal"
@@ -141,6 +143,10 @@ export default {
     selectRowClick: {
       type: Boolean,
       default: true,
+    },
+    disableSelect: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -342,7 +348,7 @@ export default {
       const vm = this
       let result = false
       let idIndex = vm.selectedLocal.indexOf(id)
-      result = (idIndex >= 0) ? true : false
+      result = (idIndex >= 0 && !vm.disableSelect) ? true : false
       return result
     },
   },
