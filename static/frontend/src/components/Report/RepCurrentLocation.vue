@@ -1,6 +1,9 @@
 <template>
   <div class="container">
     <vue-headful title="Отчет: Местоположение на дату"/>
+    <header>
+      <h2>Местоположение на дату</h2>
+    </header>
     <smart-table 
       disable-select
       :table-padd="200"
@@ -26,7 +29,6 @@
         },
       ]"
     >
-      
     </smart-table>
   </div>
 </template>
@@ -63,7 +65,7 @@ export default {
       status: {
         reportName: 'RepCurrentLocation',
         filterReq: {
-          date_to: "31.12.2019 23:59:59",
+          // date_to: "31.12.2019 23:59:59",
         },
         fieldsOptions: {},
         sortBy: 'device',

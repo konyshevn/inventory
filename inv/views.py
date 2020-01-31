@@ -218,6 +218,7 @@ class RepCurrentLocation(viewsets.ViewSet):
 
         location = []
         filter_vals_diff = {}
+        # filter_req_errors = []
         if 'device' in filter_req and not filter_req['device'] == '' and not filter_req['device'] is None:
             devices = Device.objects.filter(id__in=filter_req['device'])
         else:
@@ -226,6 +227,8 @@ class RepCurrentLocation(viewsets.ViewSet):
         if 'date_to' in filter_req and not filter_req['date_to'] == '' and not filter_req['date_to'] is None:
             date_to_obj = datetime.datetime.strptime(filter_req['date_to'], '%d.%m.%Y %H:%M:%S')
             date_to = date_to_obj.date() + datetime.timedelta(days=1)
+        else:
+            date_to = datetime.datetime.today() + datetime.timedelta(days=1)
 
         if 'department' in filter_req and not filter_req['department'] == '' and not filter_req['department'] is None:
             filter_vals_diff['department'] = Department.objects.get(id_in=filter_req['department'])
