@@ -1,12 +1,21 @@
 <template>
   <div>
-    <input 
+    <input v-if="!dateOnly" 
     class="form-control"
     v-model="datetime"
     id="datetime-widget" 
     data-inputmask-alias="datetime" 
     data-inputmask-inputformat="dd.mm.yyyy HH:MM:ss" 
     data-inputmask-placeholder="__.__.____ __:__:__"
+    im-insert="false"
+    @change="onChange"/>
+    <input v-if="dateOnly"
+    class="form-control"
+    v-model="datetime"
+    id="datetime-widget" 
+    data-inputmask-alias="datetime" 
+    data-inputmask-inputformat="dd.mm.yyyy" 
+    data-inputmask-placeholder="__.__.____"
     im-insert="false"
     @change="onChange"/>
   </div>
@@ -26,6 +35,10 @@ export default {
   mixins: [],
   props: {
     model: String,
+    dateOnly: {
+      tupe: Boolean,
+      default: false,
+    }
   },
 
   data () {
@@ -36,7 +49,11 @@ export default {
 
   created: function() {
     var vm = this
-    vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY HH:mm:ss')
+    if (vm.dateOnly) {
+      vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY')
+    } else {
+      vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY HH:mm:ss')
+    }
   },
 
   methods: {
@@ -55,7 +72,12 @@ export default {
     onChange: function(value) {
       var vm = this
       console.log('change' + value)
-      var newmodel = moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ')
+      var newmodel
+      if (vm.dateOnly) {
+        newmodel = moment(String(vm.datetime), 'DD.MM.YYYY').format('YYYY-MM-DD')
+      } else {
+        newmodel = moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ')
+      }
       vm.$emit('update:model', newmodel)
 
     },
@@ -141,8 +163,12 @@ export default {
         } else {
           ssNew = '0' + ss[0]
         }
-
-        var dtNew = `${ddNew}.${mmNew}.${yyyyNew} ${hhNew}:${MMNew}:${ssNew}`
+        var dtNew
+        if (vm.dateOnly){
+          dtNew = `${ddNew}.${mmNew}.${yyyyNew}`
+        } else {
+          dtNew = `${ddNew}.${mmNew}.${yyyyNew} ${hhNew}:${MMNew}:${ssNew}`
+        }
         vm.datetime = dtNew
       },
 

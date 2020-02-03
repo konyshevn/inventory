@@ -180,11 +180,11 @@ class CatalogViewSet(viewsets.ViewSet):
 
 class RepCurrentLocation(viewsets.ViewSet):
     filter_options = {
-        "device": {'type': {'catlg': 'device'}, 'list': True, 'period': False, 'required': False},
-        'date_to': {'type': 'date', 'list': False, 'period': False, 'required': False},
-        'department': {'type': {'catlg': 'department'}, 'list': True, 'period': False, 'required': False},
-        'stock': {'type': {'catlg': 'stock'}, 'list': True, 'period': False, 'required': False},
-        'person': {'type': {'catlg': 'person'}, 'list': True, 'period': False, 'required': False},
+        "device": {'label': 'Устройство', 'type': {'catlg': 'device'}, 'list': True, 'period': False, 'required': False},
+        'date_to': {'label': 'Дата', 'type': 'date', 'list': False, 'period': False, 'required': False},
+        'department': {'label': 'Подразделение', 'type': {'catlg': 'department'}, 'list': True, 'period': False, 'required': False},
+        'stock': {'label': 'Склад', 'type': {'catlg': 'stock'}, 'list': True, 'period': False, 'required': False},
+        'person': {'label': 'Сотрудник', 'type': {'catlg': 'person'}, 'list': True, 'period': False, 'required': False},
     }
 
     fields_options = {

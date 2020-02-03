@@ -2,13 +2,19 @@
   <div class="container">
     <vue-headful title="Отчет: Местоположение на дату"/>
     <header>
-      <h2>Местоположение на дату</h2>
+      <h2 class="align-middle">Местоположение на дату </h2>
+      <b-button 
+        variant="success" 
+        style="margin-left: 20px;"
+        @click="buildReport()"
+      >
+        Сформировать
+      </b-button>
     </header>
+    <report-control-panel :status.sync="status"> </report-control-panel>
     <smart-table 
       disable-select
       :table-padd="200"
-      :selected-plural="true"
-      :selectAll="true"
       :sort-by.sync="status.sortBy"
       :sort-asc.sync="status.sortAsc"
       :items="reportData"
@@ -44,7 +50,7 @@ import { mapMutations } from 'vuex';
 // import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
 // import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
-
+import ReportControlPanel from '@/components/Report/common/ReportControlPanel.vue';
 
 
 export default {
@@ -53,6 +59,7 @@ export default {
     // CatlgWidget,
     // DatetimeWidget,
     SmartTable,
+    ReportControlPanel,
   },
 
   mixins: [],
@@ -65,9 +72,13 @@ export default {
       status: {
         reportName: 'RepCurrentLocation',
         filterReq: {
-          // date_to: "31.12.2019 23:59:59",
+          device: null,
+          date_to: null,
+          person: null,
+          stock: null,
         },
         fieldsOptions: {},
+        filterOptions: {},
         sortBy: 'device',
         sortAsc: true,
       },
@@ -83,6 +94,14 @@ export default {
       'FETCHreport',
       'FETCHreportOptions',
     ]),
+
+    async buildReport (){
+      const vm = this
+      let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
+      if (reportResponse.status >= 200 && reportResponse.status < 300) {
+        vm.reportData = reportResponse.data
+      } 
+    },
   },
 
   computed: {
@@ -95,14 +114,11 @@ export default {
   async mounted () {
     const vm = this
     let reportOptionsResponse = await vm.FETCHreportOptions(vm.status.reportName)
+    console.log(reportOptionsResponse)
     if (reportOptionsResponse.status >= 200 && reportOptionsResponse.status < 300) {
-      vm.status.fieldsOptions = reportOptionsResponse.data.fields_options
+      vm.status.fieldsOptions = reportOptionsResponse.data[0].fields_options
+      vm.status.filterOptions = reportOptionsResponse.data[0].filter_options
     }
-
-    let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
-    if (reportResponse.status >= 200 && reportResponse.status < 300) {
-      vm.reportData = reportResponse.data
-    } 
   },
 
   created: function() {
