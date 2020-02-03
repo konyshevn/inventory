@@ -18,15 +18,28 @@
         <template slot="no-data">
           <span>Не найдено</span>
         </template>
-        <template slot="item" slot-scope="{ item }">
+        
+        <!-- <template slot="input-start">
+          <span v-if="multi" class="input-start">Multi</span>
+        </template> -->
+        
+        <template v-if="!multi" slot="item" slot-scope="{ item }">
           <div class="item">
             <span class="item-name"> {{ item.label }} </span>
           </div>
         </template>
+
+        <template slot="selection" slot-scope="{ item }">
+          <div class="selection">
+            <span> {{ item.label }} </span>
+          </div>
+        </template>
+        
         <template slot="input-end">
           <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
         </template>
+      
       </cool-select>
     </div>
     <catlg-widget-modal :parent="uid" :catlgType="widgetType"> </catlg-widget-modal>
@@ -63,7 +76,16 @@ export default {
     settings: {
       type: Object,
       default: null,
-    }
+    },
+    modelMulti: {
+      type: Array,
+      default: () => {return []},
+    },
+    multi: {
+      type: Boolean,
+      default: false,
+    },
+
   },
 
   data () {

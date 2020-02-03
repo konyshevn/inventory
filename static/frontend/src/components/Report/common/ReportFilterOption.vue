@@ -6,6 +6,7 @@
       <catlg-widget v-if="isCatlg" 
         :widgetType="filterOption.type.catlg"
         :model.sync="status.filterReq[filterOptionName]"
+        :multi="true"
       ></catlg-widget>
       <datetime-widget v-if="isDate"
         :date-only="true"
