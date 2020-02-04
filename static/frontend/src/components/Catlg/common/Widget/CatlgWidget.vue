@@ -23,7 +23,7 @@
         <template slot="item" slot-scope="{ item }">
           <div class="item">
             <span class="item-name"> 
-              {{ item.label }} 
+              {{ item.label }}
               <span v-if="modelMultiContains(item.id)" style="float: right;">
                 <font-awesome-icon icon="check"/>
               </span>
@@ -31,9 +31,9 @@
           </div>
         </template>
 
-        <template slot="selection" slot-scope="{ item }">
+        <template slot="selection">
           <div class="selection">
-            <span> {{ item.label }} </span>
+            <span> {{modelMultiSelection}} </span>
           </div>
         </template>
         
@@ -41,8 +41,7 @@
           <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
           <b-button v-if="multi" size="sm" variant="light"
-            v-b-modal="`widget-model-multi-${widgetType}-${uid}`"
-          >
+          v-b-modal="`widget-model-multi-${widgetType}-${uid}`">
               <b-badge>{{modelMultiLength}}</b-badge>
           </b-button>
         </template>
@@ -54,11 +53,18 @@
     <catlg-item-modal :parent="uid" :catlgType="widgetType"></catlg-item-modal>
     
     <b-modal :id="`widget-model-multi-${widgetType}-${uid}`" 
-      size="md" 
-      scrollable 
-      ok-only
-      :title="catlgTitle(widgetType)">
-      <b-list-group>
+    size="md" 
+    scrollable 
+    ok-only
+    :title="catlgTitle(widgetType)">
+      <catlg-widget
+      :widgetType="widgetType"
+      :multi="true"
+      :model-multi.sync="modelMulti"
+      >
+      </catlg-widget>
+
+      <b-list-group style="float: left;">
          <b-list-group-item v-for="id in modelMulti" :key="id">
           <span style="vertical-align: middle;">
             {{GETcatlgItemLabel(widgetType, id)}}
@@ -88,6 +94,8 @@ export default {
   name: 'CatlgWidget',
   components: {
     CatlgItemModal: () => import('@/components/Catlg/common/CatlgItemModal.vue'),
+    CatlgWidget: () => import('@/components/Catlg/common/Widget/CatlgWidget.vue'),
+
     CoolSelect,
     CatlgWidgetModal,
 
@@ -228,6 +236,17 @@ export default {
         length = vm.modelMulti.length
       } 
       return length
+    },
+
+    modelMultiSelection: function () {
+      const vm = this
+      let selection = ''
+      vm.modelMulti.forEach(function(id, index){
+        selection = (index == 0) ? vm.GETcatlgItemLabel(vm.widgetType, id) : selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
+        // selection = selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
+      })
+      selection = selection.slice(0, 50) + '...'
+      return selection
     },
   },
 
