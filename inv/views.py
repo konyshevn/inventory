@@ -200,6 +200,10 @@ class RepCurrentLocation(viewsets.ViewSet):
         filter_options = self.filter_options
         print('request: ', request.data)
         filter_req = request.data['filter_req']
+
+        # for option, value in filter_req.items():
+        #     if (type(value) is not list) and filter_options[option]['list']:
+        #         filter_req[option] = [value, ]
         # for option, params in filter_options.items():
 
         #     if option in filter_req:

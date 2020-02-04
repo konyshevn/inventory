@@ -19,13 +19,15 @@
           <span>Не найдено</span>
         </template>
         
-        <!-- <template slot="input-start">
-          <span v-if="multi" class="input-start">Multi</span>
-        </template> -->
-        
-        <template v-if="!multi" slot="item" slot-scope="{ item }">
+            
+        <template slot="item" slot-scope="{ item }">
           <div class="item">
-            <span class="item-name"> {{ item.label }} </span>
+            <span class="item-name"> 
+              {{ item.label }} 
+              <span v-if="modelMultiContains(item.id)" style="float: right;">
+                <font-awesome-icon icon="check"/>
+              </span>
+            </span>
           </div>
         </template>
 
@@ -38,12 +40,36 @@
         <template slot="input-end">
           <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
+          <b-button v-if="multi" size="sm" variant="light"
+            v-b-modal="`widget-model-multi-${widgetType}-${uid}`"
+          >
+              <b-badge>{{modelMultiLength}}</b-badge>
+          </b-button>
         </template>
-      
+
+
       </cool-select>
     </div>
     <catlg-widget-modal :parent="uid" :catlgType="widgetType"> </catlg-widget-modal>
     <catlg-item-modal :parent="uid" :catlgType="widgetType"></catlg-item-modal>
+    
+    <b-modal :id="`widget-model-multi-${widgetType}-${uid}`" 
+      size="md" 
+      scrollable 
+      ok-only
+      :title="catlgTitle(widgetType)">
+      <b-list-group>
+         <b-list-group-item v-for="id in modelMulti" :key="id">
+          <span style="vertical-align: middle;">
+            {{GETcatlgItemLabel(widgetType, id)}}
+          </span>
+          <b-button size="sm" variant="light" style="float: right;"
+            @click="modelMultiRemove(id)"
+          ><font-awesome-icon icon="times"/>
+          </b-button>
+         </b-list-group-item>
+      </b-list-group>
+    </b-modal>
   </div>
 
 </template>
@@ -52,6 +78,7 @@
 /* eslint-disable no-console */
 import Vue from 'vue'
 import { mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 import { CoolSelect } from 'vue-cool-select';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
 import {EventBus} from '@/components/common/event-bus.js'
@@ -123,8 +150,6 @@ export default {
       setTimeout(function() { vm.active=false }, 1);
     },
 
-
-
     async onSearch(search) {
       var vm = this
       const lettersLimit = 2;
@@ -140,12 +165,48 @@ export default {
       vm.loading = false
     },
 
+    modelMultiAdd: function(model) {
+      const vm = this
+      if (model) {
+        let modelIndex = vm.modelMulti.indexOf(model)
+        if ((modelIndex < 0) && model != null && model != undefined) {
+          let newModelMulti = vm.modelMulti
+          newModelMulti.push(model)
+          vm.$emit('update:model-multi', newModelMulti)
+        }
+      }
+    },
+
+    modelMultiContains: function(model) {
+      const vm = this
+      if (model != null) {
+        let modelIndex = vm.modelMulti.indexOf(model)
+        if (modelIndex >= 0 ) {
+          return true
+        }
+      }
+      return false
+    },
+
+    modelMultiRemove: function(model) {
+      const vm = this
+      let modelIndex = vm.modelMulti.indexOf(model)
+      if ((modelIndex >= 0) && model != null && model != undefined) {
+        let newModelMulti = vm.modelMulti
+        newModelMulti.splice(modelIndex, 1);
+        vm.$emit('update:model-multi', newModelMulti)
+      }
+    },
   },
 
   mounted: function () {
   },
 
   computed: {
+    ...mapGetters([
+      'GETcatlgItemLabel',
+    ]),
+
     modalId: function () {
       let vm = this
       return `modal-${vm.widgetType}-${vm.uid}`
@@ -158,6 +219,15 @@ export default {
 
     uid: function () {
       return String(this._uid)
+    },
+
+    modelMultiLength: function () {
+      const vm = this
+      let length = 0
+      if (Array.isArray(vm.modelMulti)) {
+        length = vm.modelMulti.length
+      } 
+      return length
     },
   },
 
@@ -187,6 +257,7 @@ export default {
       handler(){
         const vm = this
         vm.$emit('update:model', vm.modelLocal)
+        vm.modelMultiAdd(vm.modelLocal)
       },
     },
 

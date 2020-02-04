@@ -3,11 +3,17 @@
   <tr>
     <td class="align-middle">{{filterOption.label}}</td>
     <td class="align-middle">
-      <catlg-widget v-if="isCatlg" 
+      <catlg-widget v-if="isCatlgMulti" 
+        :widgetType="filterOption.type.catlg"
+        :multi="true"
+        :model-multi.sync="status.filterReq[filterOptionName]"
+      ></catlg-widget>
+
+      <catlg-widget v-if="isCatlgSingle" 
         :widgetType="filterOption.type.catlg"
         :model.sync="status.filterReq[filterOptionName]"
-        :multi="true"
       ></catlg-widget>
+
       <datetime-widget v-if="isDate"
         :date-only="true"
         :model="status.filterReq[filterOptionName]" 
@@ -41,6 +47,7 @@ export default {
  
   data () {
     return {
+      modelMulti: [],
     }       
   },
 
@@ -58,9 +65,36 @@ export default {
       }
     },
 
+    isCatlgSingle: function(){
+      const vm = this
+      if (vm.isCatlg && (('list' in vm.filterOption && !vm.filterOption['list']) || !('list' in vm.filterOption) )) {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    isCatlgMulti: function(){
+      const vm = this
+      if (vm.isCatlg && 'list' in vm.filterOption && vm.filterOption['list']) {
+        return true
+      } else {
+        return false
+      }
+    },
+
     isDate: function(){
       const vm = this
       if (vm.filterOption['type'] == 'date') {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    isDatetime: function(){
+      const vm = this
+      if (vm.filterOption['type'] == 'datetime') {
         return true
       } else {
         return false

@@ -72,10 +72,10 @@ export default {
       status: {
         reportName: 'RepCurrentLocation',
         filterReq: {
-          device: null,
+          device: [],
           date_to: null,
-          person: null,
-          stock: null,
+          person: [],
+          stock: [],
         },
         fieldsOptions: {},
         filterOptions: {},
