@@ -31,16 +31,19 @@
           </div>
         </template>
 
-        <template slot="selection">
+        <template v-if="multi" slot="selection" >
           <div class="selection">
             <span> {{modelMultiSelection}} </span>
           </div>
         </template>
         
         <template slot="input-end">
-          <b-button v-if="active" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
+          <b-button v-if="active && !multi" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
+
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
+          
           <b-button v-if="multi" size="sm" variant="light"
+          :disabled="!modelMultiClick"
           v-b-modal="`widget-model-multi-${widgetType}-${uid}`">
               <b-badge>{{modelMultiLength}}</b-badge>
           </b-button>
@@ -53,15 +56,15 @@
     <catlg-item-modal :parent="uid" :catlgType="widgetType"></catlg-item-modal>
     
     <b-modal :id="`widget-model-multi-${widgetType}-${uid}`" 
-    size="md" 
-    scrollable 
+    size="lg" 
+    
     ok-only
     :title="catlgTitle(widgetType)">
       <catlg-widget
       :widgetType="widgetType"
       :multi="true"
       :model-multi.sync="modelMulti"
-      >
+      :model-multi-click="false">
       </catlg-widget>
 
       <b-list-group style="float: left;">
@@ -119,6 +122,10 @@ export default {
     multi: {
       type: Boolean,
       default: false,
+    },
+    modelMultiClick: {
+      type: Boolean,
+      default: true,
     },
 
   },
@@ -287,6 +294,7 @@ export default {
     EventBus.$on('catlgWidgetSetModel', event => {
       if (event.modalId == vm.modalId){
         vm.$emit('update:model', event.id)
+        vm.modelMultiAdd(event.id)
       }
     })
   },
