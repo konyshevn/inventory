@@ -16,7 +16,7 @@
 
       <datetime-widget v-if="isDate"
         :date-only="true"
-        :model="status.filterReq[filterOptionName]" 
+        :model.sync="status.filterReq[filterOptionName]" 
       ></datetime-widget>
     </td>
   </tr>

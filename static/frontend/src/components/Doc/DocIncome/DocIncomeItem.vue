@@ -19,7 +19,7 @@
             <label>Дата:</label> 
           </b-col>
           <b-col sm="3">
-            <datetime-widget v-if="item.doc_date" :model.sync="item.doc_date"></datetime-widget>
+            <datetime-widget :model.sync="item.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="2" align="center">
             <b-button v-if="item.active" disabled variant="success">Проведен</b-button>

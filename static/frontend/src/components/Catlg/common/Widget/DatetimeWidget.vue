@@ -17,7 +17,7 @@
     data-inputmask-inputformat="dd.mm.yyyy" 
     data-inputmask-placeholder="__.__.____"
     im-insert="false"
-    @change="onChange"/>
+     />
   </div>
 
 </template>
@@ -48,39 +48,45 @@ export default {
     },
 
   created: function() {
-    var vm = this
-    if (vm.dateOnly) {
-      vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY')
-    } else {
-      vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY HH:mm:ss')
-    }
   },
 
   methods: {
-/*
-    onInput: function(value) {
-      var vm = this
-      console.log('input ' + value)
-    },
 
-    onUpdate: function(value) {
-      var vm = this
-      console.log('update' + value)
+    onChange: function() {
+        console.log('onChange')
+        var vm = this
+        var newmodel
+        if (moment(String(vm.datetime), 'DD.MM.YYYY').isValid() || moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').isValid()) {
+          if (vm.dateOnly) {
+            newmodel = moment(String(vm.datetime), 'DD.MM.YYYY').format('YYYY-MM-DD')
+          } else {
+            newmodel = moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ')
+          }
+        } else {
+          newmodel = null
+          vm.datetime = ""
+        }
+        vm.$emit('update:model', newmodel)
 
     },
-*/
-    onChange: function(value) {
-      var vm = this
-      console.log('change' + value)
-      var newmodel
-      if (vm.dateOnly) {
-        newmodel = moment(String(vm.datetime), 'DD.MM.YYYY').format('YYYY-MM-DD')
-      } else {
-        newmodel = moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').format('YYYY-MM-DDTHH:mm:ssZ')
+  },
+
+  watch: {
+    model: {
+      handler(){
+        var vm = this
+        if (moment(String(vm.model)).isValid() || moment(String(vm.model)).isValid()) {
+          if (vm.dateOnly) {
+            vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY')
+          } else {
+            vm.datetime = moment(String(vm.model)).format('DD.MM.YYYY HH:mm:ss')
+          }
+        } else {
+          vm.datetime = ""
+        }
       }
-      vm.$emit('update:model', newmodel)
-
     },
+    
   },
 
   mounted: function () {
@@ -166,8 +172,16 @@ export default {
         var dtNew
         if (vm.dateOnly){
           dtNew = `${ddNew}.${mmNew}.${yyyyNew}`
+          if (dtNew == '..') {
+            dtNew = ""
+            vm.$emit('update:model', null)
+          }
         } else {
           dtNew = `${ddNew}.${mmNew}.${yyyyNew} ${hhNew}:${MMNew}:${ssNew}`
+          if (dtNew == '.. ::') {
+            dtNew = ""
+            //vm.$emit('update:model', now)
+          }
         }
         vm.datetime = dtNew
       },
