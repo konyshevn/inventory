@@ -49,7 +49,6 @@ export default {
   data () {
     return {
       filterValueLocal: this.filterValue,
-      modelMulti: [],
     }       
   },
 

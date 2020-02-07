@@ -182,7 +182,8 @@ export default {
 
     modelMultiAdd: function(model) {
       const vm = this
-      if (model) {
+      console.log('modelMultiAdd')
+      if (model && vm.modelMulti) {
         let modelIndex = vm.modelMulti.indexOf(model)
         if ((modelIndex < 0) && model != null && model != undefined) {
           let newModelMulti = vm.modelMulti
@@ -194,7 +195,8 @@ export default {
 
     modelMultiContains: function(model) {
       const vm = this
-      if (model != null) {
+      console.log('modelMultiContains')
+      if (model && vm.modelMulti) {
         let modelIndex = vm.modelMulti.indexOf(model)
         if (modelIndex >= 0 ) {
           return true
@@ -205,6 +207,7 @@ export default {
 
     modelMultiRemove: function(model) {
       const vm = this
+      console.log('modelMultiRemove')
       let modelIndex = vm.modelMulti.indexOf(model)
       if ((modelIndex >= 0) && model != null && model != undefined) {
         let newModelMulti = vm.modelMulti
@@ -248,11 +251,13 @@ export default {
     modelMultiSelection: function () {
       const vm = this
       let selection = ''
-      vm.modelMulti.forEach(function(id, index){
-        selection = (index == 0) ? vm.GETcatlgItemLabel(vm.widgetType, id) : selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
-        // selection = selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
-      })
-      selection = selection.slice(0, 50) + '...'
+      if (Array.isArray(vm.modelMulti)){
+        vm.modelMulti.forEach(function(id, index){
+          selection = (index == 0) ? vm.GETcatlgItemLabel(vm.widgetType, id) : selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
+          // selection = selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
+        })
+        selection = selection.slice(0, 50) + '...'
+      }
       return selection
     },
   },
