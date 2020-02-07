@@ -17,7 +17,7 @@
     data-inputmask-inputformat="dd.mm.yyyy" 
     data-inputmask-placeholder="__.__.____"
     im-insert="false"
-     />
+    @change="onChange" />
   </div>
 
 </template>

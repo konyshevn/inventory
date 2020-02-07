@@ -4,7 +4,7 @@
       <report-filter-option v-for="(option, optionName, index) in status.filterOptions" :key="index"
         :filter-option="option"
         :filter-option-name="optionName"
-        :status="status"
+        :filter-value.sync="status.filterReq[optionName]"
       >      
       </report-filter-option>
     </b-table-simple>

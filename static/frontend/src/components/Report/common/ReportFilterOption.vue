@@ -6,17 +6,17 @@
       <catlg-widget v-if="isCatlgMulti" 
         :widgetType="filterOption.type.catlg"
         :multi="true"
-        :model-multi.sync="status.filterReq[filterOptionName]"
+        :model-multi.sync="filterValueLocal"
       ></catlg-widget>
 
       <catlg-widget v-if="isCatlgSingle" 
         :widgetType="filterOption.type.catlg"
-        :model.sync="status.filterReq[filterOptionName]"
+        :model.sync="filterValueLocal"
       ></catlg-widget>
 
       <datetime-widget v-if="isDate"
         :date-only="true"
-        :model.sync="status.filterReq[filterOptionName]" 
+        :model.sync="filterValueLocal" 
       ></datetime-widget>
     </td>
   </tr>
@@ -41,12 +41,14 @@ export default {
   props: {
     filterOption: Object,
     filterOptionName: String,
-    status: Object,
+    // status: Object,
+    filterValue: null,
   },
   
  
   data () {
     return {
+      filterValueLocal: this.filterValue,
       modelMulti: [],
     }       
   },
@@ -108,6 +110,14 @@ export default {
   created: function() {
   }, 
 
+  watch: {
+    filterValueLocal: {
+      handler(){
+        const vm = this
+        vm.$emit('update:filter-value', vm.filterValueLocal)
+      }
+    },
+  },
 }
    
 
