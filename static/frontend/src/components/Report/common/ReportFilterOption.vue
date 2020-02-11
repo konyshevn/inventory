@@ -1,25 +1,34 @@
 <template>
   
-  <tr>
-    <td class="align-middle">{{filterOption.label}}</td>
-    <td class="align-middle">
+  <b-row align-v="end" class="mb-2">
+    <b-col sm="2"><label>{{filterOption.label}}:</label></b-col>
+    <b-col sm="7">
       <catlg-widget v-if="isCatlgMulti" 
-        :widgetType="filterOption.type.catlg"
-        :multi="true"
-        :model-multi.sync="filterValueLocal"
-      ></catlg-widget>
+      :widgetType="filterOption.type.catlg"
+      :multi="true"
+      :model-multi.sync="filterValueLocal">
+      </catlg-widget>
 
       <catlg-widget v-if="isCatlgSingle" 
-        :widgetType="filterOption.type.catlg"
-        :model.sync="filterValueLocal"
-      ></catlg-widget>
+      :widgetType="filterOption.type.catlg"
+      :model.sync="filterValueLocal">
+      </catlg-widget>
 
       <datetime-widget v-if="isDate"
-        :date-only="true"
-        :model.sync="filterValueLocal" 
-      ></datetime-widget>
-    </td>
-  </tr>
+      :date-only="true"
+      :model.sync="filterValueLocal">
+      </datetime-widget>
+    </b-col>
+    <b-col sm="1">
+      <b-button v-if="isCatlg"
+      :disabled="!catlgWidgetMultiSwitch" 
+      :pressed.sync="catlgWidgetMulti" 
+      variant="light" 
+      size="sm">
+        Список
+      </b-button>
+    </b-col>
+  </b-row>
 
 </template>
 
@@ -49,6 +58,7 @@ export default {
   data () {
     return {
       filterValueLocal: this.filterValue,
+      catlgWidgetMulti: false,
     }       
   },
 
@@ -66,9 +76,19 @@ export default {
       }
     },
 
+    catlgWidgetMultiSwitch: function() {
+      const vm = this
+      if ('list' in vm.filterOption && vm.filterOption['list']) {
+        return true
+      } else {
+        return false
+      }
+    },
+
+
     isCatlgSingle: function(){
       const vm = this
-      if (vm.isCatlg && (('list' in vm.filterOption && !vm.filterOption['list']) || !('list' in vm.filterOption) )) {
+      if (vm.isCatlg && !vm.catlgWidgetMulti) {
         return true
       } else {
         return false
@@ -77,7 +97,7 @@ export default {
 
     isCatlgMulti: function(){
       const vm = this
-      if (vm.isCatlg && 'list' in vm.filterOption && vm.filterOption['list']) {
+      if (vm.isCatlg && 'list' in vm.filterOption && vm.filterOption['list'] && vm.catlgWidgetMulti) {
         return true
       } else {
         return false

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <b-table-simple small class="table-borderless" style="width: 700px;">
+    <b-container >
       <report-filter-option v-for="(option, optionName, index) in status.filterOptions" :key="index"
         :filter-option="option"
         :filter-option-name="optionName"
         :filter-value.sync="status.filterReq[optionName]"
       >      
       </report-filter-option>
-    </b-table-simple>
+    </b-container>
     
   </div>
 

@@ -74,8 +74,8 @@ export default {
         filterReq: {
           device: null,
           date_to: null,
-          person: [],
-          stock: [],
+          person: null,
+          stock: null,
         },
         fieldsOptions: {},
         filterOptions: {},

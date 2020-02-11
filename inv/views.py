@@ -200,10 +200,11 @@ class RepCurrentLocation(viewsets.ViewSet):
         filter_options = self.filter_options
         print('request: ', request.data)
         filter_req = request.data['filter_req']
+        
+        for option, value in filter_req.items():
+            if (type(value) is not list) and filter_options[option]['list'] and value:
+                filter_req[option] = [value, ]
 
-        # for option, value in filter_req.items():
-        #     if (type(value) is not list) and filter_options[option]['list']:
-        #         filter_req[option] = [value, ]
         # for option, params in filter_options.items():
 
         #     if option in filter_req:
@@ -223,25 +224,24 @@ class RepCurrentLocation(viewsets.ViewSet):
         location = []
         filter_vals_diff = {}
         # filter_req_errors = []
-        if 'device' in filter_req and not filter_req['device'] == '' and not filter_req['device'] is None and not filter_req['device'] == []:
+        if 'device' in filter_req and filter_req['device']:
             devices = Device.objects.filter(id__in=filter_req['device'])
         else:
             devices = Device.objects.all()
 
         if 'date_to' in filter_req and filter_req['date_to']:
-        # if 'date_to' in filter_req and not filter_req['date_to'] == '' and not filter_req['date_to'] is None:
             date_to_obj = datetime.datetime.strptime(filter_req['date_to'], '%Y-%m-%d')
             date_to = date_to_obj.date() + datetime.timedelta(days=1)
         else:
             date_to = datetime.datetime.today() + datetime.timedelta(days=1)
 
-        if 'department' in filter_req and not filter_req['department'] == '' and not filter_req['department'] is None and not filter_req['department'] == []:
+        if 'department' in filter_req and filter_req['department']:
             filter_vals_diff['department'] = Department.objects.get(id__in=filter_req['department'])
 
-        if 'stock' in filter_req and not filter_req['stock'] == '' and not filter_req['stock'] is None and not filter_req['stock'] == []:
+        if 'stock' in filter_req and filter_req['stock']:
             filter_vals_diff['stock'] = Stock.objects.get(id__in=filter_req['stock'])
 
-        if 'person' in filter_req and not filter_req['person'] == '' and not filter_req['person'] is None and not filter_req['person'] == []:
+        if 'person' in filter_req and filter_req['person']:
             filter_vals_diff['person'] = Person.objects.get(id__in=filter_req['person'])
 
         for device in devices:

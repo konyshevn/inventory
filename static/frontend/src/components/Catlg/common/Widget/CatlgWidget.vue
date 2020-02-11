@@ -31,13 +31,16 @@
           </div>
         </template>
 
-        <template v-if="multi" slot="selection" >
+        <template slot="selection" >
           <div class="selection">
-            <span> {{modelMultiSelection}} </span>
+            <span v-if="multi"> {{modelMultiSelection}} </span>
+            <span v-else> {{GETcatlgItemLabel(widgetType, modelLocal)}} </span>
           </div>
         </template>
         
         <template slot="input-end">
+          <b-button v-if="active" size="sm" variant="light" @click="modelClear()"><font-awesome-icon icon="times"/></b-button>
+
           <b-button v-if="active && !multi" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
 
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
@@ -60,15 +63,15 @@
     
     ok-only
     :title="catlgTitle(widgetType)">
-      <catlg-widget
-      :widgetType="widgetType"
-      :multi="true"
-      :model-multi.sync="modelMulti"
-      :model-multi-click="false">
-      </catlg-widget>
 
       <b-list-group style="float: left;">
-         <b-list-group-item v-for="id in modelMulti" :key="id">
+        <catlg-widget
+        :widgetType="widgetType"
+        :multi="true"
+        :model-multi.sync="modelMulti"
+        :model-multi-click="false">
+        </catlg-widget>
+        <b-list-group-item v-for="id in modelMulti" :key="id">
           <span style="vertical-align: middle;">
             {{GETcatlgItemLabel(widgetType, id)}}
           </span>
@@ -76,7 +79,7 @@
             @click="modelMultiRemove(id)"
           ><font-awesome-icon icon="times"/>
           </b-button>
-         </b-list-group-item>
+        </b-list-group-item>
       </b-list-group>
     </b-modal>
   </div>
@@ -183,12 +186,18 @@ export default {
     modelMultiAdd: function(model) {
       const vm = this
       console.log('modelMultiAdd')
-      if (model && vm.modelMulti) {
-        let modelIndex = vm.modelMulti.indexOf(model)
-        if ((modelIndex < 0) && model != null && model != undefined) {
-          let newModelMulti = vm.modelMulti
-          newModelMulti.push(model)
-          vm.$emit('update:model-multi', newModelMulti)
+      let modelIndex
+      if (model) {
+        if (!Array.isArray(vm.modelMulti)){
+          vm.$emit('update:model-multi', [model])
+          console.log('modelMultiAdd: modelMulti - not array')
+        } else {
+          modelIndex = vm.modelMulti.indexOf(model)
+          if (modelIndex < 0) {
+            let newModelMulti = vm.modelMulti
+            newModelMulti.push(model)
+            vm.$emit('update:model-multi', newModelMulti)
+          }
         }
       }
     },
@@ -213,6 +222,14 @@ export default {
         let newModelMulti = vm.modelMulti
         newModelMulti.splice(modelIndex, 1);
         vm.$emit('update:model-multi', newModelMulti)
+      }
+    },
+
+    modelClear: function() {
+      const vm = this
+      vm.$emit('update:model', null)
+      if (vm.multi) {
+        vm.$emit('update:model-multi', null)
       }
     },
   },
@@ -256,8 +273,9 @@ export default {
           selection = (index == 0) ? vm.GETcatlgItemLabel(vm.widgetType, id) : selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
           // selection = selection + '; ' + vm.GETcatlgItemLabel(vm.widgetType, id)
         })
-        selection = selection.slice(0, 50) + '...'
       }
+      selection = selection.slice(0, 30) + '...'
+      console.log('modelMultiSelection:', selection)
       return selection
     },
   },
