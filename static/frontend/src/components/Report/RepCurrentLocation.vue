@@ -4,14 +4,18 @@
     <header>
       <h2 class="align-middle">Местоположение на дату </h2>
       <b-button 
-        variant="success" 
-        style="margin-left: 20px;"
-        @click="buildReport()"
-      >
+      variant="success" 
+      style="margin-left: 20px;"
+      @click="buildReport()">
         Сформировать
       </b-button>
+      <b-button v-b-toggle.report-settings class="m-1">Настройки</b-button>
     </header>
-    <report-control-panel :status.sync="status"> </report-control-panel>
+
+    <b-collapse id="report-settings" v-model="showSettings">
+      <report-control-panel :status.sync="status"> </report-control-panel>
+    </b-collapse>
+    
     <smart-table 
       disable-select
       :table-padd="200"
@@ -82,6 +86,7 @@ export default {
         sortBy: 'device',
         sortAsc: true,
       },
+      showSettings: true,
       reportData: null,
     }       
   },
@@ -97,6 +102,7 @@ export default {
 
     async buildReport (){
       const vm = this
+      vm.showSettings = false
       let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
       if (reportResponse.status >= 200 && reportResponse.status < 300) {
         vm.reportData = reportResponse.data
