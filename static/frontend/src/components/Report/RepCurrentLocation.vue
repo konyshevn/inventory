@@ -15,8 +15,15 @@
     <b-collapse id="report-settings" v-model="showSettings">
       <report-control-panel :status.sync="status"> </report-control-panel>
     </b-collapse>
-    
+
+    <div v-if="loading" class="loading-spinner">
+      <b-spinner ></b-spinner>   
+      <br><br>
+      <strong>Загрузка...</strong>
+    </div>
+
     <smart-table 
+    v-if="!loading"
       disable-select
       :table-padd="200"
       :sort-by.sync="status.sortBy"
@@ -76,10 +83,10 @@ export default {
       status: {
         reportName: 'RepCurrentLocation',
         filterReq: {
-          device: null,
-          date_to: null,
-          person: null,
-          stock: null,
+          // device: null,
+          // date_to: null,
+          // person: null,
+          // stock: null,
         },
         fieldsOptions: {},
         filterOptions: {},
@@ -88,6 +95,7 @@ export default {
       },
       showSettings: true,
       reportData: null,
+      loading: false,
     }       
   },
 
@@ -102,11 +110,14 @@ export default {
 
     async buildReport (){
       const vm = this
+      vm.reportData = null
       vm.showSettings = false
+      vm.loading = true
       let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
       if (reportResponse.status >= 200 && reportResponse.status < 300) {
         vm.reportData = reportResponse.data
-      } 
+      }
+      vm.loading = false 
     },
   },
 
@@ -141,5 +152,11 @@ export default {
 
 
 <style>
+.loading-spinner {
+  z-index: 999999; 
+  position: fixed; 
+  top: 50%; 
+  left: 50%
+}
 </style>
 
