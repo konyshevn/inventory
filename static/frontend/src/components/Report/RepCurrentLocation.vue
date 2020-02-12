@@ -16,7 +16,7 @@
       <report-control-panel :status.sync="status"> </report-control-panel>
     </b-collapse>
 
-    <div v-if="loading" class="loading-spinner">
+    <div v-if="loading" class="loading-spinner" >
       <b-spinner ></b-spinner>   
       <br><br>
       <strong>Загрузка...</strong>
@@ -24,28 +24,27 @@
 
     <smart-table 
     v-if="!loading"
-      disable-select
-      :table-padd="200"
-      :sort-by.sync="status.sortBy"
-      :sort-asc.sync="status.sortAsc"
-      :items="reportData"
-      :fields="[
-        {key: 'device', label: 'Устройство', type: 'text', width: '40%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'department', label: 'Подразделение', type: 'text', width: '25%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'stock', label: 'Склад', type: 'text', width: '10%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'person', label: 'Сотрудник', type: 'text', width: '15%',
-        formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
-        },
-        {key: 'qty', label: 'Количество', type: 'number', width: '10%',
-        },
-      ]"
-    >
+    disable-select
+    :table-padd="200"
+    :sort-by.sync="status.sortBy"
+    :sort-asc.sync="status.sortAsc"
+    :items="reportData"
+    :fields="[
+      {key: 'device', label: 'Устройство', type: 'text', width: '40%',
+      formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+      },
+      {key: 'department', label: 'Подразделение', type: 'text', width: '25%',
+      formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+      },
+      {key: 'stock', label: 'Склад', type: 'text', width: '10%',
+      formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+      },
+      {key: 'person', label: 'Сотрудник', type: 'text', width: '15%',
+      formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
+      },
+      {key: 'qty', label: 'Количество', type: 'number', width: '10%',
+      },
+    ]">
     </smart-table>
   </div>
 </template>

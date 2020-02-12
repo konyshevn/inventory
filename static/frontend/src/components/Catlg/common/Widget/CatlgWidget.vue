@@ -14,6 +14,7 @@
       disable-filtering-by-search
       @search="onSearch"
       @input="onInput"
+      :placeholder="(multi) ? modelMultiSelection : ''"
       :class="{'widget-invalid': required ? !isValid : false }">
         <template slot="no-data">
           <span>Не найдено</span>
@@ -31,12 +32,13 @@
           </div>
         </template>
 
-        <template slot="selection" >
-          <div class="selection">
-            <span v-if="multi"> {{modelMultiSelection}} </span>
-            <span v-else> {{GETcatlgItemLabel(widgetType, modelLocal)}} </span>
+         <template v-if="multi" slot="selection" >
+          <div class="item">
+            <span class="item-name" > {{modelMultiSelection}} </span>
           </div>
         </template>
+
+
         
         <template slot="input-end">
           <b-button v-if="active" size="sm" variant="light" @click="modelClear()"><font-awesome-icon icon="times"/></b-button>
