@@ -36,7 +36,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'currentDoc',
     ]),
 
   },

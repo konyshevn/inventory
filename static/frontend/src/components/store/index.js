@@ -227,7 +227,7 @@ export const store = new Vuex.Store({
 
   actions: {
 //---------------------------Document---------------------------
-    PUTdoc: async (context, [docType, item]) => {
+    PUTdoc: async ({commit}, [docType, item]) => {
       var response = null
       try {
         var currentDoc = item
@@ -248,6 +248,7 @@ export const store = new Vuex.Store({
 
         if (response.status >= 200 && response.status < 300) {
           item = response.data
+          commit('SETdocItem', [docType, item])
           //dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
         }
       } catch(error) {

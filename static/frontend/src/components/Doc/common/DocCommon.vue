@@ -32,8 +32,6 @@ export default {
 
   computed: {
     ...mapGetters([
-      'currentDoc',
-      'currentDocStatus',
       'widgetsIsValid',
     ]),
 

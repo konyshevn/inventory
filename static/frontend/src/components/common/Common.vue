@@ -71,11 +71,18 @@ export default {
     docItemTitle(docType, docId){
       const vm = this
       let title = ''
-      if (docId == 'new' || docId == undefined){
+      console.log('docItemTitle: docType, docId', docType, docId)
+      if (docType == undefined || docType == null) {
+        title = ''
+        console.log('docType = undef', title)
+      } else if (docId == 'new' || docId == undefined){
         title = `${vm.docTitle(docType)} №`
+        console.log('docId = undef', title)
       } else {
         let item = vm.GETdocItem(docType, docId)
+        console.log('item', item)
         title = `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}`
+        console.log('good', title)
       }
       return title
     },
