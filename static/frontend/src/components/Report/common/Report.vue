@@ -47,6 +47,11 @@ export default {
 </script>
 
 <style >
-
+.loading-spinner {
+  z-index: 999999; 
+  position: fixed; 
+  top: 50%; 
+  left: 50%
+}
 </style>
 

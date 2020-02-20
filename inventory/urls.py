@@ -60,7 +60,7 @@ urlpatterns = [
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/new/(?P<doc_follower_name>\w+)/$', inv.views.follower_manager),
     re_path('doc/(?P<doc_leader_name>\w+)/(?P<doc_leader_id>\w+)/follower/hierarchy/$', inv.views.follower_hierarchy),
     path('', include(router.urls)),
-    #re_path('^.*$', TemplateView.as_view(template_name="index.html"), name="home"),
+    re_path('^.*$', TemplateView.as_view(template_name="index.html"), name="home"),
 
 ]
 

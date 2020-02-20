@@ -178,7 +178,20 @@ class CatalogViewSet(viewsets.ViewSet):
         return queryset
 
 
-class RepCurrentLocation(viewsets.ViewSet):
+class Report(viewsets.ViewSet):
+    report_name = 'Report'
+    filter_options = {}
+    fields_options = {}
+
+    def list(self, request):
+        return Response([{
+            'report': self.report_name,
+            'filter_options': self.filter_options,
+            'fields_options': self.fields_options,
+        }])
+
+
+class RepCurrentLocation(Report):
     filter_options = {
         "device": {'label': 'Устройство', 'type': {'catlg': 'device'}, 'list': True, 'period': False, 'required': False},
         'date_to': {'label': 'Дата', 'type': 'date', 'list': False, 'period': False, 'required': False},
@@ -195,35 +208,20 @@ class RepCurrentLocation(viewsets.ViewSet):
         'qty': {'type': 'number'},
     }
 
+    report_name = 'RepCurrentLocation'
+
     def create(self, request):
         filter_vals = {}
         filter_options = self.filter_options
-        print('request: ', request.data)
+        # print('request: ', request.data)
         filter_req = request.data['filter_req']
         
         for option, value in filter_req.items():
             if (type(value) is not list) and filter_options[option]['list'] and value:
                 filter_req[option] = [value, ]
 
-        # for option, params in filter_options.items():
-
-        #     if option in filter_req:
-        #         option_param = filter_options[option]
-
-        #         if option_param['list']:
-        #             option_label = '%s__in' % option
-        #         elif option_param['period']:
-        #             for k, v in filter_req[option].items():
-        #                 option_label = '%s__%s' % (option, k)
-        #                 filter_vals.update([(option_label, v)])
-        #             continue
-        #         else:
-        #             option_label = '%s' % option
-        #         filter_vals.update([(option_label, filter_req[option])])
-
         location = []
         filter_vals_diff = {}
-        # filter_req_errors = []
         if 'device' in filter_req and filter_req['device']:
             devices = Device.objects.filter(id__in=filter_req['device'])
         else:
@@ -266,13 +264,6 @@ class RepCurrentLocation(viewsets.ViewSet):
                 location_rec['device'] = device.pk
                 location.append(location_rec)
         return Response(location)
-
-    def list(self, request):
-        return Response([{
-            'report': 'RepCurrentLocation',
-            'filter_options': self.filter_options,
-            'fields_options': self.fields_options,
-        }])
 
 
 class DocIncomeViewSet(DocumentViewSet, viewsets.ModelViewSet):

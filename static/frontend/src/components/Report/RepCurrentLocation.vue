@@ -52,15 +52,16 @@
 
 <script>
 /* eslint-disable no-console */
-import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
+// import { mapGetters } from 'vuex';
+// import { mapActions } from 'vuex';
+// import { mapMutations } from 'vuex';
 // import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 // import DocCommon from '@/components/Doc/common/DocCommon.vue';
 // import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
 // import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
 import ReportControlPanel from '@/components/Report/common/ReportControlPanel.vue';
+import ReportCommon from '@/components/Report/common/ReportCommon.vue';
 
 
 export default {
@@ -72,7 +73,7 @@ export default {
     ReportControlPanel,
   },
 
-  mixins: [],
+  mixins: [ReportCommon],
   
   props: {
   },
@@ -99,49 +100,15 @@ export default {
   },
 
   methods: {
-    ...mapMutations([
-    ]),
-
-    ...mapActions([
-      'FETCHreport',
-      'FETCHreportOptions',
-    ]),
-
-    async buildReport (){
-      const vm = this
-      vm.reportData = null
-      vm.showSettings = false
-      vm.loading = true
-      let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
-      if (reportResponse.status >= 200 && reportResponse.status < 300) {
-        vm.reportData = reportResponse.data
-      }
-      vm.loading = false 
-    },
   },
 
   computed: {
-    ...mapGetters([
-      'GETcatlgItemLabel',
-    ]),
-  },
-
-
-  async mounted () {
-    const vm = this
-    let reportOptionsResponse = await vm.FETCHreportOptions(vm.status.reportName)
-    console.log(reportOptionsResponse)
-    if (reportOptionsResponse.status >= 200 && reportOptionsResponse.status < 300) {
-      vm.status.fieldsOptions = reportOptionsResponse.data[0].fields_options
-      vm.status.filterOptions = reportOptionsResponse.data[0].filter_options
-    }
   },
 
   created: function() {
   }, 
 
   beforeDestroy: function() {
-    //this.DELcurrentDoc()
   },
 
 }
@@ -151,11 +118,6 @@ export default {
 
 
 <style>
-.loading-spinner {
-  z-index: 999999; 
-  position: fixed; 
-  top: 50%; 
-  left: 50%
-}
+
 </style>
 
