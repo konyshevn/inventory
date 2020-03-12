@@ -13,7 +13,7 @@ import DocList from '@/components/Doc/common/DocList.vue'
 import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
 import {store} from '@/components/store';
-import Report from '@/components/Report/RepCurrentLocation.vue'
+import Report from '@/components/Report/common/Report.vue'
 
 
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');

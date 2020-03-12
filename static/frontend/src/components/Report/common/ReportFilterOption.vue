@@ -6,12 +6,14 @@
       <catlg-widget v-if="isCatlgMulti" 
       :widgetType="filterOption.type.catlg"
       :multi="true"
-      :model-multi.sync="filterValueLocal">
+      :model-multi.sync="filterValueLocal"
+      :required="isRequired">
       </catlg-widget>
 
       <catlg-widget v-if="isCatlgSingle" 
       :widgetType="filterOption.type.catlg"
-      :model.sync="filterValueLocal">
+      :model.sync="filterValueLocal"
+      :required="isRequired">
       </catlg-widget>
 
       <datetime-widget v-if="isDate"
@@ -52,6 +54,7 @@ export default {
     filterOptionName: String,
     // status: Object,
     filterValue: null,
+    parent: null,
   },
   
  
@@ -120,6 +123,15 @@ export default {
       } else {
         return false
       }
+    },
+
+    isRequired: function(){
+      const vm = this
+      let uid = null
+      if (vm.filterOption['required']) {
+        uid = vm.parent
+      }
+      return uid
     },
   },
   

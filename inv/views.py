@@ -86,26 +86,26 @@ class DocumentViewSet(viewsets.ViewSet):
         else:
             return Response(dd['data'], status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, url_path='next_doc_num')
-    def next_doc_num(self, request, pk=None):
-        doc_num = self.serializer_class.Meta.model.objects.get_doc_num()
-        doc_num_json = json.dumps({'doc_num': doc_num})
-        return HttpResponse(doc_num_json)
+    # @action(detail=False, url_path='next_doc_num')
+    # def next_doc_num(self, request, pk=None):
+    #     doc_num = self.serializer_class.Meta.model.objects.get_doc_num()
+    #     doc_num_json = json.dumps({'doc_num': doc_num})
+    #     return HttpResponse(doc_num_json)
 
-    @action(detail=False, url_path='get_labels')
-    def get_labels(self, *args):
-        labels = {}
+    # @action(detail=False, url_path='get_labels')
+    # def get_labels(self, *args):
+    #     labels = {}
 
-        for field in self.serializer_class.Meta.model._meta.get_fields():
-            if field.name in self.serializer_class.Meta.model._meta.fields:
-                labels[field.name] = field.verbose_name
+    #     for field in self.serializer_class.Meta.model._meta.get_fields():
+    #         if field.name in self.serializer_class.Meta.model._meta.fields:
+    #             labels[field.name] = field.verbose_name
 
-        labels['_model'] = {
-            'singular': self.serializer_class.Meta.model._meta.verbose_name.title(),
-            'plural': self.serializer_class.Meta.model._meta.verbose_name_plural.title(),
-        }
-        labels_json = json.dumps(labels)
-        return HttpResponse(labels_json)
+    #     labels['_model'] = {
+    #         'singular': self.serializer_class.Meta.model._meta.verbose_name.title(),
+    #         'plural': self.serializer_class.Meta.model._meta.verbose_name_plural.title(),
+    #     }
+    #     labels_json = json.dumps(labels)
+    #     return HttpResponse(labels_json)
 
     @action(detail=True, url_path='get_follower')
     def get_follower(self, request, pk=None):
@@ -135,6 +135,26 @@ class DocumentViewSet(viewsets.ViewSet):
             if follower_model:
                 doc_follower_id = doc_current.follower_create(model_follower=follower_model)
         return HttpResponse(json.dumps(doc_follower_id))
+
+    def get_queryset(self):
+
+        # Get URL parameter as a string, if exists
+        ids = self.request.query_params.get('ids', None)
+
+        # Get snippets for ids if they exist
+        if ids is not None:
+            # Convert parameter string to list of integers
+            ids = [int(x) for x in ids.split(',') if x != '']
+            # Get objects for all parameter ids
+            queryset = self.serializer_class.Meta.model.objects.filter(pk__in=ids)
+        else:
+            # Else no parameters, return all objects
+            queryset = self.serializer_class.Meta.model.objects.all()
+
+        return queryset
+
+
+
 
 
 class CatalogViewSet(viewsets.ViewSet):
@@ -211,11 +231,10 @@ class RepCurrentLocation(Report):
     report_name = 'RepCurrentLocation'
 
     def create(self, request):
-        filter_vals = {}
         filter_options = self.filter_options
         # print('request: ', request.data)
         filter_req = request.data['filter_req']
-        
+
         for option, value in filter_req.items():
             if (type(value) is not list) and filter_options[option]['list'] and value:
                 filter_req[option] = [value, ]
@@ -263,6 +282,99 @@ class RepCurrentLocation(Report):
                     location_rec['person'] = ''
                 location_rec['device'] = device.pk
                 location.append(location_rec)
+        return Response(location)
+
+
+class RepStatementDocs(Report):
+    filter_options = {
+        "device": {'label': 'Устройство', 'type': {'catlg': 'device'}, 'list': False, 'period': False, 'required': True},
+        'date_from': {'label': 'Дата начало', 'type': 'date', 'list': False, 'period': False, 'required': False},
+        'date_to': {'label': 'Дата конец', 'type': 'date', 'list': False, 'period': False, 'required': False},
+        'department': {'label': 'Подразделение', 'type': {'catlg': 'department'}, 'list': False, 'period': False, 'required': False},
+        'stock': {'label': 'Склад', 'type': {'catlg': 'stock'}, 'list': False, 'period': False, 'required': False},
+        'person': {'label': 'Сотрудник', 'type': {'catlg': 'person'}, 'list': False, 'period': False, 'required': False},
+    }
+
+    fields_options = {
+        'base_doc': {'type': 'doc'},
+        'department': {'type': {'catlg': 'department'}},
+        'stock': {'type': {'catlg': 'stock'}},
+        'person': {'type': {'catlg': 'person'}},
+        'qty': {'type': 'number'},
+    }
+
+    report_name = 'RepStatementDocs'
+
+    def create(self, request):
+        filter_options = self.filter_options
+        # print('request: ', request.data)
+        filter_req = request.data['filter_req']
+
+        for option, value in filter_req.items():
+            if (type(value) is not list) and filter_options[option]['list'] and value:
+                filter_req[option] = [value, ]
+
+        location = []
+        filter_vals = {}
+
+        if 'device' in filter_req and filter_req['device']:
+            filter_vals['device'] = Device.objects.get(id=filter_req['device'])
+
+        if 'date_from' in filter_req and filter_req['date_from']:
+            date_from_obj = datetime.datetime.strptime(filter_req['date_from'], '%Y-%m-%d')
+            filter_vals['reg_date__gte'] = date_from_obj.date()
+
+        if 'date_to' in filter_req and filter_req['date_to']:
+            date_to_obj = datetime.datetime.strptime(filter_req['date_to'], '%Y-%m-%d')
+            filter_vals['reg_date__lte'] = date_to_obj.date() + datetime.timedelta(days=1)
+
+        if 'department' in filter_req and filter_req['department']:
+            filter_vals['department'] = Department.objects.get(id=filter_req['department'])
+
+        if 'stock' in filter_req and filter_req['stock']:
+            filter_vals['stock'] = Stock.objects.get(id=filter_req['stock'])
+
+        if 'person' in filter_req and filter_req['person']:
+            filter_vals['person'] = Person.objects.get(id=filter_req['person'])
+
+        reg_recs = RegDeviceStock.objects.filter(**filter_vals).order_by('-reg_date')
+
+        for row in reg_recs:
+            location_rec = {}
+            doc_multi_operation = row.base_doc._REG_CONST_ATTR_MAP['RegDeviceStock']['_MULTI']
+            doc_type = row.base_doc_type.model
+
+            if row.operation_type == '+':
+                location_rec['base_doc'] = {'docType': doc_type, 'docId': row.base_doc.id}
+                location_rec['qty'] = RegDeviceStock.objects.saldo(device=row.device, date_to=row.reg_date)
+
+                if type(row.department) is not str and row.department is not None:
+                    location_rec['department'] = row.department.pk
+                else:
+                    location_rec['department'] = ''
+
+                if type(row.stock) is not str and row.stock is not None:
+                    location_rec['stock'] = row.stock.pk
+                else:
+                    location_rec['stock'] = ''
+
+                if type(row.person) is not str and row.person is not None:
+                    location_rec['person'] = row.person.pk
+                else:
+                    location_rec['person'] = ''
+
+                location_rec['date'] = row.reg_date
+            elif not doc_multi_operation:
+                location_rec['base_doc'] = {'docType': doc_type, 'docId': row.base_doc.id}
+                location_rec['qty'] = RegDeviceStock.objects.saldo(device=row.device, date_to=row.reg_date)
+                location_rec['department'] = ''
+                location_rec['stock'] = ''
+                location_rec['person'] = ''
+                location_rec['date'] = row.reg_date
+            else:
+                continue
+            location.append(location_rec)
+
         return Response(location)
 
 

@@ -270,9 +270,21 @@ export const store = new Vuex.Store({
       return response
     },
 
-    FETCHdocs: async ({commit, dispatch}, docType) => {
+    FETCHdocs: async ({commit, dispatch}, [docType, id]) => {
+
+        if (id){
+          response = await HTTP.get(docType + '/?ids='+ id.join(','))
+        } else {
+          response = await HTTP.get(docType + '/')
+        }
+
+
+
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
+
+
+
 
       // console.log('FETCHdocs: aliases', aliases.docAlias[docType]['fieldsMap'])
       await dispatch('FETCHdependentCatlg', [DocsReady, aliases.docAlias[docType]['fieldsMap']])
@@ -281,6 +293,7 @@ export const store = new Vuex.Store({
 
     FETCHdocItem: async ({commit, dispatch}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/')
+
       /*
       await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], aliases.docAlias[docType].fieldsMap])
 
@@ -480,18 +493,39 @@ export const store = new Vuex.Store({
     FETCHreport: async ({dispatch}, [reportName, filterReq]) => {
       var response = null
       var fieldsMap = {}
+      var docsFields = []
+      var docsToLoad = {}
+
       try {
         response = await HTTP.post('/report/' + reportName + '/', {filter_req: filterReq})
         let reportData = response.data
         var reportOptions = await dispatch('FETCHreportOptions', reportName)
-        let fields_options = reportOptions.data.fields_options
+        var fields_options = reportOptions.data[0]['fields_options']
         
         for (let field in fields_options) {
           if (typeof fields_options[field]['type'] === 'object' && fields_options[field]['type'] !== null && 'catlg' in fields_options[field]['type']) {
             fieldsMap[field] = fields_options[field]['type']['catlg']
+          } else if (fields_options[field]['type'] == 'doc') {
+            docsFields.push(field)
           } 
         }
-        await dispatch('FETCHdependentCatlg', [reportData, fieldsMap])      
+
+        await dispatch('FETCHdependentCatlg', [reportData, fieldsMap])
+
+        reportData.forEach(function(item){
+          docsFields.forEach(function(field) {
+            if (!(item[field]['docType'] in docsToLoad)) {
+              docsToLoad[item[field]['docType']] = []
+            }
+            if (!(item[field]['docId'] in docsToLoad[item[field]['docType']])) {
+              docsToLoad[item[field]['docType']].push(item[field]['docId'])
+            }
+          })
+        })
+
+        for (let docType in docsToLoad) {
+          await dispatch('FETCHdocs', [docType, docsToLoad[docType]])    
+        }     
 
       } catch(error) {
         response = error['response']

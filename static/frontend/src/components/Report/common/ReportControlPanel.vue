@@ -6,7 +6,8 @@
           <report-filter-option v-for="(option, optionName, index) in status.filterOptions" :key="index"
           :filter-option="option"
           :filter-option-name="optionName"
-          :filter-value.sync="status.filterReq[optionName]">      
+          :filter-value.sync="status.filterReq[optionName]"
+          :parent="status.uid">      
           </report-filter-option>
         </b-container>
       </b-tab>

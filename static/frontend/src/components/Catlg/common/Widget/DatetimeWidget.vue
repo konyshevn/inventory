@@ -3,7 +3,7 @@
     <input v-if="!dateOnly" 
     class="form-control"
     v-model="datetime"
-    id="datetime-widget" 
+    :id="'datetime-widget-' + uid" 
     data-inputmask-alias="datetime" 
     data-inputmask-inputformat="dd.mm.yyyy HH:MM:ss" 
     data-inputmask-placeholder="__.__.____ __:__:__"
@@ -12,7 +12,7 @@
     <input v-if="dateOnly"
     class="form-control"
     v-model="datetime"
-    id="datetime-widget" 
+    :id="'datetime-widget-' + uid" 
     data-inputmask-alias="datetime" 
     data-inputmask-inputformat="dd.mm.yyyy" 
     data-inputmask-placeholder="__.__.____"
@@ -91,7 +91,7 @@ export default {
 
   mounted: function () {
     var vm = this
-    var selector = document.getElementById("datetime-widget");
+    var selector = document.getElementById("datetime-widget-" + vm.uid);
     var im = new Inputmask({
       "onincomplete": function(){
         var now = moment();
@@ -191,6 +191,9 @@ export default {
    },
 
   computed: {
+    uid: function () {
+      return String(this._uid)
+    },
   },
 
 

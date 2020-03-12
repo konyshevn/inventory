@@ -9,6 +9,7 @@
 import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
 import { mapMutations } from 'vuex';
+import {EventBus} from '@/components/common/event-bus.js'
 
 
 export default {
@@ -37,20 +38,26 @@ export default {
 
     async buildReport (){
       const vm = this
-      vm.reportData = null
-      vm.showSettings = false
-      vm.loading = true
-      let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
-      if (reportResponse.status >= 200 && reportResponse.status < 300) {
-        vm.reportData = reportResponse.data
+      if (!vm.widgetsIsValid(vm.status.uid)) {
+        EventBus.$emit('openStatusMsg', ['Заполните все необходимые реквизиты'])
+      } else {
+        vm.reportData = null
+        vm.showSettings = false
+        vm.loading = true
+        let reportResponse = await vm.FETCHreport([vm.status.reportName, vm.status.filterReq])
+        if (reportResponse.status >= 200 && reportResponse.status < 300) {
+          vm.reportData = reportResponse.data
+        }
+        vm.loading = false 
       }
-      vm.loading = false 
+
     },
   },
 
   computed: {
     ...mapGetters([
       'GETcatlgItemLabel',
+      'widgetsIsValid',
     ]),
   },
 

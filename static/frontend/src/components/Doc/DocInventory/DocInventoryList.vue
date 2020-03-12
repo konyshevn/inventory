@@ -103,7 +103,7 @@ export default {
 
   async mounted () {
     const vm = this
-    await this.FETCHdocs(vm.status.docType);
+    await this.FETCHdocs([vm.status.docType]);
     // console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {

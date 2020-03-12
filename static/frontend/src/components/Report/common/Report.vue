@@ -8,6 +8,7 @@
 <script>
 /* eslint-disable no-console */
 import RepCurrentLocation from '@/components/Report/RepCurrentLocation.vue';
+import RepStatementDocs from '@/components/Report/RepStatementDocs.vue';
 
 
 
@@ -15,6 +16,7 @@ export default {
   name: 'Report',
   components: {
     RepCurrentLocation,
+    RepStatementDocs,
 
   },
   props: {

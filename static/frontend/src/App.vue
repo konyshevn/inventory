@@ -24,6 +24,8 @@
 
         <b-nav-item-dropdown text="Отчеты" right>
           <b-dropdown-item :to="{name: 'report', params: {reportName: 'RepCurrentLocation'}}">Местоположение на дату</b-dropdown-item>
+          <b-dropdown-item :to="{name: 'report', params: {reportName: 'RepStatementDocs'}}">Ведомость</b-dropdown-item>
+
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>
