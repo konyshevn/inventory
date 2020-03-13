@@ -639,6 +639,7 @@ class DocInventory(Document):
     _REG_CONST_ATTR_MAP = {
     }
 
+    # For django template
     def doc_inventory_fill_saldo(self, department, stock=None):
         start = time.time()
         table_unit = []
@@ -655,6 +656,26 @@ class DocInventory(Document):
                     'id': None,
                 })
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
+        return table_unit
+
+    # For API
+    def fill_saldo(self, department, stock=None):
+        def get_instance_pk(value):
+            return value.id if value is not None else None
+
+        table_unit = []
+        for device in Device.objects.all():
+            location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
+            if (location['department'] == department) and (location['qty'] == 1) and ((stock is None) or location['stock'] == stock):
+                table_unit.append({
+                    'device': get_instance_pk(device),
+                    'person_accountg': get_instance_pk(location['person']),
+                    'qty_accountg': location['qty'],
+                    'person_fact': get_instance_pk(location['person']),
+                    'stock_fact': get_instance_pk(location['stock']),
+                    'qty_fact': location['qty'],
+                    'id': None,
+                })
         return table_unit
 
     def follower_create(self, model_follower):

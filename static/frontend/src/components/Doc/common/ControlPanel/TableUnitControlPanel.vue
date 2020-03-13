@@ -3,6 +3,7 @@
     <b-button-group align="left">
       <b-button variant="light" size="sm" @click="addTUrow">Добавить строку</b-button>
       <b-button variant="light" size="sm" @click="delTUrow">Удалить строку</b-button>
+      <slot></slot>
     </b-button-group>
   </div>
 </template>
@@ -40,16 +41,13 @@ export default {
     delTUrow: function() {
       const vm = this
       let rowToDelete = vm.status.tableUnit.selected
-      console.log('rowToDelete', rowToDelete)
       let itemLocal = _.cloneDeep(vm.item)
-      console.log('itemLocal:before', itemLocal)
       itemLocal.table_unit.forEach(function(item){
         if ((rowToDelete.indexOf(item.id) >= 0) || (rowToDelete.indexOf(String(item.id)) >= 0)) {
           item.DELETE = true
         } 
       })
 
-      console.log('itemLocal:after', itemLocal)
       vm.$emit('update:item', itemLocal)
       let statusLocal = _.cloneDeep(vm.status)
       statusLocal.tableUnit.selected = []

@@ -154,9 +154,6 @@ class DocumentViewSet(viewsets.ViewSet):
         return queryset
 
 
-
-
-
 class CatalogViewSet(viewsets.ViewSet):
     def destroy(self, request, pk, format=None):
         catlg = self.get_object()
@@ -396,6 +393,12 @@ class DocMoveViewSet(DocumentViewSet, viewsets.ModelViewSet):
 class DocInventoryViewSet(DocumentViewSet, viewsets.ModelViewSet):
     serializer_class = serializers.DocInventorySerializer
     queryset = DocInventory.objects.all()
+
+    @action(detail=True, url_path='fill_saldo')
+    def fill_saldo(self, request, pk=None):
+        doc = self.serializer_class.Meta.model.objects.get(id=pk)
+        table_unit_filled_saldo = doc.fill_saldo(department=doc.department, stock=doc.stock)
+        return HttpResponse(json.dumps(table_unit_filled_saldo))
 
 
 class RegDeviceStockViewSet(viewsets.ModelViewSet):

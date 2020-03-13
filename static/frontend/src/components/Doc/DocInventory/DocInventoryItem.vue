@@ -32,7 +32,7 @@
             <label>Дата:</label> 
           </b-col>
           <b-col sm="2">
-            <datetime-widget v-if="item.doc_date" :model.sync="item.doc_date"></datetime-widget>
+            <datetime-widget :model.sync="item.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="2" align="center">
             <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
@@ -71,7 +71,9 @@
         </b-row>
       </b-container>
       <b-container class="text-left" >
-        <table-unit-control-panel :item.sync="item" :status.sync="status"></table-unit-control-panel>
+        <table-unit-control-panel :item.sync="item" :status.sync="status">
+          <b-button variant="light" size="sm" @click="fillSaldo">Заполнить остатками</b-button>
+        </table-unit-control-panel>
       </b-container>
     </div>
 
@@ -163,7 +165,25 @@ export default {
 
     ...mapActions([
       'FETCHdocItem',
-    ])
+      'FETCHdocItemExtra',
+    ]),
+
+    async fillSaldo () {
+      const vm = this
+      var confirm = await vm.confirmMsg('Документ будет сохранен. Продолжить?')
+      if (confirm) {
+        vm.$on('update:item', item => {
+          vm.item = item
+        })
+        await vm.saveDocItem(vm.status, vm.item)
+        let tableUnitFilledSaldo = await vm.FETCHdocItemExtra([vm.status.docType, vm.item.id, 'fill_saldo'])
+        vm.item.table_unit.forEach(function(item){
+          item.DELETE = true
+        })
+        vm.item.table_unit = [...vm.item.table_unit, ...tableUnitFilledSaldo];
+      }
+      
+    },
   },
 
   computed: {

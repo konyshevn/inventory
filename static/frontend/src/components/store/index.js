@@ -309,6 +309,11 @@ export const store = new Vuex.Store({
       commit('SETdocItem', [docType, response.data])
     },
 
+    FETCHdocItemExtra: async ({dispatch}, [docType, id, extra]) => {
+      let response = await HTTP.get(docType + '/' + id + '/' + extra + '/')
+      await dispatch('FETCHdependentCatlg', [response.data, aliases.docAlias[docType].fieldsMap.tableUnit])
+      return response.data
+    },
 
     docFollower: async ({dispatch}, [docType, id]) => {
       let response = await HTTP.get(docType + '/' + id + '/get_follower/')
