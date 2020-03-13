@@ -288,8 +288,8 @@ class RepCurrentLocation(Report):
 class RepStatementDocs(Report):
     filter_options = {
         "device": {'label': 'Устройство', 'type': {'catlg': 'device'}, 'list': False, 'period': False, 'required': True},
-        'date_from': {'label': 'Дата начало', 'type': 'date', 'list': False, 'period': False, 'required': False},
-        'date_to': {'label': 'Дата конец', 'type': 'date', 'list': False, 'period': False, 'required': False},
+        'date_from': {'label': 'Дата начала', 'type': 'date', 'list': False, 'period': False, 'required': False},
+        'date_to': {'label': 'Дата окончания', 'type': 'date', 'list': False, 'period': False, 'required': False},
         'department': {'label': 'Подразделение', 'type': {'catlg': 'department'}, 'list': False, 'period': False, 'required': False},
         'stock': {'label': 'Склад', 'type': {'catlg': 'stock'}, 'list': False, 'period': False, 'required': False},
         'person': {'label': 'Сотрудник', 'type': {'catlg': 'person'}, 'list': False, 'period': False, 'required': False},

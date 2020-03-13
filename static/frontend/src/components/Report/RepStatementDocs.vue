@@ -34,10 +34,10 @@
       formatter: (value) => {return formatDate(value)},
       formatterSort: false,
       },
-      {key: 'base_doc', label: 'Документ-регистратор', type: 'text', width: '15%',
+      {key: 'base_doc', label: 'Документ-регистратор', type: 'text', width: '20%',
       formatter: (value, key) => {return docItemTitle(value.docType, value.docId)}
       },
-      {key: 'department', label: 'Подразделение', type: 'text', width: '25%',
+      {key: 'department', label: 'Подразделение', type: 'text', width: '20%',
       formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
       },
       {key: 'stock', label: 'Склад', type: 'text', width: '10%',
@@ -46,7 +46,7 @@
       {key: 'person', label: 'Сотрудник', type: 'text', width: '15%',
       formatter: (value, key) => {return GETcatlgItemLabel(key, value)}
       },
-      {key: 'qty', label: 'Количество', type: 'number', width: '10%',
+      {key: 'qty', label: 'Количество', type: 'number', width: '15%',
       },
     ]">
     </smart-table>
@@ -114,7 +114,7 @@ export default {
     const vm = this
     vm.status.uid = vm.uid
   },
-  
+
   created: function() {
   }, 
 
