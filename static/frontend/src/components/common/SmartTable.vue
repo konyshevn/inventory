@@ -341,7 +341,7 @@ export default {
       if (!(vm.selectAll)) {return}
       if (vm.selectedLocal >= 0) {
         vm.selectedLocal = []
-        vm.itemsFilter.forEach(function(item){
+        vm.itemsFilterActive.forEach(function(item){
           vm.selectedLocal.push(item.id)
         })
       } else {
