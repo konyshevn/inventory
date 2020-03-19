@@ -54,7 +54,13 @@ export default {
 
     catlgItemTitle(catlgType, catlgId){
       const vm = this
-      let title = vm.GETcatlgItemLabel(catlgType, catlgId)
+      let title
+      console.log(catlgType, catlgId)
+      if (catlgId == 'new' || !catlgId) {
+        title = vm.catlgTitle(catlgType)
+      } else {
+        title = vm.GETcatlgItemLabel(catlgType, catlgId)
+      }
       return title
     },
 

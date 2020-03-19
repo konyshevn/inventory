@@ -1,6 +1,6 @@
 <template>
   <div style="text-align: center">
-    <vue-headful :title="catlgTitle(catlgType, 'plural')"/>
+    <vue-headful v-if="!modal" :title="catlgTitle(catlgType, 'plural')"/>
 
     <component :is="catlgAlias[catlgType]['list']" :modal="modal"></component>
     <catlg-item-modal parent="list" :catlgType="catlgType"></catlg-item-modal>

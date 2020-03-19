@@ -1,6 +1,6 @@
 <template>
   <div class="catlg-person-item container" >
-    <vue-headful :title="catlgItemTitle(catlgType, item.id)"/>
+    <vue-headful v-if="!modal" :title="catlgItemTitle(catlgType, item.id)"/>
     <div class="container">
     <header>
       <h2>{{catlgTitle(catlgType)}}</h2>
@@ -44,6 +44,10 @@ export default {
   
   props: {
     id: String,
+    modal: {
+      type: Boolean,
+      default: false,
+    },
   },
   
   mixins: [CatlgCommon,],

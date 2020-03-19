@@ -7,7 +7,7 @@
     @show="showModal=true" 
     @hidden="showModal=false"
     >
-      <catlg-item :id="id" :catlgType="catlgType" v-if="showModal"></catlg-item>
+      <catlg-item :id="id" :catlgType="catlgType" v-if="showModal" :modal="true"></catlg-item>
     </b-modal>
   </div>
 </template>

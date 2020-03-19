@@ -1,7 +1,6 @@
 <template>
   <div align="left">
-    <vue-headful :title="catlgItemTitle(catlgType, id)"/>
-    <component :is="catlgAlias[catlgType]['item']" :id="id"></component>
+    <component :is="catlgAlias[catlgType]['item']" :id="id" :modal="modal"></component>
   </div>
 </template>
 
@@ -31,7 +30,12 @@ export default {
 
   props: {
     id: null,
-    catlgType: String
+    catlgType: String,
+    modal: {
+      type: Boolean,
+      default: false,
+    },
+
   },
   
  

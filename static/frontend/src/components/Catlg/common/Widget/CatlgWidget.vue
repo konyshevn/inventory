@@ -43,7 +43,7 @@
         <template slot="input-end">
           <b-button v-if="active" size="sm" variant="light" @click="modelClear()"><font-awesome-icon icon="times"/></b-button>
 
-          <b-button v-if="active && !multi" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
+          <b-button v-if="active && !multi" :disabled="!modelLocal" size="sm" variant="light" @click="editCatlgItemModal(widgetType, model, catlgItemModalId)"><font-awesome-icon icon="edit"/></b-button>
 
           <b-button v-if="active" size="sm" variant="light" v-b-modal="modalId"><font-awesome-icon icon="search"/></b-button>
           
