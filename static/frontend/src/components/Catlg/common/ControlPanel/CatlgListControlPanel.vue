@@ -36,7 +36,7 @@ export default {
   methods: {
     onDelCatlgs: function() {
       const vm = this
-      vm.delCatlgs(vm.status.catlgType, vm.status.selected, vm.status.modal)
+      vm.delCatlgs(vm.status, vm.status.selected, vm.status.modal)
       let statusLocal = _.cloneDeep(vm.status)
       statusLocal.selected = []
       vm.$emit('update:status', statusLocal)

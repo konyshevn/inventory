@@ -1,8 +1,8 @@
 <template>
   <div>
     <b-button-group align="left">
-      <b-button type="submit" variant="light" size="sm" @click="saveCatlgItem(catlgType, item, parent)">Сохранить</b-button>
-      <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delCatlgs(catlgType, [item.id], modal)">Удалить</b-button>
+      <b-button type="submit" variant="light" size="sm" @click="saveCatlgItem(item, status, parent)">Сохранить</b-button>
+      <b-button type="submit" variant="light" size="sm" :disabled="!item.id" @click="delCatlgs(status, [item.id], modal)">Удалить</b-button>
     </b-button-group>
   </div>
 </template>
@@ -10,7 +10,6 @@
 <script>
 /* eslint-disable no-console */
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
-import { mapGetters } from 'vuex';
 
 export default {
   name: 'CatlgItemControlPanel',
@@ -19,10 +18,7 @@ export default {
   mixins: [CatlgCommon],
   props: {
     item: {},
-    catlgType: {
-      type: String,
-      default: '',
-    },
+    status: Object,
     parent: null,
   },
 
@@ -30,15 +26,14 @@ export default {
     return {
     }
   },
+
   methods: {
   },
+
   mounted: function () {
   },
-  computed: {
-    ...mapGetters([
-      'currentDoc',
-    ]),
 
+  computed: {
     modal: function () {
       const vm = this
       if (!(vm.$route.params.catlgType === undefined) && (vm.$route.params.id == vm.item.id)) {

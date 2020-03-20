@@ -4,7 +4,7 @@
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>
-      <b-badge v-if="false" variant="info">редактируется</b-badge> 
+      <item-changed v-if="item.id" :item-saved.sync="status.itemSaved" :item="item"></item-changed>
     </header>
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item"></doc-item-control-panel>
@@ -106,6 +106,7 @@ import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemCon
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
+import ItemChanged from '@/components/common/ItemChanged.vue';
 
 
 export default {
@@ -116,6 +117,7 @@ export default {
     DocItemControlPanel,
     TableUnitControlPanel,
     SmartTable,
+    ItemChanged,
   },
 
   mixins: [CatlgCommon, DocCommon],
@@ -128,13 +130,13 @@ export default {
     return {
       status: {
         docType: 'docincome',
-        docChanged: false,
         uid: null,
         tableUnit: {
           sortBy: "", 
           sortAsc: true,
           selected: [],
         },
+        itemSaved: false,
       },
       item: {},
     }       
@@ -154,30 +156,14 @@ export default {
       'widgetsIsValid',
       'GETdocItem',
     ]),
-    // async item2() {
-    //   const vm = this
-    //   vm.status.uid = vm.uid
-    //   let item = {}
-    //   if (vm.id == "new") {
-    //     item = new DocConstructor[vm.status.docType]
-    //     //vm.DELcurrentDoc()
-    //     //vm.INITcurrentDoc(vm.docType)
-    //   } else {
-    //     await vm.FETCHdocItem([vm.status.docType, vm.id])
-    //     item = vm.GETdocItem(vm.status.docType, vm.id)
-    //   }
-    //   return item
-    // }
+
   },
 
- 
   async mounted () {
     const vm = this
     vm.status.uid = vm.uid
     if (vm.id == "new") {
       vm.item = new DocConstructor[vm.status.docType]
-      //vm.DELcurrentDoc()
-      //vm.INITcurrentDoc(vm.docType)
     } else {
       await vm.FETCHdocItem([vm.status.docType, vm.id])
       vm.item = vm.GETdocItem(vm.status.docType, vm.id)
@@ -188,64 +174,12 @@ export default {
   }, 
 
   beforeDestroy: function() {
-    //this.DELcurrentDoc()
   },
 
 }
-   
-
-
 
 </script>
 
-<style >
-
-
-.table_unit td:nth-child(1), .table_unit th:nth-child(1) {
-  width: 5%;
-}
-.table_unit td:nth-child(2), .table_unit th:nth-child(2) {
-  width: 35%;
-}
-.table_unit td:nth-child(3), .table_unit th:nth-child(3) {
-  width: 25%;
-}
-.table_unit td:nth-child(4), .table_unit th:nth-child(4) {
-  width: 15%;
-}
-.table_unit td:nth-child(5), .table_unit th:nth-child(5) {
-  width: 20%;
-}
-
-.table_unit {
-  display: inline-grid;
-  grid-template-areas: 
-  "head-fixed" 
-  "body-scrollable";
-}
-
-.table_unit thead {
-  grid-area: head-fixed;
-  /* fallback */
-  width: 100%;
-  /* minus scroll bar width */
-  width: calc( 100% - 1em ) !important;/* scrollbar is average 1em/16px width, remove it from thead width */
-  cursor: pointer;
-}
-
-.table_unit tbody {
-  grid-area: body-scrollable;
-  overflow-y: scroll;
-  height: calc(90vh  - 350px);
-}
-
-
-.table_unit thead, .table_unit tbody tr {
-    display:table;
-    table-layout:fixed;/* even columns width , fix width of table too*/
-}
-
-
-
+<style>
 </style>
 

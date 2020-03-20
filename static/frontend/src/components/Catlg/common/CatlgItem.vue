@@ -69,5 +69,9 @@ header { text-align: left; }
 header > h2 { display: inline-block; }
 header span { margin-left: 10px;}
 
+.catlg-item-control-panel {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 </style>
 

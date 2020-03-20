@@ -1,14 +1,14 @@
 <template>
   <div class="catlg-person-item container" >
-    <vue-headful v-if="!modal" :title="catlgItemTitle(catlgType, item.id)"/>
+    <vue-headful v-if="!modal" :title="catlgItemTitle(status.catlgType, item.id)"/>
     <div class="container">
     <header>
-      <h2>{{catlgTitle(catlgType)}}</h2>
-      <b-badge v-if="false" variant="info">редактируется</b-badge> 
+      <h2>{{catlgTitle(status.catlgType)}}</h2>
+      <item-changed v-if="item.id" :item-saved.sync="status.itemSaved" :item="item"></item-changed>
     </header>
     </div>
-    <catlg-item-control-panel :item="item" :catlgType="catlgType" :parent="uid" style="padding-top: 20px"></catlg-item-control-panel>
-    <div style="padding-top: 20px">
+    <catlg-item-control-panel class="catlg-item-control-panel" :item="item" :status.sync="status" :parent="uid"></catlg-item-control-panel>
+    <div>
       <b-table-simple small class="table-borderless" style="width: 500px" fixed>
         <tr>
           <td class="align-middle" style="width: 30%">
@@ -53,6 +53,7 @@ import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
+import ItemChanged from '@/components/common/ItemChanged.vue';
 
 
 
@@ -61,6 +62,7 @@ export default {
   components: {
     CatlgWidget,
     CatlgItemControlPanel,
+    ItemChanged,
   },
   
   props: {
@@ -75,7 +77,10 @@ export default {
   
   data () {
     return {
-      catlgType: 'person',
+      status: {
+        catlgType: 'person',
+        itemSaved: false,
+      },
       item: {},
     }       
   },
@@ -99,11 +104,11 @@ export default {
    async mounted () {
     var vm = this
     if (vm.id == 'new') {
-      vm.item = new CatlgConstructor[vm.catlgType]
+      vm.item = new CatlgConstructor[vm.status.catlgType]
       //Vue.set(vm, 'item', new CatlgConstructor['device'])
     } else {
-      await vm.FETCHcatlgItem([vm.catlgType, vm.id])
-      vm.item = vm.GETcatlgItem(vm.catlgType, vm.id)
+      await vm.FETCHcatlgItem([vm.status.catlgType, vm.id])
+      vm.item = vm.GETcatlgItem(vm.status.catlgType, vm.id)
     }
   },
 
@@ -111,7 +116,6 @@ export default {
   }, 
 
   beforeDestroy: function() {
-    console.log('beforeDestroy')
   },
 
 }
