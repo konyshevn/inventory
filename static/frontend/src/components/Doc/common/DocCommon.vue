@@ -61,6 +61,7 @@ export default {
       let errors = []
       let itemLocal = _.cloneDeep(item)
       itemLocal.active = true
+      var isNewDoc = item.id
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
@@ -72,7 +73,7 @@ export default {
       if (response.status >= 200 && response.status < 300) {
         vm.$emit('update:item', response.data)
         let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = true
+        statusLocal.itemSaved = isNewDoc
         vm.$emit('update:status', statusLocal)
         if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
@@ -90,6 +91,7 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
+      var isNewDoc = item.id
       itemLocal.active = false
       
       if (!vm.widgetsIsValid(status.uid)) {
@@ -102,7 +104,7 @@ export default {
       if (response.status >= 200 && response.status < 300) {
         vm.$emit('update:item', response.data)
         let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = true
+        statusLocal.itemSaved = isNewDoc
         vm.$emit('update:status', statusLocal)
         if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
@@ -118,6 +120,7 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
+      var isNewDoc = item.id
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
@@ -131,7 +134,7 @@ export default {
       if (response.status >= 200 && response.status < 300) {
         vm.$emit('update:item', response.data)
         let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = true
+        statusLocal.itemSaved = isNewDoc
         vm.$emit('update:status', statusLocal)
         if (!(item.id)) {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })

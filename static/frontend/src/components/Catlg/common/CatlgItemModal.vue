@@ -61,9 +61,8 @@ export default {
         vm.$root.$emit('bv::show::modal', vm.modalId)
       }
     })
-    EventBus.$on('closeCatlgItemModal', event => {
-      console.log('EVENT', event)
-      if (event.modalId == vm.modalId) {
+    EventBus.$on('closeCatlgItemModal', modal => {
+      if (modal == `catlg-item-modal-${vm.catlgType}`) {
         vm.$root.$emit('bv::hide::modal', vm.modalId)
       }
     })

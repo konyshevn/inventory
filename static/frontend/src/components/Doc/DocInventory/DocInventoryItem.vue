@@ -4,7 +4,7 @@
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>
-      <b-badge v-if="false" variant="info">редактируется</b-badge> 
+      <item-changed v-if="item.id" :item-saved.sync="status.itemSaved" :item="item"></item-changed>
     </header>
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item">
@@ -125,6 +125,7 @@ import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemCon
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
 import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
+import ItemChanged from '@/components/common/ItemChanged.vue';
 
 
 export default {
@@ -135,6 +136,7 @@ export default {
     DocItemControlPanel,
     TableUnitControlPanel,
     SmartTable,
+    ItemChanged,
   },
 
   mixins: [CatlgCommon, DocCommon],
@@ -152,10 +154,10 @@ export default {
           sortBy: "", 
           sortAsc: true,
           selected: [],
+          itemSaved: false,
         },
       },
       item: {},
-      itemInit: {},
     }       
   },
 

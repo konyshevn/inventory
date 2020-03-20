@@ -48,15 +48,15 @@ export default {
       if (!Array.isArray(ids)){
         ids = [ids]
       }
-      console.log('Status', status)
+      // console.log('Status', status)
       var confirm = await vm.confirmMsg('Вы действительно хотите удалить выбранные элементы?')
 			if (confirm) {
-        console.log('delCatlgs: confirm')
+        // console.log('delCatlgs: confirm')
         await asyncForEach(ids, async function(item){
           let response = await vm.DELcatlg([status.catlgType, item])
-          console.log('delCatlgs: response', response)
+          // console.log('delCatlgs: response', response)
           if (!(response.status == 200 || response.status == 201 || response.status == 204)) {
-            console.log('delCatlgs', response)
+            // console.log('delCatlgs', response)
             errors.push(`Ошибка удаления "${vm.GETcatlgItemLabel(status.catlgType, item)}": ${response.data}`)
           }
         })
@@ -65,7 +65,8 @@ export default {
           if (!modal) {
             vm.$router.push({ name: 'catlg.list', params: {catlgType: status.catlgType} })
           } else {
-            EventBus.$emit('closeCatlgItemModal')
+            // console.log('closeCatlgItemModal',  `catlg-item-modal-${status.catlgType}`)
+            EventBus.$emit('closeCatlgItemModal', `catlg-item-modal-${status.catlgType}`)
           }
         } else {
           EventBus.$emit('openStatusMsg', errors)
@@ -90,7 +91,7 @@ export default {
       // console.log('saveCatlgItem: response', response)
       if (response.status == 200 || response.status == 201) {
         let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = true
+        statusLocal.itemSaved = isNewCatlg
         vm.$emit('update:status', statusLocal)
 
         if (!(isNewCatlg)) {
