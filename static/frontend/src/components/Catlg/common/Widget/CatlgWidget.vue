@@ -25,7 +25,7 @@
           <div class="item">
             <span class="item-name"> 
               {{ item.label }}
-              <span v-if="modelMultiContains(item.id)" style="float: right;">
+              <span v-if="multi && modelMultiContains(item.id)" style="float: right;">
                 <font-awesome-icon icon="check"/>
               </span>
             </span>
@@ -308,7 +308,7 @@ export default {
       handler(){
         const vm = this
         vm.$emit('update:model', vm.modelLocal)
-        vm.modelMultiAdd(vm.modelLocal)
+        if (vm.multi) {vm.modelMultiAdd(vm.modelLocal)}
       },
     },
 
