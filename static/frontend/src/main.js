@@ -42,11 +42,13 @@ Vue.component('vue-headful', vueHeadful);
 
 Vue.use(VueRouter)
 Vue.config.devtools = true
-Vue.config.productionTip = false
+// Vue.config.productionTip = false
 Vue.use(VueSelect, {
   theme: 'bootstrap' // or 'material-design'
 })
 Vue.use(BootstrapVue)
+
+Vue.config.performance = true
 
 const routes = [
   { 
