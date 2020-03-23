@@ -73,7 +73,7 @@
       :selected.sync="status.tableUnit.selected"
       :sort-by.sync="status.tableUnit.sortBy"
       :sort-asc.sync="status.tableUnit.sortAsc"
-      :items="item.table_unit"
+      :items.sync="item.table_unit"
       :fields="[
         {key: 'device', label: 'Устройство', type: 'widget', width: '35%',
         widgetSettings: {required: uid, type: 'device'}

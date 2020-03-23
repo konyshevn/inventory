@@ -56,7 +56,7 @@ export default {
     EventBus.$on('editCatlgItemModal', event => {
       //console.log('$on.editCatlgItemModal: event', event)
       if (event.modalId == vm.modalId) {
-        vm.id = event.id
+        vm.id = String(event.id)
         //vm.catlgType = event.catlgType
         vm.$root.$emit('bv::show::modal', vm.modalId)
       }

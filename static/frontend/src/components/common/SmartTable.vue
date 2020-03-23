@@ -2,7 +2,7 @@
   <div>
     <div class="search-input">
       <b-input-group>
-      <b-form-input v-model="searchText" placeholder="Поиск"></b-form-input>
+      <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
       <b-input-group-append>
         <b-button variant="light" @click="searchText=''" class="search-button"><font-awesome-icon icon="times"/></b-button>
       </b-input-group-append>
@@ -74,7 +74,6 @@
 /* eslint-disable no-console */
 import SortHeader from '@/components/common/SortHeader.vue'
 var _ = require('lodash');
-
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
@@ -84,14 +83,13 @@ export default {
   components: {
     SortHeader,
     CatlgWidget: () => import('@/components/Catlg/common/Widget/CatlgWidget.vue'),
-
   },
 
   mixins: [],
   
   data () {
     return {
-      itemsFilter: this.items,
+      itemsFilter: [],
       searchText: '',
       isInited: false,
       selectedLocal: [],
@@ -99,14 +97,8 @@ export default {
   },
 
   props: {
-    items:  {
-      type: Array,
-      default: () => {return []},
-    },
-    fields:{
-      type: Array,
-      default: () => {return []},
-    },
+    items: Array,
+    fields: Array,
     sortBy: {
       type: String,
       default: '',
@@ -192,15 +184,11 @@ export default {
     itemsFilterActive: function () {
       const vm = this
       let result = []
-      if (Array.isArray(vm.items)){
-        let itemsFilter = vm.tableSearch2()
-        if (vm.sortByField) {itemsFilter = vm.sortItemsFilter2(itemsFilter, vm.sortByField, vm.sortAsc)}
-        if (itemsFilter) {result = itemsFilter.filter(item => !(('DELETE' in item) && (item.DELETE)))}
+      if (vm.itemsFilter) {
+        result = vm.itemsFilter.filter(item => !(('DELETE' in item) && (item.DELETE)))
       }
-
       return result
     },
-
   },
   
   methods: {
@@ -219,9 +207,7 @@ export default {
       return value
     },
 
-
-
-    tableSearch2: function() {
+    tableSearch: function() {
       const vm = this
       var findItem
       var itemsFilter
@@ -250,24 +236,32 @@ export default {
           return findItem
         })
       }
-      return itemsFilter
+      vm.itemsFilter = itemsFilter
     },
 
-    sortItemsFilter2: function (itemsFilter, field, sortAsc) {
-      const vm = this
-      if (itemsFilter.length == 0) {return []}
-      var order = sortAsc ? -1 : 1
+    async sortItemsFilter (field, changeOrder=true) {
+      const vm = this 
+      if (!field) {return}
+      if (changeOrder && (vm.sortBy == field.key)) {
+        await vm.$emit('update:sortAsc', !vm.sortAsc)
+      } else if (vm.sortBy != field.key) {
+        await vm.$emit('update:sortAsc', true)
+      }
+
       let formatterSort = true
       if ('formatterSort' in field) {
         formatterSort = field.formatterSort
       }
-   
+
+      var order = vm.sortAsc ? -1 : 1
+      
       function compareText(a, b) {
         if(a[field.key] === "" || a[field.key] === null) return 1;
         if(b[field.key] === "" || b[field.key] === null) return -1;
         if(a[field.key] === b[field.key]) return 0;
         return a[field.key] < b[field.key] ? 1 * order : -1 * order;
       }
+
 
       function compareFormatter(a, b) {
         let aFormatter = vm.formatterValue(a, field)
@@ -291,34 +285,33 @@ export default {
         return Number(a[field.key]) < Number(b[field.key]) ? 1 * order : -1 * order;
       }
 
-      let itemsFilterSort = _.cloneDeep(itemsFilter)
       if (('formatter' in field) && formatterSort) {
-        itemsFilterSort.sort(compareFormatter);
+        vm.itemsFilter.sort(compareFormatter);
       } else if (field.type == 'text' || field.type == 'boolean' || field.type == 'input-text') {
-        itemsFilterSort.sort(compareText);
+        vm.itemsFilter.sort(compareText);
       } else if (field.type == 'number' || field.type == 'input-number') {
-        itemsFilterSort.sort(compareNumber);
+        vm.itemsFilter.sort(compareNumber);
       } else if (field.type == 'widget') {
-        itemsFilterSort.sort(compareWidget);
+        vm.itemsFilter.sort(compareWidget);
       }
 
-      if ('rowOrder' in itemsFilterSort[0]) {
-        itemsFilterSort.map(function(value, index){
+      
+      if ('rowOrder' in vm.itemsFilter[0]) {
+        vm.itemsFilter.map(function(value, index){
           value.rowOrder = index + 1
         })
       }
           
       vm.$emit('update:sortBy', field.key)
-
-      return itemsFilterSort
     },
-
 
     selectRow: function (id, event) {
       const vm = this
       if (!(vm.selectRowClick)) {
+        //vm.$emit('update:selected', vm.selectedLocal)
         return
       }
+      //var selectedLocal = vm.selected
       if ((event.srcElement.className == 'custom-control-label')) { return }
       if (vm.selectedPlural) {
         let idIndex = vm.selectedLocal.indexOf(id)
@@ -327,13 +320,16 @@ export default {
         } else {
           vm.selectedLocal.push(id)
         }
+        //result = (idIndex >= 0) ? vm.selectedLocal.splice(idIndex, 1) : vm.selectedLocal.push(id)
       } else {
         if (vm.selectedLocal == id) {
           vm.selectedLocal = []
         } else {
           vm.selectedLocal = [id]
         }
+        //result = (vm.selectedLocal == id) ? null : [id]
       }
+      //vm.$emit('update:selected', vm.selectedLocal)
     },
 
     selectAllRows: function () {
@@ -341,12 +337,14 @@ export default {
       if (!(vm.selectAll)) {return}
       if (vm.selectedLocal >= 0) {
         vm.selectedLocal = []
-        vm.itemsFilterActive.forEach(function(item){
+        vm.itemsFilter.forEach(function(item){
           vm.selectedLocal.push(item.id)
         })
       } else {
         vm.selectedLocal = []
       }
+      //vm.$emit('update:selected', vm.selectedLocal)
+
     },
 
     isRowSelected: function (id) {
@@ -373,10 +371,10 @@ export default {
         const vm = this
         if (Array.isArray(newItems) && Array.isArray(oldItems)){
           let diffItems = newItems.filter(vm.compareArray(oldItems))
-          let row
           if (diffItems.length == 1) {
+            vm.sortItemsFilter(vm.sortByField, false)
             Vue.nextTick(function () {
-              row = document.getElementById(`${vm.uid}-${diffItems[0].id}`)
+              let row = document.getElementById(`${vm.uid}-${diffItems[0].id}`)
               row.scrollIntoView(true)
               if (vm.selectRowClick){vm.selectedLocal = [diffItems[0].id]}
             })
@@ -384,6 +382,7 @@ export default {
         }
       }
     },
+
 
     selectedLocal: {
       handler(){
@@ -396,34 +395,52 @@ export default {
       }
     },
 
+    items: {
+      handler(){
+        const vm = this
+        if ((vm.items.length > 0) && !(vm.isInited)) {
+          vm.itemsFilter = vm.items
+          if (vm.sortBy != '') {
+            vm.sortItemsFilter(vm.sortByField, false)
+          }
+          vm.isInited = true
+        }
+        vm.tableSearch()
+      },
+    
+
+      //immediate: true,
+    },
+
+    searchText: {
+      handler(){
+        const vm = this
+        if (vm.searchText == '') {
+          vm.itemsFilter = vm.items
+          vm.sortItemsFilter(vm.sortByField, false)
+        }
+      },
+    },
+
     selected: {
       handler(){
         const vm = this
         vm.selectedLocal = vm.selected
       }
     },
-
   },
 
   mounted: function () {
     const vm = this
     vm.$root.$on('sort-table', event => {
-      if (event.key == vm.sortBy) {
-        vm.$emit('update:sortAsc', !vm.sortAsc)
-      } else {
-        vm.$emit('update:sortBy', event.key)
-        vm.$emit('update:sortAsc', true)
-      }
-
-
+      vm.sortItemsFilter(event)
     })
   },
 
   created: function () {
   },
-
-  
 }
+
 </script>
 
 <style scoped>

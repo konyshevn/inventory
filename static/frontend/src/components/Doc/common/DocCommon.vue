@@ -61,7 +61,7 @@ export default {
       let errors = []
       let itemLocal = _.cloneDeep(item)
       itemLocal.active = true
-      var isNewDoc = item.id
+      var isNewDoc = item.id ? true : false
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
@@ -91,7 +91,7 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
-      var isNewDoc = item.id
+      var isNewDoc = item.id ? true : false
       itemLocal.active = false
       
       if (!vm.widgetsIsValid(status.uid)) {
@@ -120,7 +120,7 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
-      var isNewDoc = item.id
+      var isNewDoc = item.id ? true : false
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400

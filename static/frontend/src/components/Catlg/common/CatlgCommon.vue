@@ -77,7 +77,7 @@ export default {
 
 		async saveCatlgItem (item, status, parent){
 			var vm = this
-      var isNewCatlg = item.id
+      var isNewCatlg = item.id ? true : false
       var errors = []
       var response = {}
       if (!vm.widgetsIsValid(parent)) {
