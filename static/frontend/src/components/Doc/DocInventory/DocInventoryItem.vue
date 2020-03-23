@@ -9,13 +9,13 @@
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item">
           <b-dropdown text="Создать на основании" right variant="light" size="sm">
-            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docincome')">
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docincome')" :disabled="!item.id">
               Оприходование
             </b-dropdown-item>
-            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docwriteoff')">
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docwriteoff')" :disabled="!item.id">
               Списание
             </b-dropdown-item>
-            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docmove')">
+            <b-dropdown-item @click="createDocFollower(status.docType, item.id, 'docmove')" :disabled="!item.id">
               Перемещение
             </b-dropdown-item>
           </b-dropdown>

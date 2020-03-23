@@ -292,7 +292,9 @@ export const store = new Vuex.Store({
     },
 
     FETCHdocItem: async ({commit, dispatch}, [docType, id]) => {
-      let response = await HTTP.get(docType + '/' + id + '/')
+      if (docType && id) {
+
+        let response = await HTTP.get(docType + '/' + id + '/')
 
       /*
       await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], aliases.docAlias[docType].fieldsMap])
@@ -303,10 +305,11 @@ export const store = new Vuex.Store({
         }
       }
       */
-      await dispatch('FETCHdependentCatlg', [[response.data], aliases.docAlias[docType].fieldsMap])
-      await dispatch('FETCHdependentCatlg', [response.data.table_unit, aliases.docAlias[docType].fieldsMap.tableUnit])
+        await dispatch('FETCHdependentCatlg', [[response.data], aliases.docAlias[docType].fieldsMap])
+        await dispatch('FETCHdependentCatlg', [response.data.table_unit, aliases.docAlias[docType].fieldsMap.tableUnit])
 
-      commit('SETdocItem', [docType, response.data])
+        commit('SETdocItem', [docType, response.data])
+      }
     },
 
     FETCHdocItemExtra: async ({dispatch}, [docType, id, extra]) => {

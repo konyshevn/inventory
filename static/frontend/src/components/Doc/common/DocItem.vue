@@ -1,7 +1,7 @@
 <template>
   <div>
     <component :is="docAlias[docType]['item']" :id="id"></component>
-    <doc-follower :docType="docType" :docId="id"></doc-follower>
+    <doc-follower v-if="id && docType && id != 'new'" :docType="docType" :docId="id"></doc-follower>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ export default {
   },
   props: {
     id: null,
-    docType: String
+    docType: String,
   },
   
  

@@ -113,16 +113,19 @@ class DocumentViewSet(viewsets.ViewSet):
         followers = doc_leader.get_follower
         followers_id = []
         for doc in followers:
-            doc_contenttype = ContentType.objects.get_for_model(doc._meta.model)
-            followers_id.append({'docId': doc.id, 'docType': doc_contenttype.model})
+            if doc:
+                doc_contenttype = ContentType.objects.get_for_model(doc._meta.model)
+                followers_id.append({'docId': doc.id, 'docType': doc_contenttype.model})
         return HttpResponse(json.dumps(followers_id))
 
     @action(detail=True, url_path='get_leader')
     def get_leader(self, request, pk=None):
+        leader_id = {}
         doc_current = self.serializer_class.Meta.model.objects.get(id=pk)
         doc_leader = doc_current.get_leader
-        doc_leader_contenttype = ContentType.objects.get_for_model(doc_leader._meta.model)
-        leader_id = {'docId': doc_leader.id, 'docType': doc_leader_contenttype.model}
+        if doc_leader:
+            doc_leader_contenttype = ContentType.objects.get_for_model(doc_leader._meta.model)
+            leader_id = {'docId': doc_leader.id, 'docType': doc_leader_contenttype.model}
         return HttpResponse(json.dumps(leader_id))
 
     @action(detail=True, url_path='create_follower')

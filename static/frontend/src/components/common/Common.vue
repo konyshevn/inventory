@@ -83,7 +83,7 @@ export default {
         title = `${vm.docTitle(docType)} №`
       } else {
         let item = vm.GETdocItem(docType, docId)
-        title = `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}`
+        title = (item) ? `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}` : ''
       }
       return title
     },

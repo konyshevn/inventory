@@ -1,15 +1,15 @@
 <template>
   <div>
   <b-modal id='doc-follower' ok-only title='Иерархия документов'>
-  <b-list-group>
-    <b-list-group-item v-if="leader"
+  <b-list-group >
+    <b-list-group-item v-if="!isLeaderEmpty"
     class="doc-item-title"
     :to="{name: 'doc.item', params: {docType: leader.docType, id: leader.docId}}"
     target="_blank">
         {{docItemTitle(leader.docType, leader.docId)}}
     </b-list-group-item>
 
-    <b-list-group-item 
+    <b-list-group-item v-if="docType && docId" 
     class="doc-item-title"
     :style="currentDocStyle"
     :to="{name: 'doc.item', params: {docType: docType, id: docId}}">
@@ -29,9 +29,10 @@
 
 <script>
 /* eslint-disable no-console */
-import {aliases} from '@/components/common/aliases.js';
+// import {aliases} from '@/components/common/aliases.js';
 import { mapActions } from 'vuex';
 import Common from '@/components/common/Common.vue';
+import {EventBus} from '@/components/common/event-bus.js'
 
 
 export default {
@@ -44,7 +45,7 @@ export default {
   mixins: [Common],
   
   props: {
-    docId: Number,
+    docId: String,
     docType: String,
     showCurrentDoc: {
       type: Boolean,
@@ -55,9 +56,9 @@ export default {
  
   data () {
     return {
-      docAlias: aliases.docAlias,
+      // docAlias: aliases.docAlias,
       followers: [],
-      leader: null,
+      leader: {},
       docIdLocal: this.docId,
       docTypeLocal: this.docType,
     }       
@@ -91,15 +92,30 @@ export default {
       }
       return style
     },
+
+    isLeaderEmpty: function() {
+      const vm = this
+      return (Object.keys(vm.leader).length === 0 && vm.leader.constructor === Object)
+    },
+
   },
   
   async mounted() {
     const vm = this
-    vm.followers = await vm.docFollower([vm.docType, vm.docId])
-    vm.leader = await vm.docLeader([vm.docType, vm.docId])
+    EventBus.$emit('created-doc-follower', {docType: vm.docType, docId: vm.docId})
+    // vm.followers = await vm.docFollower([vm.docType, vm.docId])
+    // vm.leader = await vm.docLeader([vm.docType, vm.docId])
   },
 
   created: function() {
+    const vm = this
+
+    EventBus.$on('created-doc-follower', async ({docType, docId}) => {
+      if (docType == vm.docType && docId == vm.docId) {
+        vm.followers = await vm.docFollower([vm.docType, vm.docId])
+        vm.leader = await vm.docLeader([vm.docType, vm.docId])
+      }
+    })
   }, 
 
 }

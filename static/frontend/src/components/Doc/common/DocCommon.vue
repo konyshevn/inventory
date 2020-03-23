@@ -194,7 +194,9 @@ export default {
             data: vm.docItemTitle(followerType, follower.id),
           }])
         })
+        EventBus.$emit('created-doc-follower', {docType: docType, docId: id})
       }
+
       EventBus.$emit('openStatusMsg', msgs)
     },
     
