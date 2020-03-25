@@ -69,7 +69,7 @@ export default {
       } else {
         response = await vm.PUTdoc([status.docType, itemLocal])
       }
-
+      console.log(response.data)
       if (response.status >= 200 && response.status < 300) {
         vm.$emit('update:item', response.data)
         let statusLocal = _.cloneDeep(status)

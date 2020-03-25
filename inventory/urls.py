@@ -39,9 +39,9 @@ router.register('api/report/RepCurrentLocation', inv.views.RepCurrentLocation, b
 router.register('api/report/RepStatementDocs', inv.views.RepStatementDocs, base_name='RepStatementDocs')
 
 urlpatterns = [
-    re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
     path('admin/', admin.site.urls),
     path('main/', inv.views.main),
+    re_path('selectize_ajax_query/', inv.views.selectize_ajax_query, name='selectize_ajax_query'),
     path('doc_type_error/', inv.views.doc_type_error),
     path('catlg_type_error/', inv.views.catlg_type_error),
     path('reg_type_error/', inv.views.reg_type_error),

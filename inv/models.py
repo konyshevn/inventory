@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.db.models import Sum
 from django.db.models.deletion import ProtectedError
-import sys
+import sys, copy
 from functools import reduce
 import datetime, time
 from dateutil import tz
@@ -338,6 +338,18 @@ class Document(models.Model):
             return {'success': False, 'data': [err]}
 
         if self._TABLE_UNIT_EXIST:
+            # удалить записи табличной части, которых нет в данных из формы (аргумент функции - table_unit)
+            for rec in self.get_table_unit():
+                print('doc_tu', rec.id)
+                is_exist = False
+                for row in table_unit:
+                    print('arg_tu', row)
+                    if row['id'] == rec.id:
+                        is_exist = True
+                        continue
+                if not is_exist:
+                    rec.delete()
+
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
 
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
@@ -379,6 +391,8 @@ class Document(models.Model):
                         table_unit_item.save()
                     except Exception as err:
                         return {'success': False, 'data': [err]}
+
+
         try:
             self.save()
         except Exception as err:
@@ -432,6 +446,25 @@ class Document(models.Model):
         if doc_attr['doc_date'] is None:
             doc_attr['doc_date'] = self.doc_date
 
+        doc_before_update_attr = {}
+        doc_model = self._meta.model
+        for attr_obj in doc_model._meta.fields:
+            attr = attr_obj.name
+            doc_before_update_attr[attr] = getattr(self, attr)
+
+
+        doc_before_update_table_unit = []
+        table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
+        for rec in self.get_table_unit():
+            row = {}
+            for attr_obj in table_unit_model._meta.fields:
+                attr = attr_obj.name
+                row[attr] = getattr(rec, attr)
+            doc_before_update_table_unit.append(row)
+
+        print('doc_before_update_attr:', doc_before_update_attr)
+        print('doc_before_update_table_unit:', doc_before_update_table_unit)
+
         doc = self
         dw = doc.doc_write(doc_attr=doc_attr, table_unit=table_unit)
         print(doc)
@@ -446,6 +479,11 @@ class Document(models.Model):
 
         if status['success']:
             status['data'] = [doc]
+        else:
+            print('Status False. Lets restore')
+            doc.doc_write(doc_attr=doc_before_update_attr, table_unit=doc_before_update_table_unit)
+            doc.reg_delete()
+            doc.reg_write()
         return status
 
     def set_leader(self, leader_doc):
