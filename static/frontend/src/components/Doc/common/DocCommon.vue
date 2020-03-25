@@ -80,6 +80,8 @@ export default {
         }
  
       } else {
+        itemLocal.active = false
+        vm.$emit('update:item', itemLocal)
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
@@ -140,6 +142,8 @@ export default {
           vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
         }
       } else {
+        itemLocal.active = false
+        vm.$emit('update:item', itemLocal)
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }

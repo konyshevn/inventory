@@ -309,6 +309,7 @@ class Document(models.Model):
             return {'success': True, 'data': status_errors}
         else:
             self.reg_delete()
+            self.active = False
             return {'success': False, 'data': status_errors}
 
     # Метод "Запись данных в документ".
@@ -446,24 +447,20 @@ class Document(models.Model):
         if doc_attr['doc_date'] is None:
             doc_attr['doc_date'] = self.doc_date
 
-        doc_before_update_attr = {}
-        doc_model = self._meta.model
-        for attr_obj in doc_model._meta.fields:
-            attr = attr_obj.name
-            doc_before_update_attr[attr] = getattr(self, attr)
+        # doc_before_update_attr = {}
+        # doc_model = self._meta.model
+        # for attr_obj in doc_model._meta.fields:
+        #     attr = attr_obj.name
+        #     doc_before_update_attr[attr] = getattr(self, attr)
 
-
-        doc_before_update_table_unit = []
-        table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
-        for rec in self.get_table_unit():
-            row = {}
-            for attr_obj in table_unit_model._meta.fields:
-                attr = attr_obj.name
-                row[attr] = getattr(rec, attr)
-            doc_before_update_table_unit.append(row)
-
-        print('doc_before_update_attr:', doc_before_update_attr)
-        print('doc_before_update_table_unit:', doc_before_update_table_unit)
+        # doc_before_update_table_unit = []
+        # table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
+        # for rec in self.get_table_unit():
+        #     row = {}
+        #     for attr_obj in table_unit_model._meta.fields:
+        #         attr = attr_obj.name
+        #         row[attr] = getattr(rec, attr)
+        #     doc_before_update_table_unit.append(row)
 
         doc = self
         dw = doc.doc_write(doc_attr=doc_attr, table_unit=table_unit)
@@ -479,11 +476,11 @@ class Document(models.Model):
 
         if status['success']:
             status['data'] = [doc]
-        else:
-            print('Status False. Lets restore')
-            doc.doc_write(doc_attr=doc_before_update_attr, table_unit=doc_before_update_table_unit)
-            doc.reg_delete()
-            doc.reg_write()
+        # else:
+            # print('Status False. Lets restore')
+            # doc.doc_write(doc_attr=doc_before_update_attr, table_unit=doc_before_update_table_unit)
+            # doc.reg_delete()
+            # doc.reg_write()
         return status
 
     def set_leader(self, leader_doc):

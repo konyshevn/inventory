@@ -14,6 +14,7 @@
       disable-filtering-by-search
       @search="onSearch"
       @input="onInput"
+      :resetSearchOnBlur="false"
       :placeholder="(multi) ? modelMultiSelection : ''"
       :class="{'widget-invalid': required ? !isValid : false }">
         <template slot="no-data">

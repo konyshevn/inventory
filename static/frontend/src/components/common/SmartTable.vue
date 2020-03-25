@@ -369,7 +369,7 @@ export default {
     itemsFilterActive: {
       handler(newItems, oldItems){
         const vm = this
-        if (Array.isArray(newItems) && Array.isArray(oldItems)){
+        if (Array.isArray(newItems) && Array.isArray(oldItems) && newItems.length > 1){
           let diffItems = newItems.filter(vm.compareArray(oldItems))
           if (diffItems.length == 1) {
             vm.sortItemsFilter(vm.sortByField, false)

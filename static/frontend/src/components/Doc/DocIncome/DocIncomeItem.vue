@@ -66,7 +66,7 @@
 
     <div>
       <smart-table 
-      :table-padd="400"
+      :table-padd="200"
       :selected-plural="true"
       :select-all="true"
       :select-row-click="false"
