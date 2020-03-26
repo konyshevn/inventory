@@ -2,7 +2,7 @@
   <div>
     <div class="search-input">
       <b-input-group>
-      <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
+      <b-form-input v-model="searchText" placeholder="Поиск"></b-form-input>
       <b-input-group-append>
         <b-button variant="light" @click="searchText=''" class="search-button"><font-awesome-icon icon="times"/></b-button>
       </b-input-group-append>
@@ -89,7 +89,7 @@ export default {
   
   data () {
     return {
-      itemsFilter: [],
+      itemsFilter: this.items || [],
       searchText: '',
       isInited: false,
       selectedLocal: [],

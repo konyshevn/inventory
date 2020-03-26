@@ -234,10 +234,11 @@ export const store = new Vuex.Store({
         if (currentDoc.doc_num == "") {
           currentDoc.doc_num = null
         }
-        currentDoc.table_unit.forEach(function(item){
+        currentDoc.table_unit.forEach(function(item, index){
           if (String(item.id).indexOf("null_") == 0) {
             item.id = null
           }
+          item.rowOrder = index + 1 
         })
 
         if (currentDoc.id == null) {
