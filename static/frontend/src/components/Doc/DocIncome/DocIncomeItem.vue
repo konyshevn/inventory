@@ -104,7 +104,6 @@
 
 <script>
 /* eslint-disable no-console */
-// import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';

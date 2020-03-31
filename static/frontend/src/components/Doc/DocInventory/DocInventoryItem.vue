@@ -1,10 +1,18 @@
 <template>
   <div class="container">
+  <b-overlay
+  id="overlay-background"
+  :show="status.itemSaving"
+  variant="white"
+  opacity="0.40"
+  blur="2px"
+  rounded="sm"
+  >
     <vue-headful :title="docItemTitle(status.docType, item.id)"/>
     <div class="container">
     <header>
       <h2>{{docTitle(status.docType)}}</h2>
-      <item-changed v-if="item.id" :item-saved.sync="status.itemSaved" :item="item"></item-changed>
+      <item-changed :item="item" :status="status"></item-changed>
     </header>
       <b-container class="text-left" >
         <doc-item-control-panel :status.sync="status" :item.sync="item">
@@ -108,25 +116,22 @@
       </smart-table>
 
   </div>
+  </b-overlay>
   </div>
 </template>
 
 
 <script>
 /* eslint-disable no-console */
-import { mapGetters } from 'vuex';
 import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
-import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
 import DocCommon from '@/components/Doc/common/DocCommon.vue';
 import CatlgWidget from '@/components/Catlg/common/Widget/CatlgWidget.vue';
 import DatetimeWidget from '@/components/Catlg/common/Widget/DatetimeWidget.vue';
 import DocItemControlPanel from '@/components/Doc/common/ControlPanel/DocItemControlPanel.vue';
 import TableUnitControlPanel from '@/components/Doc/common/ControlPanel/TableUnitControlPanel.vue';
 import SmartTable from '@/components/common/SmartTable.vue'
-import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 import ItemChanged from '@/components/common/ItemChanged.vue';
-
+import DocItemMixin from '@/components/Doc/common/DocItemMixin.vue';
 
 export default {
   name: 'DocInventoryItem',
@@ -139,7 +144,7 @@ export default {
     ItemChanged,
   },
 
-  mixins: [CatlgCommon, DocCommon],
+  mixins: [DocItemMixin, DocCommon],
   
   props: {
     id: String,
@@ -154,19 +159,15 @@ export default {
           sortBy: "", 
           sortAsc: true,
           selected: [],
-          itemSaved: false,
         },
+        itemSaving: false,
       },
       item: {},
     }       
   },
 
   methods: {
-    ...mapMutations([
-    ]),
-
     ...mapActions([
-      'FETCHdocItem',
       'FETCHdocItemExtra',
     ]),
 
@@ -183,35 +184,11 @@ export default {
           item.DELETE = true
         })
         vm.item.table_unit = [...vm.item.table_unit, ...tableUnitFilledSaldo];
-      }
-      
+      }      
     },
   },
 
   computed: {
-    ...mapGetters([
-      'widgetsIsValid',
-      'GETdocItem',
-    ]),
-  },
-
-  async mounted () {
-    const vm = this
-    vm.status.uid = vm.uid
-    if (vm.id == "new") {
-      vm.item = new DocConstructor[vm.status.docType]
-    } else {
-      await vm.FETCHdocItem([vm.status.docType, vm.id])
-      vm.item = vm.GETdocItem(vm.status.docType, vm.id)
-      //vm.itemInit = _.cloneDeep(vm.item)
-    }
-  },
-
-  created: function() {
-  }, 
-
-  beforeDestroy: function() {
-    //this.DELcurrentDoc()
   },
 
 }
