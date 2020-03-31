@@ -120,7 +120,6 @@ export default {
     }
 
     EventBus.$on(eventName, ({itemType, itemId, saved}) => {
-      console.log('itemType, itemId, saved', itemType, itemId, saved)
       if (itemTypeLocal == itemType && vm.item.id == itemId && saved) {
         vm.initItem = _.cloneDeep(vm.item)     
       }

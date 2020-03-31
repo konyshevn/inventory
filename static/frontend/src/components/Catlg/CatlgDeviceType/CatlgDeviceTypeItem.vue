@@ -1,10 +1,18 @@
 <template>
-  <div class="catlg-person-item container" >
+  <div class="catlg-device-type-item container">
+  <b-overlay
+  id="overlay-background"
+  :show="status.itemSaving"
+  variant="white"
+  opacity="0.40"
+  blur="2px"
+  rounded="sm"
+  >
     <vue-headful v-if="!modal" :title="catlgItemTitle(status.catlgType, item.id)"/>
     <div class="container">
     <header>
       <h2>{{catlgTitle(status.catlgType)}}</h2>
-      <item-changed v-if="item.id" :item-saved.sync="status.itemSaved" :item="item"></item-changed>
+      <item-changed :item="item" :status="status"></item-changed>
     </header>
     </div>
     <catlg-item-control-panel class="catlg-item-control-panel" :item="item" :status.sync="status" :parent="uid"></catlg-item-control-panel>
@@ -20,22 +28,17 @@
         </tr>
       </b-table-simple>
     </div>
-
+  </b-overlay>
   </div>
 </template>
 
 
 <script>
 /* eslint-disable no-console */
-import { mapGetters } from 'vuex';
-import { mapActions } from 'vuex';
-import { mapMutations } from 'vuex';
 import CatlgCommon from '@/components/Catlg/common/CatlgCommon.vue';
+import CatlgItemMixin from '@/components/Catlg/common/CatlgItemMixin.vue';
 import CatlgItemControlPanel from '@/components/Catlg/common/ControlPanel/CatlgItemControlPanel.vue';
-import * as CatlgConstructor from '@/components/Catlg/common/catlg-constructor.js'
 import ItemChanged from '@/components/common/ItemChanged.vue';
-
-
 
 export default {
   name: 'CatlgDeviceTypeItem',
@@ -52,55 +55,26 @@ export default {
     },
   },
   
-  mixins: [CatlgCommon,],
+  mixins: [CatlgItemMixin, CatlgCommon,],
   
   data () {
     return {
       status: {
-        itemSaved: false,
+        itemSaving: false,
         catlgType: 'deviceType',
+        modalLocal: this.modal,
       },
       item: {},
     }       
   },
 
   methods: {
-    ...mapMutations([
-    ]),
-
-    ...mapActions([
-      'FETCHcatlgItem',
-    ])
   },
 
   computed: {
-    ...mapGetters([
-      'GETcatlgItem',
-
-    ])
-  },
-
-   async mounted () {
-    var vm = this
-    if (vm.id == 'new') {
-      vm.item = new CatlgConstructor[vm.status.catlgType]
-      //Vue.set(vm, 'item', new CatlgConstructor['device'])
-    } else {
-      await vm.FETCHcatlgItem([vm.status.catlgType, vm.id])
-      vm.item = vm.GETcatlgItem(vm.status.catlgType, vm.id)
-    }
-  },
-
-  created: function() {
-  }, 
-
-  beforeDestroy: function() {
   },
 
 }
-   
-
-
 
 </script>
 
