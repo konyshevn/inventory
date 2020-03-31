@@ -61,7 +61,9 @@ export default {
       let errors = []
       let itemLocal = _.cloneDeep(item)
       itemLocal.active = true
-      var isNewDoc = item.id ? true : false
+      let itemSaved = false
+
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
@@ -69,22 +71,20 @@ export default {
       } else {
         response = await vm.PUTdoc([status.docType, itemLocal])
       }
-      console.log(response.data)
       if (response.status >= 200 && response.status < 300) {
-        vm.$emit('update:item', response.data)
-        let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = isNewDoc
-        vm.$emit('update:status', statusLocal)
+        itemLocal = response.data
+        itemSaved = true
         if (!(item.id)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
-        }
- 
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
+        } 
       } else {
         itemLocal.active = false
-        vm.$emit('update:item', itemLocal)
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
+
 
     },
 
@@ -93,9 +93,10 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
-      var isNewDoc = item.id ? true : false
       itemLocal.active = false
-      
+      let itemSaved = false
+
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})      
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
@@ -104,17 +105,18 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        vm.$emit('update:item', response.data)
-        let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = isNewDoc
-        vm.$emit('update:status', statusLocal)
+        itemLocal = response.data
+        itemSaved = true
         if (!(item.id)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
         }
       } else {
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
+
     },
 
     async saveDocItem (status, item) {
@@ -122,31 +124,29 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
-      var isNewDoc = item.id ? true : false
+      let itemSaved = false
 
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
       } else {
-        // console.log('saveDocItem: status, itemLocal', status, itemLocal)
         response = await vm.PUTdoc([status.docType, itemLocal])
-        // console.log('saveDocItem: after PUTdoc')
       }
 
       if (response.status >= 200 && response.status < 300) {
-        vm.$emit('update:item', response.data)
-        let statusLocal = _.cloneDeep(status)
-        statusLocal.itemSaved = isNewDoc
-        vm.$emit('update:status', statusLocal)
+        itemLocal = response.data
+        itemSaved = true
         if (!(item.id)) {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
         }
       } else {
         itemLocal.active = false
-        vm.$emit('update:item', itemLocal)
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
 
     },
 

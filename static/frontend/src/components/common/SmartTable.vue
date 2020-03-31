@@ -2,7 +2,7 @@
   <div>
     <div class="search-input">
       <b-input-group>
-      <b-form-input v-model="searchText" placeholder="Поиск"></b-form-input>
+      <b-form-input v-model="searchText" placeholder="Поиск" @input.native="tableSearch"></b-form-input>
       <b-input-group-append>
         <b-button variant="light" @click="searchText=''" class="search-button"><font-awesome-icon icon="times"/></b-button>
       </b-input-group-append>
@@ -93,6 +93,7 @@ export default {
       searchText: '',
       isInited: false,
       selectedLocal: [],
+      // currentItem: 1,
     }
   },
 
@@ -212,7 +213,7 @@ export default {
       var findItem
       var itemsFilter
       var formatterSearch, field, itemValue
-      if (vm.searchText.length <= 0) {
+      if (vm.searchText.length < 2) {
         itemsFilter = vm.items
       } else {
         itemsFilter = _.filter(vm.items, function(item){
@@ -362,6 +363,21 @@ export default {
         }).length == 0;
       }
     },
+
+    // nextItem (e) {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    //   console.log('nectItem', this.currentItem)
+    
+    //   if (e.keyCode == 38 && this.currentItem > 1) {
+    //     this.currentItem--
+    //   } else if (e.keyCode == 40 && this.currentItem < this.itemsFilter.length) {
+    //     this.currentItem++
+    //   }
+    //   // let row = document.getElementById(this.currentItem - 10)
+    //   // row.scrollIntoView(true)
+
+    // },
   },
 
   watch: {
@@ -432,6 +448,7 @@ export default {
 
   mounted: function () {
     const vm = this
+    // document.addEventListener("keyup", this.nextItem);
     vm.$root.$on('sort-table', event => {
       vm.sortItemsFilter(event)
     })
@@ -458,6 +475,11 @@ export default {
 background-color: #f2f2f2;
 color: #000000;
 font-weight: bold;
+}
+
+.active-item {
+background-color: #f2f2f2;
+color: #000000;
 }
 
 .list tbody tr:hover {

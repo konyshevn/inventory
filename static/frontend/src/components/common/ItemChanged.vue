@@ -1,6 +1,7 @@
 <template>
   <div class="item-changed-badge">
-    <b-badge v-if="itemChanged" variant="info">изменен</b-badge> 
+    <b-badge v-if="itemChanged && !itemNew" variant="info">изменен</b-badge>
+    <b-badge v-if="itemNew && inited" variant="info">новый</b-badge> 
   </div>
 </template>
 
@@ -8,6 +9,7 @@
 <script>
 /* eslint-disable no-console */
 var _ = require('lodash');
+import {EventBus} from '@/components/common/event-bus.js'
 
 
 export default {
@@ -17,17 +19,19 @@ export default {
   },
 
   props: {
-    itemSaved: {
-      type: Boolean,
-      default: false,
-    },
     item: Object,
+    status: Object,
   },
   
  
   data () {
     return {
       initItem: {},
+      inited: false,
+      eventName: {
+        doc: 'stop-saving-doc',
+        catlg: 'stop-saving-catlg',
+      },
     }       
   },
 
@@ -68,29 +72,60 @@ export default {
       return (!Object.compare(vm.initItem, vm.item) || !Object.compare(vm.item, vm.initItem))
     },
 
+    itemNew: function() {
+      const vm = this
+      return (!vm.item.id)
+    },
+
   },
   
   mounted: function () {
-    const vm = this
-    vm.initItem = _.cloneDeep(vm.item)
+    // const vm = this
+    // vm.initItem = _.cloneDeep(vm.item)
   },
 
   watch: {
-    itemSaved: {
+    item: {
       handler(){
         const vm = this
-        if (vm.itemSaved) {
-          console.log('itemSaved')
-          vm.initItem = _.cloneDeep(vm.item)
-          let itemSaved = _.cloneDeep(vm.itemSaved)
-          itemSaved = false
-          vm.$emit('update:itemSaved', itemSaved)
+        if (Object.keys(vm.item).length != 0 && !vm.inited) {
+          vm.inited = true
+          vm.initItem = _.cloneDeep(vm.item)          
         }
       },
-    },
+    }
+    // itemSaved: {
+    //   handler(){
+    //     const vm = this
+    //     if (vm.itemSaved) {
+    //       vm.initItem = _.cloneDeep(vm.item)
+    //       let itemSaved = _.cloneDeep(vm.itemSaved)
+    //       itemSaved = false
+    //       vm.$emit('update:itemSaved', itemSaved)
+    //     }
+    //   },
+    // },
+  
   },
 
   created: function() {
+    const vm = this
+    let eventName, itemTypeLocal
+    if ('docType' in vm.status) {
+      eventName = vm.eventName['doc']
+      itemTypeLocal = vm.status.docType
+    } else if ('catlgType' in vm.status) {
+      eventName = vm.eventName['catlg']
+      itemTypeLocal = vm.status.catlgType
+    }
+
+    EventBus.$on(eventName, ({itemType, itemId, saved}) => {
+      console.log('itemType, itemId, saved', itemType, itemId, saved)
+      if (itemTypeLocal == itemType && vm.item.id == itemId && saved) {
+        vm.initItem = _.cloneDeep(vm.item)     
+      }
+    })
+
   }, 
 
 }
