@@ -5,9 +5,19 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class RegDeviceStockSerializer(serializers.ModelSerializer):
+    base_doc = serializers.SerializerMethodField()
+
+    def get_base_doc(self, obj):
+        doc = {
+            "docType": obj.base_doc_type.model,
+            "docId": obj.base_doc_id
+        }
+        return doc
+
     class Meta:
         model = models.RegDeviceStock
-        exclude = ()
+        exclude = ('base_doc_id', 'base_doc_type')
+        read_only_fields = ['__all__']
 
 
 class leaderField(serializers.RelatedField):

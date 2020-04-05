@@ -107,6 +107,12 @@ class DocumentViewSet(viewsets.ViewSet):
     #     labels_json = json.dumps(labels)
     #     return HttpResponse(labels_json)
 
+    @action(detail=True, url_path='get_reg_list')
+    def get_reg_list(self, request, pk=None):
+        reg_list = self.serializer_class.Meta.model.objects.get(id=pk)._REG_LIST
+        reg_list = [x.lower() for x in reg_list]
+        return HttpResponse(json.dumps(reg_list))
+
     @action(detail=True, url_path='get_follower')
     def get_follower(self, request, pk=None):
         doc_leader = self.serializer_class.Meta.model.objects.get(id=pk)
@@ -209,6 +215,41 @@ class Report(viewsets.ViewSet):
             'filter_options': self.filter_options,
             'fields_options': self.fields_options,
         }])
+
+
+class RegistryViewSet(viewsets.ViewSet):
+    # @action(detail=False, url_path='get_by_doc')
+    # def get_by_doc(self, request):
+    #     doc_req_type = self.request.query_params.get('doc_type', None)
+    #     doc_req_id = self.request.query_params.get('doc_id', None)
+    #     reg_recs_formated = []
+    #     reg_recs = []
+    #     if doc_req_type is not None and doc_req_id is not None:
+    #         doc_model = get_doc_type(doc_req_type)['model']
+    #         doc_contenttype = ContentType.objects.get_for_model(doc_model)
+    #         reg_recs = self.serializer_class.Meta.model.objects.filter(base_doc_type=doc_contenttype, base_doc_id=doc_req_id).order_by('-reg_date')
+            # print(reg_recs)
+            # for reg in reg_recs:
+            #     row = {}
+            #     for option, field in self.fields_options.items():
+            #         if 'catlg' in field['type']:
+            #             row[option] = reg[option].id
+            #         elif 'doc' in field['type']
+
+        # return HttpResponse(json.dumps(list(reg_recs)))
+    @action(detail=False, url_path='get_fields_options')
+    def get_fields_options(self, request):
+        return HttpResponse(json.dumps(self.fields_options))
+
+    def get_queryset(self):
+        doc_req_type = self.request.query_params.get('doc_type', None)
+        doc_req_id = self.request.query_params.get('doc_id', None)
+        reg_recs = self.serializer_class.Meta.model.objects.all()
+        if doc_req_type is not None and doc_req_id is not None:
+            doc_model = get_doc_type(doc_req_type)['model']
+            doc_contenttype = ContentType.objects.get_for_model(doc_model)
+            reg_recs = self.serializer_class.Meta.model.objects.filter(base_doc_type=doc_contenttype, base_doc_id=doc_req_id).order_by('-reg_date')
+        return reg_recs
 
 
 class RepCurrentLocation(Report):
@@ -404,9 +445,19 @@ class DocInventoryViewSet(DocumentViewSet, viewsets.ModelViewSet):
         return HttpResponse(json.dumps(table_unit_filled_saldo))
 
 
-class RegDeviceStockViewSet(viewsets.ModelViewSet):
+class RegDeviceStockViewSet(RegistryViewSet, viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.RegDeviceStockSerializer
     queryset = RegDeviceStock.objects.all()
+    fields_options = {
+        'operation_type': {'type': 'text', 'label': 'Операция'},
+        'reg_date': {'type': 'date', 'label': 'Дата'},
+        'base_doc': {'type': 'doc', 'label': 'Документ-основание'},
+        'device': {'type': {'catlg': 'device'}, 'label': 'Устройство'},
+        'department': {'type': {'catlg': 'department'}, 'label': 'Подразделение'},
+        'stock': {'type': {'catlg': 'stock'}, 'label': 'Склад'},
+        'person': {'type': {'catlg': 'person'}, 'label': 'Сотрудник'},
+        'qty': {'type': 'number', 'label': 'Количество'},
+    }
 
 
 class DeviceViewSet(CatalogViewSet, viewsets.ModelViewSet):

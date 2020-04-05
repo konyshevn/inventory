@@ -15,19 +15,7 @@ async function asyncForEach(array, callback) {
 //import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
 /* eslint-disable no-console */
 export const store = new Vuex.Store({
-  state: {
-    currentDoc: {
-      data: {},
-      status: {
-        docType: String,
-        tableUnit: {
-          sort: {field: "", fieldType: "", order: -1},
-          selected: []
-        },
-        loading: true,
-      }
-    },
-    
+  state: {    
     widgetIsValid: [],
     
     docs: {
@@ -61,43 +49,31 @@ export const store = new Vuex.Store({
       department: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       stock: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       person: {
         data: [],
         status: {
-          sort: {field: "surname", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       device: {
         data: [],
         status: {
-          sort: {field: "deviceType", fieldType: "widget", order: 1},
-          selected: [],
         },
       },
       deviceType: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       nomenclature: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
     },
@@ -113,7 +89,6 @@ export const store = new Vuex.Store({
     GETdocs: state => docType => {
       return state.docs[docType]['data']
     },
-
 
 //---------------------------Catalog---------------------------
     catlgExist: state => catlgType => {
@@ -272,20 +247,14 @@ export const store = new Vuex.Store({
     },
 
     FETCHdocs: async ({commit, dispatch}, [docType, id]) => {
-
-        if (id){
-          response = await HTTP.get(docType + '/?ids='+ id.join(','))
-        } else {
-          response = await HTTP.get(docType + '/')
-        }
-
-
+      if (id){
+        response = await HTTP.get(docType + '/?ids='+ id.join(','))
+      } else {
+        response = await HTTP.get(docType + '/')
+      }
 
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
-
-
-
 
       // console.log('FETCHdocs: aliases', aliases.docAlias[docType]['fieldsMap'])
       await dispatch('FETCHdependentCatlg', [DocsReady, aliases.docAlias[docType]['fieldsMap']])
@@ -297,15 +266,6 @@ export const store = new Vuex.Store({
 
         let response = await HTTP.get(docType + '/' + id + '/')
 
-      /*
-      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], aliases.docAlias[docType].fieldsMap])
-
-      for (let key in response.data){
-        if ((getters.catlgExist(key)) && (response.data[key])) {
-          await dispatch('FETCHcatlgItem', [key, response.data[key]])
-        }
-      }
-      */
         await dispatch('FETCHdependentCatlg', [[response.data], aliases.docAlias[docType].fieldsMap])
         await dispatch('FETCHdependentCatlg', [response.data.table_unit, aliases.docAlias[docType].fieldsMap.tableUnit])
 
@@ -541,6 +501,40 @@ export const store = new Vuex.Store({
       } 
       return response
     },
+
+    //---------------------------Registry---------------------------
+    FETCHregistry: async (context, [registryName, docType, docId]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${registryName}/?doc_type=${docType}&doc_id=${docId}`)
+        // await dispatch('FETCHdocItem', [docType, docId])
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHregistryFieldsOption: async (context, [registryName]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${registryName}/get_fields_options/`)
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHdocItemRegList: async (context, [docType, docId]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${docType}/${docId}/get_reg_list/`)
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+
  
   },
 

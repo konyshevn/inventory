@@ -30,7 +30,7 @@
             <datetime-widget :model.sync="item.doc_date"></datetime-widget>
           </b-col>
           <b-col sm="2" align="center">
-            <b-button v-if="item.active" disabled variant="success">Проведен</b-button>
+            <b-button v-if="item.active" :to="{path: 'registry-list'}" append target="_blank" variant="success">Проведен</b-button>
             <b-button v-if="!item.active" disabled variant="light">Не проведен</b-button>
           </b-col>
           <b-col sm="1" align="center">

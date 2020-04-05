@@ -76,6 +76,7 @@ export default {
 
     docItemTitle(docType, docId){
       const vm = this
+      console.log('docItemTitle', docType, docId)
       let title = ''
       if (docType == undefined || docType == null) {
         title = ''

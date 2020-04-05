@@ -14,6 +14,7 @@ import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
 import {store} from '@/components/store';
 import Report from '@/components/Report/common/Report.vue'
+import RegistryList from '@/components/Registry/RegistryList.vue'
 
 
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');
@@ -74,6 +75,15 @@ const routes = [
     component: DocItem
   },
   { 
+    path: '/doc/:docType/:docId/registry-list',
+    name: 'doc.item.registry-list',
+    props: (route) => ({
+      docId: String(route.params.docId),
+      docType: String(route.params.docType),
+    }),
+    component: RegistryList
+  },
+  { 
     path: '/catlg/:catlgType',
     name: 'catlg.list',
     props: (route) => ({
@@ -98,7 +108,16 @@ const routes = [
     }),
     component: Report
   },
-
+  // { 
+  //   path: '/registry/registry-list',
+  //   name: 'registry.list',
+  //   // props: () => ({
+  //   //   docId: '',
+  //   //   docType: ''
+  //   // }),
+  //   props: true,
+  //   component: RegistryList
+  // },
 ]
 
 const router = new VueRouter({
