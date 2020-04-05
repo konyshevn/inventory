@@ -533,8 +533,6 @@ export const store = new Vuex.Store({
       } 
       return response
     },
-
-
  
   },
 
