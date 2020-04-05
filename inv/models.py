@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.db.models import Sum
 from django.db.models.deletion import ProtectedError
-import sys
+import sys, copy
 from functools import reduce
 import datetime, time
 from dateutil import tz
@@ -309,6 +309,7 @@ class Document(models.Model):
             return {'success': True, 'data': status_errors}
         else:
             self.reg_delete()
+            self.active = False
             return {'success': False, 'data': status_errors}
 
     # Метод "Запись данных в документ".
@@ -338,6 +339,18 @@ class Document(models.Model):
             return {'success': False, 'data': [err]}
 
         if self._TABLE_UNIT_EXIST:
+            # удалить записи табличной части, которых нет в данных из формы (аргумент функции - table_unit)
+            for rec in self.get_table_unit():
+                print('doc_tu', rec.id)
+                is_exist = False
+                for row in table_unit:
+                    print('arg_tu', row)
+                    if row['id'] == rec.id:
+                        is_exist = True
+                        continue
+                if not is_exist:
+                    rec.delete()
+
             table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
 
             # rec - словарь с ключами ввиде атрибутов TableUnit, значения - то что выбрано в форме.
@@ -379,6 +392,8 @@ class Document(models.Model):
                         table_unit_item.save()
                     except Exception as err:
                         return {'success': False, 'data': [err]}
+
+
         try:
             self.save()
         except Exception as err:
@@ -432,6 +447,21 @@ class Document(models.Model):
         if doc_attr['doc_date'] is None:
             doc_attr['doc_date'] = self.doc_date
 
+        # doc_before_update_attr = {}
+        # doc_model = self._meta.model
+        # for attr_obj in doc_model._meta.fields:
+        #     attr = attr_obj.name
+        #     doc_before_update_attr[attr] = getattr(self, attr)
+
+        # doc_before_update_table_unit = []
+        # table_unit_model = getattr(sys.modules[__name__], self.__class__.__name__ + 'TableUnit')
+        # for rec in self.get_table_unit():
+        #     row = {}
+        #     for attr_obj in table_unit_model._meta.fields:
+        #         attr = attr_obj.name
+        #         row[attr] = getattr(rec, attr)
+        #     doc_before_update_table_unit.append(row)
+
         doc = self
         dw = doc.doc_write(doc_attr=doc_attr, table_unit=table_unit)
         print(doc)
@@ -446,6 +476,11 @@ class Document(models.Model):
 
         if status['success']:
             status['data'] = [doc]
+        # else:
+            # print('Status False. Lets restore')
+            # doc.doc_write(doc_attr=doc_before_update_attr, table_unit=doc_before_update_table_unit)
+            # doc.reg_delete()
+            # doc.reg_write()
         return status
 
     def set_leader(self, leader_doc):
@@ -524,7 +559,7 @@ class DocWriteoff(Document):
 
 class DocWriteoffTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocWriteoff, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
     person = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True)
     qty = models.PositiveIntegerField(default=1)
     comment = models.CharField(max_length=70, blank=True)
@@ -576,7 +611,7 @@ class DocMove(Document):
 
 class DocMoveTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocMove, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
     person_from = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_from')
     person_to = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_to')
     qty = models.PositiveIntegerField(default=1)
@@ -588,6 +623,7 @@ class DocIncome(Document):
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT, blank=True, null=True)
     devices = models.ManyToManyField(Device, through='DocIncomeTableUnit')
     _REG_LIST = ['RegDeviceStock']
+    _FOLLOWER_TYPES = [DocWriteoff]
     _TABLE_UNIT_EXIST = True
     _REG_DOC_ATTR_MAP = {
         'RegDeviceStock': {
@@ -638,6 +674,7 @@ class DocInventory(Document):
     _REG_CONST_ATTR_MAP = {
     }
 
+    # For django template
     def doc_inventory_fill_saldo(self, department, stock=None):
         start = time.time()
         table_unit = []
@@ -656,12 +693,32 @@ class DocInventory(Document):
         print('doc_inventory_fill_saldo_TOTAL: %s' % str(time.time() - start))
         return table_unit
 
-    def follower_create(self, doc_follower_name, model_follower):
+    # For API
+    def fill_saldo(self, department, stock=None):
+        def get_instance_pk(value):
+            return value.id if value is not None else None
+
+        table_unit = []
+        for device in Device.objects.all():
+            location = RegDeviceStock.objects.current_location(device=device, date=self.doc_date)
+            if (location['department'] == department) and (location['qty'] == 1) and ((stock is None) or location['stock'] == stock):
+                table_unit.append({
+                    'device': get_instance_pk(device),
+                    'person_accountg': get_instance_pk(location['person']),
+                    'qty_accountg': location['qty'],
+                    'person_fact': get_instance_pk(location['person']),
+                    'stock_fact': get_instance_pk(location['stock']),
+                    'qty_fact': location['qty'],
+                    'id': None,
+                })
+        return table_unit
+
+    def follower_create(self, model_follower):
         table_unit = []
         doc_leader = self
         for rec in doc_leader.get_table_unit():
             qty_diff = rec.qty_fact - rec.qty_accountg
-            if (qty_diff > 0) & (doc_follower_name == 'income'):
+            if (qty_diff > 0) & (model_follower == DocIncome):
                 table_unit.append({
                     'device': rec.device,
                     'person': rec.person_fact,
@@ -669,7 +726,7 @@ class DocInventory(Document):
                     'comment': rec.comment,
                     'id': None,
                 })
-            elif (qty_diff < 0) & (doc_follower_name == 'writeoff'):
+            elif (qty_diff < 0) & (model_follower == DocWriteoff):
                 table_unit.append({
                     'device': rec.device,
                     'person': rec.person_accountg,
@@ -677,7 +734,7 @@ class DocInventory(Document):
                     'comment': rec.comment,
                     'id': None,
                 })
-            elif (qty_diff == 0) & (doc_follower_name == 'move') & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
+            elif (qty_diff == 0) & (model_follower == DocMove) & ((doc_leader.stock != rec.stock_fact) or (rec.person_accountg != rec.person_fact)):
                 print('MOVE')
                 table_unit_rec = {
                     'device': rec.device,
@@ -696,7 +753,7 @@ class DocInventory(Document):
                 if not stock_to_flag:
                     table_unit.append({'stock_to': rec.stock_fact, 'table_unit': [table_unit_rec, ]})
 
-        if doc_follower_name == 'move':
+        if model_follower == DocMove:
             doc_follower_id = []
             for row in table_unit:
                 doc_attr = {
@@ -731,7 +788,7 @@ class DocInventory(Document):
 
 class DocInventoryTableUnit(DocumentTableUnit):
     doc = models.ForeignKey(DocInventory, on_delete=models.CASCADE, related_name='table_unit')
-    device = models.ForeignKey(Device, on_delete=models.PROTECT)
+    device = models.ForeignKey(Device, on_delete=models.PROTECT, blank=True, null=True)
 
     person_accountg = models.ForeignKey(Person, on_delete=models.PROTECT, blank=True, null=True, related_name='person_accountg')
     qty_accountg = models.PositiveIntegerField(default=1)

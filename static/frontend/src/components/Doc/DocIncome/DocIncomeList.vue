@@ -1,9 +1,10 @@
 <template>
   <div class="doc-income-list container">
+    <vue-headful :title="docTitle(status.docType, 'plural')"/>
     <header>
       <h2>{{docTitle(status.docType, 'plural')}}</h2>
     </header>
-    <b-container class="text-left">
+    <b-container class="text-left control-panel">
       <doc-list-control-panel :status.sync="status"></doc-list-control-panel>
     </b-container>
 
@@ -100,8 +101,8 @@ export default {
 
   async mounted () {
     const vm = this
-    await this.FETCHdocs(vm.status.docType);
-    console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
+    await this.FETCHdocs([vm.status.docType]);
+    // console.log('mounted: GETdocs', vm.GETdocs(vm.status.docType))
     document.addEventListener('mousedown', function (event) {
       if (event.detail > 1) {
         event.preventDefault();

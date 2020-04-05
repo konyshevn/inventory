@@ -13,6 +13,9 @@ import DocList from '@/components/Doc/common/DocList.vue'
 import CatlgList from '@/components/Catlg/common/CatlgList.vue'
 import CatlgItem from '@/components/Catlg/common/CatlgItem.vue'
 import {store} from '@/components/store';
+import Report from '@/components/Report/common/Report.vue'
+import RegistryList from '@/components/Registry/RegistryList.vue'
+
 
 //var catlgItemPath = require('@/components/Catlg/common/CatlgItem.vue');
 //Vue.component('CatlgItem', Vue.extend(catlgItemPath))
@@ -24,24 +27,29 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faList } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEdit)
 library.add(faSearch)
 library.add(faCheckSquare)
 library.add(faCheck)
 library.add(faTimes)
-
+library.add(faList)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+import vueHeadful from 'vue-headful';
+Vue.component('vue-headful', vueHeadful);
 
 Vue.use(VueRouter)
 Vue.config.devtools = true
-Vue.config.productionTip = false
+// Vue.config.productionTip = false
 Vue.use(VueSelect, {
   theme: 'bootstrap' // or 'material-design'
 })
 Vue.use(BootstrapVue)
+
+Vue.config.performance = true
 
 const routes = [
   { 
@@ -67,6 +75,15 @@ const routes = [
     component: DocItem
   },
   { 
+    path: '/doc/:docType/:docId/registry-list',
+    name: 'doc.item.registry-list',
+    props: (route) => ({
+      docId: String(route.params.docId),
+      docType: String(route.params.docType),
+    }),
+    component: RegistryList
+  },
+  { 
     path: '/catlg/:catlgType',
     name: 'catlg.list',
     props: (route) => ({
@@ -83,7 +100,24 @@ const routes = [
     }),
     component: CatlgItem
   },
-
+  { 
+    path: '/report/:reportName',
+    name: 'report',
+    props: (route) => ({
+      reportName: String(route.params.reportName),
+    }),
+    component: Report
+  },
+  // { 
+  //   path: '/registry/registry-list',
+  //   name: 'registry.list',
+  //   // props: () => ({
+  //   //   docId: '',
+  //   //   docType: ''
+  //   // }),
+  //   props: true,
+  //   component: RegistryList
+  // },
 ]
 
 const router = new VueRouter({

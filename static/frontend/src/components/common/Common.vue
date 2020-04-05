@@ -6,6 +6,7 @@
 
 <script>
 /* eslint-disable no-console */
+import { mapGetters } from 'vuex';
 import {aliases} from '@/components/common/aliases.js';
 import moment from 'moment';
 
@@ -51,6 +52,18 @@ export default {
       return title
     },
 
+    catlgItemTitle(catlgType, catlgId){
+      const vm = this
+      let title
+      console.log(catlgType, catlgId)
+      if (catlgId == 'new' || !catlgId) {
+        title = vm.catlgTitle(catlgType)
+      } else {
+        title = vm.GETcatlgItemLabel(catlgType, catlgId)
+      }
+      return title
+    },
+
     docTitle(docType, type='singular'){
       let title = 'unknown'
       if (type == 'singular'){
@@ -59,6 +72,25 @@ export default {
         title = aliases.docAlias[docType]['titlePlural']
       }
       return title
+    },
+
+    docItemTitle(docType, docId){
+      const vm = this
+      console.log('docItemTitle', docType, docId)
+      let title = ''
+      if (docType == undefined || docType == null) {
+        title = ''
+      } else if (docId == 'new' || docId == undefined){
+        title = `${vm.docTitle(docType)} №`
+      } else {
+        let item = vm.GETdocItem(docType, docId)
+        title = (item) ? `${vm.docTitle(docType)} № ${item.doc_num} от ${vm.dateFormat(item.doc_date)}` : ''
+      }
+      return title
+    },
+
+    dateFormat(date){
+      return moment(String(date)).format('DD.MM.YYYY HH:mm:ss')
     },
 
     selectRow: function (id, event) {
@@ -138,6 +170,11 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'GETdocItem',
+      'GETcatlgItemLabel',
+    ]),
+
     uid: function () {
       return String(this._uid)
     },

@@ -4,22 +4,18 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 import {HTTP} from '../../http-common'
 var _ = require('lodash');
-//import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
+import {aliases} from '@/components/common/aliases.js';
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}
+
+//import * as DocConstructor from '@/components/Doc/common/doc-constructor.js'
+/* eslint-disable no-console */
 export const store = new Vuex.Store({
-  state: {
-    currentDoc: {
-      data: {},
-      status: {
-        docType: String,
-        tableUnit: {
-          sort: {field: "", fieldType: "", order: -1},
-          selected: []
-        },
-        loading: true,
-      }
-    },
-    
+  state: {    
     widgetIsValid: [],
     
     docs: {
@@ -41,58 +37,43 @@ export const store = new Vuex.Store({
           sort: {field: "doc_date", sortAsc: true},
         }
       },
+      docinventory: {
+        data: [],
+        status: {
+          sort: {field: "doc_date", sortAsc: true},
+        }
+      },
     },
-/*    
-    docs: {
-      data: [],
-      filtered: [],
-      status: {
-        sort: {field: "doc_date", fieldType: "text", order: -1},
-        selected: [],
-      }
-    },
-*/
+
     catlgs: {
       department: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       stock: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       person: {
         data: [],
         status: {
-          sort: {field: "surname", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       device: {
         data: [],
         status: {
-          sort: {field: "deviceType", fieldType: "widget", order: 1},
-          selected: [],
         },
       },
       deviceType: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
       nomenclature: {
         data: [],
         status: {
-          sort: {field: "label", fieldType: "text", order: 1},
-          selected: [],
         },
       },
     },
@@ -108,7 +89,6 @@ export const store = new Vuex.Store({
     GETdocs: state => docType => {
       return state.docs[docType]['data']
     },
-
 
 //---------------------------Catalog---------------------------
     catlgExist: state => catlgType => {
@@ -222,17 +202,18 @@ export const store = new Vuex.Store({
 
   actions: {
 //---------------------------Document---------------------------
-    PUTdoc: async ([docType, item]) => {
+    PUTdoc: async ({commit}, [docType, item]) => {
       var response = null
       try {
         var currentDoc = item
         if (currentDoc.doc_num == "") {
           currentDoc.doc_num = null
         }
-        currentDoc.table_unit.forEach(function(item){
+        currentDoc.table_unit.forEach(function(item, index){
           if (String(item.id).indexOf("null_") == 0) {
             item.id = null
           }
+          item.rowOrder = index + 1 
         })
 
         if (currentDoc.id == null) {
@@ -243,6 +224,7 @@ export const store = new Vuex.Store({
 
         if (response.status >= 200 && response.status < 300) {
           item = response.data
+          commit('SETdocItem', [docType, item])
           //dispatch('FETCHcurrentDoc', [getters.currentDocStatus.docType, response.data.id])
         }
       } catch(error) {
@@ -264,29 +246,64 @@ export const store = new Vuex.Store({
       return response
     },
 
-    FETCHdocs: async ({commit, dispatch}, docType) => {
+    FETCHdocs: async ({commit, dispatch}, [docType, id]) => {
+      if (id){
+        response = await HTTP.get(docType + '/?ids='+ id.join(','))
+      } else {
+        response = await HTTP.get(docType + '/')
+      }
+
       let response = await HTTP.get(docType + '/')
       let DocsReady = response.data
-      await dispatch('FETCHdependentCatlg', DocsReady)
+
+      // console.log('FETCHdocs: aliases', aliases.docAlias[docType]['fieldsMap'])
+      await dispatch('FETCHdependentCatlg', [DocsReady, aliases.docAlias[docType]['fieldsMap']])
       commit('SETdocs', [docType, DocsReady])
     },
 
-    FETCHdocItem: async ({commit, dispatch, getters}, [docType, id]) => {
-      let response = await HTTP.get(docType + '/' + id + '/')
-      await dispatch('FETCHwidgetInitCatlg', [response.data['table_unit'], {device: 'device', person: 'person'}])
+    FETCHdocItem: async ({commit, dispatch}, [docType, id]) => {
+      if (docType && id) {
 
-      for (let key in response.data){
-        if ((getters.catlgExist(key)) && (response.data[key])) {
-          await dispatch('FETCHcatlgItem', [key, response.data[key]])
-        }
+        let response = await HTTP.get(docType + '/' + id + '/')
+
+        await dispatch('FETCHdependentCatlg', [[response.data], aliases.docAlias[docType].fieldsMap])
+        await dispatch('FETCHdependentCatlg', [response.data.table_unit, aliases.docAlias[docType].fieldsMap.tableUnit])
+
+        commit('SETdocItem', [docType, response.data])
       }
-      commit('SETdocItem', [docType, response.data])
+    },
+
+    FETCHdocItemExtra: async ({dispatch}, [docType, id, extra]) => {
+      let response = await HTTP.get(docType + '/' + id + '/' + extra + '/')
+      await dispatch('FETCHdependentCatlg', [response.data, aliases.docAlias[docType].fieldsMap.tableUnit])
+      return response.data
+    },
+
+    docFollower: async ({dispatch}, [docType, id]) => {
+      let response = await HTTP.get(docType + '/' + id + '/get_follower/')
+      let followers = response.data
+      asyncForEach(followers, async function(follower){
+        await dispatch('FETCHdocItem', [follower.docType, follower.docId])
+      })
+      return followers
+    },
+
+    docLeader: async ({dispatch}, [docType, id]) => {
+      let response = await HTTP.get(docType + '/' + id + '/get_leader/')
+      // console.log('docLeader: response', response)
+      let leader = response.data
+      await dispatch('FETCHdocItem', [leader.docType, leader.docId])
+      return leader
+    },
+
+    CREATEdocFollower: async (context, [docType, id, followerType]) => {
+      let response = await HTTP.get(docType + '/' + id + '/create_follower/?follower_type=' + followerType)
+      return response.data
     },
 
 
-
 //---------------------------Catalog---------------------------
-    PUTcatlg: async({commit, dispatch, getters}, [catlgType, item]) => {
+    PUTcatlg: async({commit, dispatch}, [catlgType, item]) => {
       var response = null
       try {
         if (item.id == null) {
@@ -294,14 +311,15 @@ export const store = new Vuex.Store({
         } else {
           response = await HTTP.put(catlgType + '/' + item.id + '/', item)
         }
+        // console.log('PUTcatlg: response', response)
         if (response.status >= 200 && response.status < 300) {
           item = response.data
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
             dispatch('SETcatlgLabel', [catlgType, item.id])
           }
-          let sortStatus = getters.GETsortStatus({catlg: catlgType})
-          commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
+          // let sortStatus = getters.GETsortStatus({catlg: catlgType})
+          // commit('sortObjList', [{catlg: catlgType}, sortStatus.field, sortStatus.fieldType, false])
         }
 
       } catch(error) {
@@ -335,7 +353,7 @@ export const store = new Vuex.Store({
           catlgItemFetch = response.data   
         }
           
-        await dispatch('FETCHdependentCatlg', catlgItemFetch)
+        await dispatch('FETCHdependentCatlg', [catlgItemFetch, aliases.catlgAlias[catlgType]['fieldsMap']])
 
         catlgItemFetch.forEach(function(item){
           commit('SETcatlgItem', [catlgType, item])
@@ -359,7 +377,7 @@ export const store = new Vuex.Store({
         }
         var catlgItemFetch = response.data
 
-        await dispatch('FETCHdependentCatlg', catlgItemFetch)      
+        await dispatch('FETCHdependentCatlg', [catlgItemFetch, aliases.catlgAlias[catlgType]['fieldsMap']])      
         catlgItemFetch.forEach(function(item){
           commit('SETcatlgItem', [catlgType, item])
           if ( !('label' in item)) {
@@ -374,10 +392,18 @@ export const store = new Vuex.Store({
       return response
     },
 
-    FETCHdependentCatlg: async ({dispatch, getters}, items) => {
-      for (var key in items[0]){
+    FETCHdependentCatlg: async ({dispatch, getters}, [items, fieldsMap]) => {
+      let key
+      // console.log('FETCHdependentCatlg: items', items)
+      // console.log('FETCHdependentCatlg: fieldsMap', fieldsMap)
+      for (var itemKey in items[0]){
+        if (fieldsMap && (itemKey in fieldsMap)) {
+          key = fieldsMap[itemKey]
+        } else {
+          key = itemKey
+        }
         if (getters.catlgExist(key)) {
-          var catlgToLoad = _.uniq(_.map(items, _.property(key)))
+          var catlgToLoad = _.uniq(_.map(items, _.property(itemKey)))
           catlgToLoad = catlgToLoad.filter(function (el) {
             return el != null;
           });
@@ -420,6 +446,92 @@ export const store = new Vuex.Store({
           });
          await dispatch('FETCHcatlgItem', [catlgType, catlgToLoad])
       }
+    },
+
+//---------------------------Report---------------------------
+    FETCHreportOptions: async (context, reportName) => {
+      var response = null
+      try {
+        response = await HTTP.get('/report/' + reportName + '/')
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHreport: async ({dispatch}, [reportName, filterReq]) => {
+      var response = null
+      var fieldsMap = {}
+      var docsFields = []
+      var docsToLoad = {}
+
+      try {
+        response = await HTTP.post('/report/' + reportName + '/', {filter_req: filterReq})
+        let reportData = response.data
+        var reportOptions = await dispatch('FETCHreportOptions', reportName)
+        var fields_options = reportOptions.data[0]['fields_options']
+        
+        for (let field in fields_options) {
+          if (typeof fields_options[field]['type'] === 'object' && fields_options[field]['type'] !== null && 'catlg' in fields_options[field]['type']) {
+            fieldsMap[field] = fields_options[field]['type']['catlg']
+          } else if (fields_options[field]['type'] == 'doc') {
+            docsFields.push(field)
+          } 
+        }
+
+        await dispatch('FETCHdependentCatlg', [reportData, fieldsMap])
+
+        reportData.forEach(function(item){
+          docsFields.forEach(function(field) {
+            if (!(item[field]['docType'] in docsToLoad)) {
+              docsToLoad[item[field]['docType']] = []
+            }
+            if (!(item[field]['docId'] in docsToLoad[item[field]['docType']])) {
+              docsToLoad[item[field]['docType']].push(item[field]['docId'])
+            }
+          })
+        })
+
+        for (let docType in docsToLoad) {
+          await dispatch('FETCHdocs', [docType, docsToLoad[docType]])    
+        }     
+
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    //---------------------------Registry---------------------------
+    FETCHregistry: async (context, [registryName, docType, docId]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${registryName}/?doc_type=${docType}&doc_id=${docId}`)
+        // await dispatch('FETCHdocItem', [docType, docId])
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHregistryFieldsOption: async (context, [registryName]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${registryName}/get_fields_options/`)
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
+    },
+
+    FETCHdocItemRegList: async (context, [docType, docId]) => {
+      var response = null
+      try {
+        response = await HTTP.get(`${docType}/${docId}/get_reg_list/`)
+      } catch(error) {
+        response = error['response']
+      } 
+      return response
     },
  
   },

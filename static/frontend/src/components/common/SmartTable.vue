@@ -11,7 +11,9 @@
     <table class="table table-bordered list" :style="tableWidth">
       <thead>
         <tr>
-          <th style="width: 5%" @click="selectAllRows"><font-awesome-icon icon="check-square"/></th>
+          <th v-if="!disableSelect" style="width: 5%" @click="selectAllRows">
+            <font-awesome-icon icon="check-square"/>
+          </th>
           <sort-header v-for="field in fields" :key="field.key" 
           :field="field" 
           :sort-by="sortBy" 
@@ -23,11 +25,11 @@
         </tr>
       </thead>
       <tbody :style="tablePaddStyle">
-        <tr v-for="item in itemsFilterActive" :key="item.id"
+        <tr v-for="item in itemsFilterActive" :key="item.id" :id="`${uid}-${item.id}`"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"
         :class="{'row-selected': isRowSelected(item.id)}">
-          <td style="width: 5%">
+          <td v-if="!disableSelect" style="width: 5%">
             <input type="checkbox" 
             :id="item.id" 
             v-model="selectedLocal"
@@ -44,7 +46,7 @@
               <span v-else></span>
             </span>
             <catlg-widget v-else-if="field.type == 'widget'" 
-            :widgetType="field.widgetSettings.type"
+            :widget-type="field.widgetSettings.type"
             :required="('required' in field.widgetSettings) ? field.widgetSettings.required : null"
             :model.sync="item[field.key]"
             >
@@ -72,7 +74,7 @@
 /* eslint-disable no-console */
 import SortHeader from '@/components/common/SortHeader.vue'
 var _ = require('lodash');
-
+import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -81,17 +83,17 @@ export default {
   components: {
     SortHeader,
     CatlgWidget: () => import('@/components/Catlg/common/Widget/CatlgWidget.vue'),
-
   },
 
   mixins: [],
   
   data () {
     return {
-      itemsFilter: this.items,
+      itemsFilter: this.items || [],
       searchText: '',
       isInited: false,
       selectedLocal: [],
+      // currentItem: 1,
     }
   },
 
@@ -136,11 +138,15 @@ export default {
     },
     maxWidth: {
       type: Number,
-      default: 1200,
+      default: 1400,
     },
     selectRowClick: {
       type: Boolean,
       default: true,
+    },
+    disableSelect: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -151,7 +157,7 @@ export default {
 
     sortByField: function() {
       const vm = this
-      return _.find(vm.fields, {key: vm.sortBy})
+      return _.find(vm.fields, {key: vm.sortBy}) || ''
     },
 
     tablePaddStyle: function () {
@@ -172,6 +178,10 @@ export default {
       return style
     },
 
+    uid: function () {
+      return String(this._uid)
+    },
+
     itemsFilterActive: function () {
       const vm = this
       let result = []
@@ -180,7 +190,6 @@ export default {
       }
       return result
     },
-
   },
   
   methods: {
@@ -204,7 +213,7 @@ export default {
       var findItem
       var itemsFilter
       var formatterSearch, field, itemValue
-      if (vm.searchText.length <= 0) {
+      if (vm.searchText.length < 2) {
         itemsFilter = vm.items
       } else {
         itemsFilter = _.filter(vm.items, function(item){
@@ -233,6 +242,7 @@ export default {
 
     async sortItemsFilter (field, changeOrder=true) {
       const vm = this 
+      if (!field) {return}
       if (changeOrder && (vm.sortBy == field.key)) {
         await vm.$emit('update:sortAsc', !vm.sortAsc)
       } else if (vm.sortBy != field.key) {
@@ -342,30 +352,62 @@ export default {
       const vm = this
       let result = false
       let idIndex = vm.selectedLocal.indexOf(id)
-      result = (idIndex >= 0) ? true : false
+      result = (idIndex >= 0 && !vm.disableSelect) ? true : false
       return result
     },
+
+    compareArray: function (otherArray){
+      return function(current){
+        return otherArray.filter(function(other){
+          return other.id == current.id
+        }).length == 0;
+      }
+    },
+
+    // nextItem (e) {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    //   console.log('nectItem', this.currentItem)
+    
+    //   if (e.keyCode == 38 && this.currentItem > 1) {
+    //     this.currentItem--
+    //   } else if (e.keyCode == 40 && this.currentItem < this.itemsFilter.length) {
+    //     this.currentItem++
+    //   }
+    //   // let row = document.getElementById(this.currentItem - 10)
+    //   // row.scrollIntoView(true)
+
+    // },
   },
 
   watch: {
     
-    /*
-    itemsFilter: {
-      handler(){
+    itemsFilterActive: {
+      handler(newItems, oldItems){
         const vm = this
-        if ((vm.itemsFilter.length > 0) && !(vm.isInited)) {
-          vm.sortItemsFilter(vm.sortByField, false)
-          vm.isInited = true
+        if (Array.isArray(newItems) && Array.isArray(oldItems) && newItems.length > 1){
+          let diffItems = newItems.filter(vm.compareArray(oldItems))
+          if (diffItems.length == 1) {
+            vm.sortItemsFilter(vm.sortByField, false)
+            Vue.nextTick(function () {
+              let row = document.getElementById(`${vm.uid}-${diffItems[0].id}`)
+              row.scrollIntoView(true)
+              if (vm.selectRowClick){vm.selectedLocal = [diffItems[0].id]}
+            })
+          }
         }
-      },
-      immediate: true,
+      }
     },
-    */
-    
+
+
     selectedLocal: {
       handler(){
         const vm = this
         vm.$emit('update:selected', vm.selectedLocal)
+        if (!(vm.selectedPlural)) {
+          let event = {target: {value: vm.selectedLocal[0]}}
+          vm.onInputCheckbox(event)
+        }
       }
     },
 
@@ -380,11 +422,12 @@ export default {
           vm.isInited = true
         }
         vm.tableSearch()
-
       },
+    
+
       //immediate: true,
     },
-    
+
     searchText: {
       handler(){
         const vm = this
@@ -401,11 +444,11 @@ export default {
         vm.selectedLocal = vm.selected
       }
     },
-
   },
 
   mounted: function () {
     const vm = this
+    // document.addEventListener("keyup", this.nextItem);
     vm.$root.$on('sort-table', event => {
       vm.sortItemsFilter(event)
     })
@@ -413,9 +456,8 @@ export default {
 
   created: function () {
   },
-
-  
 }
+
 </script>
 
 <style scoped>
@@ -433,6 +475,11 @@ export default {
 background-color: #f2f2f2;
 color: #000000;
 font-weight: bold;
+}
+
+.active-item {
+background-color: #f2f2f2;
+color: #000000;
 }
 
 .list tbody tr:hover {

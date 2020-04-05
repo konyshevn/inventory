@@ -1,8 +1,6 @@
 <template>
   <div align="left">
-    <component :is="catlgAlias[catlgType]['item']" :id="id"></component>
-
-
+    <component :is="catlgAlias[catlgType]['item']" :id="id" :modal="modal"></component>
   </div>
 </template>
 
@@ -12,6 +10,7 @@
 import CatlgDeviceItem from '@/components/Catlg/CatlgDevice/CatlgDeviceItem.vue';
 import CatlgPersonItem from '@/components/Catlg/CatlgPerson/CatlgPersonItem.vue';
 import CatlgDepartmentItem from '@/components/Catlg/CatlgDepartment/CatlgDepartmentItem.vue';
+import Common from '@/components/common/Common.vue';
 
 import {aliases} from '@/components/common/aliases.js';
 
@@ -27,9 +26,16 @@ export default {
     CatlgNomenclatureItem: () => import('@/components/Catlg/CatlgNomenclature/CatlgNomenclatureItem.vue'),
   },
 
+  mixins: [Common,],
+
   props: {
     id: null,
-    catlgType: String
+    catlgType: String,
+    modal: {
+      type: Boolean,
+      default: false,
+    },
+
   },
   
  
@@ -63,5 +69,9 @@ header { text-align: left; }
 header > h2 { display: inline-block; }
 header span { margin-left: 10px;}
 
+.catlg-item-control-panel {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 </style>
 

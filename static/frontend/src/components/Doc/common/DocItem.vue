@@ -1,6 +1,7 @@
 <template>
   <div>
     <component :is="docAlias[docType]['item']" :id="id"></component>
+    <doc-follower v-if="id && docType && id != 'new'" :docType="docType" :docId="id"></doc-follower>
   </div>
 </template>
 
@@ -8,20 +9,29 @@
 <script>
 /* eslint-disable no-console */
 import DocIncomeItem from '@/components/Doc/DocIncome/DocIncomeItem.vue';
+import DocWriteoffItem from '@/components/Doc/DocWriteoff/DocWriteoffItem.vue';
+import DocMoveItem from '@/components/Doc/DocMove/DocMoveItem.vue';
+import DocInventoryItem from '@/components/Doc/DocInventory/DocInventoryItem.vue';
+
 import {aliases} from '@/components/common/aliases.js';
 import CatlgWidgetModal from '@/components/Catlg/common/Widget/CatlgWidgetModal.vue';
+import DocFollower from '@/components/Doc/common/DocFollower.vue';
 
 
 export default {
   name: 'DocItem',
   components: {
     DocIncomeItem,
+    DocWriteoffItem,
+    DocMoveItem,
+    DocInventoryItem,
     CatlgWidgetModal,
+    DocFollower,
 
   },
   props: {
     id: null,
-    docType: String
+    docType: String,
   },
   
  

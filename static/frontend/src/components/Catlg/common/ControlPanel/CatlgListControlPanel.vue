@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="text-right" >
+    <b-container class="text-right" style="margin-left: 0px; padding-left: 0px">
       <b-row align-v="end">
         <b-col align="left">
           <b-button variant="light" size="sm" @click="editCatlgItemModal(status.catlgType, 'new', `catlg-item-modal-${status.catlgType}-list`)">Добавить</b-button>
@@ -36,7 +36,7 @@ export default {
   methods: {
     onDelCatlgs: function() {
       const vm = this
-      vm.delCatlgs(vm.status.catlgType, vm.status.selected, vm.status.modal)
+      vm.delCatlgs(vm.status, vm.status.selected, vm.status.modal)
       let statusLocal = _.cloneDeep(vm.status)
       statusLocal.selected = []
       vm.$emit('update:status', statusLocal)

@@ -7,7 +7,7 @@
     @show="showModal=true" 
     @hidden="showModal=false"
     >
-      <catlg-item :id="id" :catlgType="catlgType" v-if="showModal"></catlg-item>
+      <catlg-item :id="id" :catlgType="catlgType" v-if="showModal" :modal="true"></catlg-item>
     </b-modal>
   </div>
 </template>
@@ -56,13 +56,13 @@ export default {
     EventBus.$on('editCatlgItemModal', event => {
       //console.log('$on.editCatlgItemModal: event', event)
       if (event.modalId == vm.modalId) {
-        vm.id = event.id
+        vm.id = String(event.id)
         //vm.catlgType = event.catlgType
         vm.$root.$emit('bv::show::modal', vm.modalId)
       }
     })
-    EventBus.$on('closeCatlgItemModal', event => {
-      if (event.modalId == vm.modalId) {
+    EventBus.$on('closeCatlgItemModal', modal => {
+      if (modal == `catlg-item-modal-${vm.catlgType}`) {
         vm.$root.$emit('bv::hide::modal', vm.modalId)
       }
     })

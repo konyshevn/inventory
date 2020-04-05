@@ -32,10 +32,13 @@ export default {
 
   computed: {
     ...mapGetters([
-      'currentDoc',
-      'currentDocStatus',
       'widgetsIsValid',
-    ])
+    ]),
+
+    docChanged: function () {
+      const vm = this
+      return !_.isEqual(vm.item, vm.itemInit);
+    },
   },
 
   methods: {
@@ -44,6 +47,8 @@ export default {
       'PUTcurrentDoc',
       'DELcurrentDoc',
       'DELdoc',
+      'CREATEdocFollower',
+      'FETCHdocItem',
     ]),
     ...mapMutations([
       'UPDcurrentDoc',
@@ -56,6 +61,9 @@ export default {
       let errors = []
       let itemLocal = _.cloneDeep(item)
       itemLocal.active = true
+      let itemSaved = false
+
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})
 
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
@@ -63,18 +71,20 @@ export default {
       } else {
         response = await vm.PUTdoc([status.docType, itemLocal])
       }
-
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
-        }
- 
+        itemLocal = response.data
+        itemSaved = true
+        if (!(item.id)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
+        } 
       } else {
+        itemLocal.active = false
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
+
 
     },
 
@@ -84,7 +94,9 @@ export default {
       var errors = []
       let itemLocal = _.cloneDeep(item)
       itemLocal.active = false
-      
+      let itemSaved = false
+
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})      
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
@@ -93,16 +105,18 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+        itemLocal = response.data
+        itemSaved = true
+        if (!(item.id)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
         }
-
       } else {
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
+
     },
 
     async saveDocItem (status, item) {
@@ -110,8 +124,9 @@ export default {
       var response = {}
       var errors = []
       let itemLocal = _.cloneDeep(item)
+      let itemSaved = false
 
-
+      EventBus.$emit('start-saving-doc', {itemType: status.docType, itemId: item.id})
       if (!vm.widgetsIsValid(status.uid)) {
         response.status = 400
         response.data = `Заполните все необходимые реквизиты.`
@@ -120,15 +135,18 @@ export default {
       }
 
       if (response.status >= 200 && response.status < 300) {
-        if (item.id) {
-          vm.$emit('update:item', response.data)
-        } else {
-          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: response.data.id} })
+        itemLocal = response.data
+        itemSaved = true
+        if (!(item.id)) {
+          vm.$router.push({ name: 'doc.item', params: {docType: status.docType, id: itemLocal.id} })
         }
       } else {
+        itemLocal.active = false
         errors.push(`Ошибка проведения: ${JSON.stringify(response.data)}`)
         EventBus.$emit('openStatusMsg', errors)
       }
+      await vm.$emit('update:item', itemLocal)
+      EventBus.$emit('stop-saving-doc', {itemType: status.docType, itemId: itemLocal.id, saved: itemSaved})
 
     },
 
@@ -167,9 +185,28 @@ export default {
       }
     },
 
+    async createDocFollower (docType, id, followerType) {
+      const vm = this
+      let msgs = ['Были созданы следующие документы, откройте их чтобы провести:']
+      let followers = await vm.CREATEdocFollower([docType, id, followerType])
+      if (followers.length > 0) {
+        await asyncForEach(followers, async function(follower){
+          await vm.FETCHdocItem([followerType, follower.id])
+          msgs.push([{
+            type: 'router-link',
+            settings: {name: 'doc.item', params: {docType: followerType, id: follower.id}},
+            data: vm.docItemTitle(followerType, follower.id),
+          }])
+        })
+        EventBus.$emit('created-doc-follower', {docType: docType, docId: id})
+      }
+
+      EventBus.$emit('openStatusMsg', msgs)
+    },
+    
+
     DocClickRow: function (id) {
       const vm = this
-      console.log(id);
       this.$router.push({ name: 'doc.item', params: {id: id, docType: vm.status.docType} })
     },
 
@@ -189,6 +226,7 @@ export default {
         vm.status.selected = (vm.status.selected == id) ? null : id
       }
     },
+
     
  },
 
