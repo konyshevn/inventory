@@ -51,6 +51,7 @@ Vue.use(BootstrapVue)
 
 Vue.config.performance = true
 
+
 const routes = [
   { 
     path: '/',

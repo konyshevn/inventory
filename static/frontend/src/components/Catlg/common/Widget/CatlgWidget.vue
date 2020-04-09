@@ -61,9 +61,8 @@
     <catlg-widget-modal :parent="uid" :catlgType="widgetType"> </catlg-widget-modal>
     <catlg-item-modal :parent="uid" :catlgType="widgetType"></catlg-item-modal>
     
-    <b-modal :id="`widget-model-multi-${widgetType}-${uid}`" 
+    <b-modal v-if="multi" :id="`widget-model-multi-${widgetType}-${uid}`" 
     size="lg" 
-    
     ok-only
     :title="catlgTitle(widgetType)">
 
@@ -188,12 +187,12 @@ export default {
 
     modelMultiAdd: function(model) {
       const vm = this
-      console.log('modelMultiAdd')
+      // console.log('modelMultiAdd')
       let modelIndex
       if (model) {
         if (!Array.isArray(vm.modelMulti)){
           vm.$emit('update:model-multi', [model])
-          console.log('modelMultiAdd: modelMulti - not array')
+          // console.log('modelMultiAdd: modelMulti - not array')
         } else {
           modelIndex = vm.modelMulti.indexOf(model)
           if (modelIndex < 0) {
@@ -207,7 +206,7 @@ export default {
 
     modelMultiContains: function(model) {
       const vm = this
-      console.log('modelMultiContains')
+      // console.log('modelMultiContains')
       if (model && vm.modelMulti) {
         let modelIndex = vm.modelMulti.indexOf(model)
         if (modelIndex >= 0 ) {
@@ -219,7 +218,7 @@ export default {
 
     modelMultiRemove: function(model) {
       const vm = this
-      console.log('modelMultiRemove')
+      // console.log('modelMultiRemove')
       let modelIndex = vm.modelMulti.indexOf(model)
       if ((modelIndex >= 0) && model != null && model != undefined) {
         let newModelMulti = vm.modelMulti
@@ -278,7 +277,7 @@ export default {
         })
       }
       selection = selection.slice(0, 30) + '...'
-      console.log('modelMultiSelection:', selection)
+      // console.log('modelMultiSelection:', selection)
       return selection
     },
   },

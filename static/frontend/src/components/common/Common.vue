@@ -55,7 +55,7 @@ export default {
     catlgItemTitle(catlgType, catlgId){
       const vm = this
       let title
-      console.log(catlgType, catlgId)
+      // console.log(catlgType, catlgId)
       if (catlgId == 'new' || !catlgId) {
         title = vm.catlgTitle(catlgType)
       } else {
@@ -76,7 +76,7 @@ export default {
 
     docItemTitle(docType, docId){
       const vm = this
-      console.log('docItemTitle', docType, docId)
+      // console.log('docItemTitle', docType, docId)
       let title = ''
       if (docType == undefined || docType == null) {
         title = ''

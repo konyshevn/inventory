@@ -53,7 +53,7 @@ export default {
   methods: {
 
     onChange: function() {
-        console.log('onChange')
+        // console.log('onChange')
         var vm = this
         var newmodel
         if (moment(String(vm.datetime), 'DD.MM.YYYY').isValid() || moment(String(vm.datetime), 'DD.MM.YYYY HH:mm:ss').isValid()) {

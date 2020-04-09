@@ -24,7 +24,7 @@
           </sort-header>
         </tr>
       </thead>
-      <tbody :style="tablePaddStyle">
+      <tbody :style="tablePaddStyle" id="table-body">
         <tr v-for="item in itemsFilterActive" :key="item.id" :id="`${uid}-${item.id}`"
         @dblclick="dblclickRow(item.id)"
         @click="selectRow(item.id, $event)"

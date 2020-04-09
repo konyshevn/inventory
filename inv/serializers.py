@@ -26,30 +26,30 @@ class leaderField(serializers.RelatedField):
 
 
 class CatalogSerializer(serializers.Serializer):
-    def __init__(self, *args, **kwargs):
-        super(CatalogSerializer, self).__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     super(CatalogSerializer, self).__init__(*args, **kwargs)
 
-        if 'labels' in self.fields:
-            raise RuntimeError(
-                'You cant have labels field defined '
-                'while using MyModelSerializer'
-            )
+    #     if 'labels' in self.fields:
+    #         raise RuntimeError(
+    #             'You cant have labels field defined '
+    #             'while using MyModelSerializer'
+    #         )
 
-        self.fields['labels'] = SerializerMethodField()
+    #     self.fields['labels'] = SerializerMethodField()
 
-    def get_labels(self, *args):
-        labels = {}
+    # def get_labels(self, *args):
+    #     labels = {}
 
-        for field in self.Meta.model._meta.get_fields():
-            if field.name in self.fields:
-                labels[field.name] = field.verbose_name
+    #     for field in self.Meta.model._meta.get_fields():
+    #         if field.name in self.fields:
+    #             labels[field.name] = field.verbose_name
 
-        labels['_model'] = {
-            'singular': self.Meta.model._meta.verbose_name.title(),
-            'plural': self.Meta.model._meta.verbose_name_plural.title(),
-        }
-        return labels
-
+    #     labels['_model'] = {
+    #         'singular': self.Meta.model._meta.verbose_name.title(),
+    #         'plural': self.Meta.model._meta.verbose_name_plural.title(),
+    #     }
+    #     return labels
+    pass
 
 class DocumentSerializer(serializers.Serializer):
     doc_num = serializers.IntegerField(required=False, allow_null=True)
@@ -141,6 +141,8 @@ class DocInventorySerializer(DocumentSerializer, serializers.ModelSerializer):
 
 
 class DeviceSerializer(CatalogSerializer, serializers.ModelSerializer):
+    # label = serializers.ReadOnlyField()
+
     class Meta:
         model = models.Device
         exclude = ()

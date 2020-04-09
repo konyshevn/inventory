@@ -81,6 +81,10 @@ class Device(Catalog):
     nomenclature = models.ForeignKey(Nomenclature, on_delete=models.PROTECT, null=True)
     deviceType = models.ForeignKey(DeviceType, on_delete=models.PROTECT, null=True)
     comment = models.CharField(max_length=100, blank=True)
+    
+    @property
+    def label(self):
+        return str(self.deviceType) + ' ' + str(self.nomenclature) + ' (sn: ' + str(self.serial_num) + ')'
 
     class Meta:
         verbose_name_plural = 'Устройства'
